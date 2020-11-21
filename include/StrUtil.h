@@ -157,14 +157,15 @@ public:
 //
 //      Externs
 //
-const char *ordSuffix(size_t i);
+const char *ord_suffix(size_t i);
+std::string expand_env(const char *s);
 
 //
 //      Function Templates
 //
 #if defined(_MSC_VER) && _MSC_VER < 1300
 template<class T_Ch, class T>
-bool strToVal(const std::basic_string<T_Ch> &src, T &dst)
+bool str2val(const std::basic_string<T_Ch> &src, T &dst)
 {
     std::basic_istringstream<T_Ch> in(src);
     return (in >> dst) && size_t(in.tellg()) == src.size();
@@ -245,7 +246,7 @@ struct C_DoStrToVal<wchar_t,T,true,false>
 };
 
 template<class T_Ch, class T>
-inline bool strToVal(const std::basic_string<T_Ch> &src, T &dst)
+inline bool str2val(const std::basic_string<T_Ch> &src, T &dst)
 {
     return C_DoStrToVal<T_Ch, T,
         std::numeric_limits<T>::is_integer,
