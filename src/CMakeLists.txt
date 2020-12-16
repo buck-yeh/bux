@@ -1,6 +1,6 @@
 #set(CMAKE_CXX_COMPILER "clang++")
 
-string(APPEND CMAKE_CXX_FLAGS "-Wall -Wextra -Wshadow -Wconversion -Wno-parentheses -Wno-unknown-pragmas -g3 -O3 -std=c++2a")
+string(APPEND CMAKE_CXX_FLAGS " -Wall -Wextra -Wshadow -Wconversion -Wno-parentheses -Wno-unknown-pragmas -g3 -O3 -std=c++2a")
 
 add_library(Bux STATIC
         AtomiX.cpp
