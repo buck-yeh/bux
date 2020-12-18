@@ -9,7 +9,7 @@
 #include "XException.h" // RUNTIME_ERROR()
 #include <string>       // std::string
 #include <string_view>  // std::string_view
-#include <type_traits>  // std::is_base_of_v<>
+#include <type_traits>  // std::is_base_of_v<>, std::is_arithmetic_v<>
 
 namespace bux {
 
@@ -135,14 +135,11 @@ struct C_ScreenerNo: C_Screener<bool(*)(T_LexID)>
     constexpr explicit C_ScreenerNo(I_Parser &parser): C_Screener<bool(*)(T_LexID)>(parser, *[](T_LexID token){ return token == IGNORED; }) {}
 };
 
-template<class T_Data>
+template<class T_Data> requires (!std::is_base_of_v<I_LexAttr,T_Data>)
 struct C_LexDataT: I_LexAttr
 /*! \brief Render any copyable "type" token attribute on the fly
 */
 {
-#if (_MSC_VER >= 1910) || (__cplusplus >= 201703L)
-    static_assert(!std::is_base_of_v<I_LexAttr,T_Data>);
-#endif
     using value_type = std::remove_cv_t<std::remove_reference_t<T_Data>>;
 
     // Data
@@ -163,10 +160,11 @@ public:
     void prependPlus();
     auto radix() const noexcept { return m_radix; }
     auto &str() const noexcept  { return m_numStr; }
-    template<class T> auto value() const //-> typename std::remove_reference<T>::type
+    template<class T> requires std::is_arithmetic_v<T>
+    auto value() const
     {
         const auto t = value_();
-        const auto ret = static_cast<typename std::remove_reference<T>::type>(t);
+        const auto ret = static_cast<T>(t);
         if (ret != t)
             RUNTIME_ERROR("Cast overflow "<<ret<<" != "<<t)
 

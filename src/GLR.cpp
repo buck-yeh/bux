@@ -1,6 +1,6 @@
 #include "GLR.h"
 #include "LogStream.h"  // HRTN()
-#include <sstream>      // std::ostringstream
+#include <fmt/core.h>   // fmt::format()
 
 namespace bux {
 namespace GLR {
@@ -31,16 +31,14 @@ std::string I_ParserPolicy::printToken(T_LexID token) const
     case ROOT_NID:
         return "<@> aka bux::ROOT_NID";
     default:
-        std::ostringstream out;
         if (token >= TOKENGEN_LB)
-            out <<"bux::TOKENGEN_LB+" <<(token - TOKENGEN_LB);
-        else
-        {
-            out <<"0x" <<std::hex <<token <<std::dec;
-            if (isascii(token))
-                out <<" or \'" <<asciiLiteral(char(token)) <<'\'';
-        }
-        return out.str();
+            return fmt::format("bux::TOKENGEN_LB+{}", token - TOKENGEN_LB);
+
+        auto out = fmt::format("0x{:x}", token);
+        if (isascii(token))
+            out.append(" or \'").append(asciiLiteral(char(token))) += '\'';
+
+        return out;
     }
 }
 
@@ -151,37 +149,35 @@ Again:
         if (m_policy.changeToken(token, info.m_attr))
             goto Again;
 
-        std::ostringstream out;
-        out <<"Syntax error on token=" <<m_policy.printToken(token);
-
+        auto out = "Syntax error on token=" + m_policy.printToken(token);
         if (auto *attr = info.m_attr.get())
-            out <<" of attr type " <<HRTN(*attr);
+            out.append(" of attr type ").append(HRTN(*attr));
         else
-            out <<" with null attr";
+            out += " with null attr";
 
         if (const auto n = m_curTops.size())
         {
-            out <<"\nStack dump";
+            out += "\nStack dump";
             if (n > 1)
-                out <<" on " <<n <<" paths";
+                out += fmt::format(" on {} paths", n);
 
-            out <<':';
+            out += ':';
             size_t ind{};
             for (auto i: m_curTops)
             {
-                out <<"\nPath[" <<ind++ <<"]:";
+                out += fmt::format("\nPath[{}]:", ind++);
                 while (i)
                 {
-                    out <<"\n(" <<i->m_pos.m_Line <<',' <<i->m_pos.m_Col <<")\t";
+                    out += fmt::format("\n({},{})\t", i->m_pos.m_Line, i->m_pos.m_Col);
                     if (i->m_attr)
-                        out <<HRTN(*i->m_attr);
+                        out += HRTN(*i->m_attr);
 
-                    out <<"\ts=" <<i->m_StateID <<"\tt=" <<m_policy.printToken(i->m_TokenID);
+                    out += fmt::format("\ts={}\tt=", i->m_StateID, m_policy.printToken(i->m_TokenID));
                     i = i->m_prev;
                 }
             }
         }
-        onError(info, out.str());
+        onError(info, out);
         return;
     }
     m_curTops.swap(nextTops);

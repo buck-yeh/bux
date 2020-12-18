@@ -1,7 +1,7 @@
 #include "LR1.h"
 #include "LogStream.h"  // HRTN()
+#include <fmt/core.h>   // fmt::format()
 #include <limits>       // std::numeric_limits<>
-#include <sstream>      // std::ostringstream
 
 namespace bux {
 namespace LR1 {
@@ -32,16 +32,13 @@ std::string I_ParserPolicy::printToken(T_LexID token) const
     case ROOT_NID:
         return "<@> aka bux::ROOT_NID";
     default:
-        std::ostringstream out;
         if (token >= TOKENGEN_LB)
-            out <<"bux::TOKENGEN_LB+" <<(token - TOKENGEN_LB);
-        else
-        {
-            out <<"0x" <<std::hex <<token <<std::dec;
-            if (isascii(token))
-                out <<" or \'" <<asciiLiteral(char(token)) <<'\'';
-        }
-        return out.str();
+            return fmt::format("bux::TOKENGEN_LB+{}", token - TOKENGEN_LB);
+
+        std::string out = fmt::format("0x{:x}", token);
+        if (isascii(token))
+            out += fmt::format(" or \'{}\'", asciiLiteral(char(token)));
+        return out;
     }
 }
 
@@ -119,31 +116,24 @@ Again:
         else
             // Unrecoverable
         {
-            std::ostringstream out;
-            out <<"Syntax error on state=" <<m_ErrState <<" token=" <<m_Policy.printToken(m_ErrToken);
-
+            auto out = fmt::format("Syntax error on state={} token={}", m_ErrState, m_Policy.printToken(m_ErrToken));
             if (auto *attr =info.m_attr.get())
-                out <<" of attr type " <<HRTN(*attr);
+                out.append(" of attr type ").append(HRTN(*attr));
             else
-                out <<" with null attr";
+                out += " with null attr";
 
-            out <<"\nStack[" <<(m_CurStack.size()-1) <<"] Dump:";
+            out += fmt::format("\nStack[{}] Dump:", m_CurStack.size()-1);
             bool first = true;
             for (const auto &i: m_CurStack)
             {
                 if (first)
-                {
                     first = false;
-                    continue; // skip root
-                }
-                out <<"\n(" <<i.m_pos.m_Line <<',' <<i.m_pos.m_Col <<")\t";
-                if (i.m_attr)
-                    out <<HRTN(*i);
-
-                out <<"\ts=" <<i.m_StateID <<"\tt=" <<m_Policy.printToken(i.m_TokenID);
+                else
+                    out += fmt::format("\n({},{})\t{}\ts={}\tt={}",
+                            i.m_pos.m_Line, i.m_pos.m_Col, i.m_attr?HRTN(*i):"", i.m_StateID, m_Policy.printToken(i.m_TokenID));
             }
 
-            onError(m_ErrPos, out.str());
+            onError(m_ErrPos, out);
             if (token == TID_EOF)
                 m_Accepted = true;
             else

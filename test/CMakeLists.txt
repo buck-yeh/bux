@@ -1,11 +1,11 @@
 enable_testing()
 
+string(APPEND CMAKE_CXX_FLAGS " -Wall -Wextra -Wshadow -Wconversion -Wno-parentheses -Wno-unknown-pragmas -g3 -O3 -std=c++2a")
+
 add_executable(test_expand_env test_expand_env.cpp)
 target_include_directories(test_expand_env PRIVATE ../include)
 target_link_libraries(test_expand_env Bux)
 
-message("HOME=$ENV{HOME}")
-message("USER=$ENV{USER}")
 add_test(NAME test_home
          COMMAND test_expand_env home
          )

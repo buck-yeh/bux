@@ -45,11 +45,11 @@ struct C_KVPair
 template<class T_Key, class T_Value>
 union U_K2V
 {
-        const C_KVPair<T_Key,T_Value> *m_table;
-        int (*m_conv)(T_Key);
+    const C_KVPair<T_Key,T_Value> *m_table;
+    int (*m_conv)(T_Key);
 
-        constexpr U_K2V(const C_KVPair<T_Key,T_Value> *table): m_table(table) {}
-        constexpr U_K2V(int (*conv)(T_Key)): m_conv(conv) {}
+    constexpr U_K2V(const C_KVPair<T_Key,T_Value> *table): m_table(table) {}
+    constexpr U_K2V(int (*conv)(T_Key)): m_conv(conv) {}
 };
 
 template<class T, bool>

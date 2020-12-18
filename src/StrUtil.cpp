@@ -56,8 +56,7 @@ std::string expand_env(const char *s)
 //
 void FC_ParseNone::operator()(const char *data, size_t n)
 {
-    std::string s(data, n);
-    m_Apply(s);
+    m_Apply({data, n});
 }
 
 void FC_BufferedParse::operator()(const char *data, size_t n)
@@ -154,8 +153,7 @@ size_t FC_ParseCRLF::parse(const char *data, size_t n)
             goto CheckCRLF;
         }
 
-        std::string s(data, p);
-        m_Apply(s);
+        m_Apply({data, p});
         const size_t jump =p -data +2;
         left -=jump;
         data +=jump;

@@ -4,7 +4,8 @@
 #include <cstdlib>      // strtol(), strtoul(), wcstol(), wcstoul()
 #include <functional>   // std::function<>
 #include <limits>       // std::numeric_limits<>
-#include <sstream>      // std::basic_istringstream<>
+#include <string>       // std::string
+#include <string_view>  // std::string_view
 
 namespace bux {
 
@@ -14,7 +15,7 @@ namespace bux {
 struct FC_ParseNone
 {
     // Types
-    typedef std::function<void(std::string&)> FH_ApplyData;
+    typedef std::function<void(std::string_view)> FH_ApplyData;
 
     // Data
     const FH_ApplyData  m_Apply;
@@ -45,7 +46,7 @@ class FC_ParseLine: public FC_BufferedParse
 public:
 
     // Types
-    typedef std::function<void(std::string&)> FH_ApplyLine;
+    typedef std::function<void(std::string_view)> FH_ApplyLine;
 
     // Data
     const FH_ApplyLine      m_Apply;
@@ -65,7 +66,7 @@ class FC_ParseCRLF: public FC_BufferedParse
 public:
 
     // Types
-    typedef std::function<void(std::string&)> FH_ApplyLine;
+    typedef std::function<void(std::string_view)> FH_ApplyLine;
 
     // Data
     const FH_ApplyLine m_Apply;
@@ -159,100 +160,6 @@ public:
 //
 const char *ord_suffix(size_t i);
 std::string expand_env(const char *s);
-
-//
-//      Function Templates
-//
-#if defined(_MSC_VER) && _MSC_VER < 1300
-template<class T_Ch, class T>
-bool str2val(const std::basic_string<T_Ch> &src, T &dst)
-{
-    std::basic_istringstream<T_Ch> in(src);
-    return (in >> dst) && size_t(in.tellg()) == src.size();
-}
-#else
-template<class T_Ch, class T, bool bIntegral, bool bSigned>
-struct C_DoStrToVal
-{
-    static bool run(const std::string &src, T &dst)
-    {
-        std::basic_istringstream<T_Ch> in(src);
-        return (in >> dst) && size_t(in.tellg()) == src.size();
-    }
-};
-
-template<class T>
-struct C_DoStrToVal<char,T,true,true>
-{
-    static bool run(const std::string &src, T &dst)
-    {
-        char *end;
-        long t =strtol(src.c_str(), &end, 0);
-        if (!*end && src.c_str() < end)
-        {
-            dst =T(t);
-            return true;
-        }
-        return false;
-    }
-};
-
-template<class T>
-struct C_DoStrToVal<char,T,true,false>
-{
-    static bool run(const std::string &src, T &dst)
-    {
-        char *end;
-        unsigned long t =strtoul(src.c_str(), &end, 0);
-        if (!*end && src.c_str() < end)
-        {
-            dst =T(t);
-            return true;
-        }
-        return false;
-    }
-};
-
-template<class T>
-struct C_DoStrToVal<wchar_t,T,true,true>
-{
-    static bool run(const std::wstring &src, T &dst)
-    {
-        wchar_t *end;
-        long t =wcstol(src.c_str(), &end, 0);
-        if (!*end && src.c_str() < end)
-        {
-            dst =T(t);
-            return true;
-        }
-        return false;
-    }
-};
-
-template<class T>
-struct C_DoStrToVal<wchar_t,T,true,false>
-{
-    static bool run(const std::wstring &src, T &dst)
-    {
-        wchar_t *end;
-        unsigned long t =wcstoul(src.c_str(), &end, 0);
-        if (!*end && src.c_str() < end)
-        {
-            dst =T(t);
-            return true;
-        }
-        return false;
-    }
-};
-
-template<class T_Ch, class T>
-inline bool str2val(const std::basic_string<T_Ch> &src, T &dst)
-{
-    return C_DoStrToVal<T_Ch, T,
-        std::numeric_limits<T>::is_integer,
-        std::numeric_limits<T>::is_signed>::run(src, dst);
-}
-#endif
 
 } // namespace bux
 
