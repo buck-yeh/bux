@@ -137,7 +137,7 @@ C_EZArgs &C_EZArgs::position_args(const C1 &arg_names, const C2 &count_optionals
         case 1:
             break;
         case 2:
-            RUNTIME_ERROR("Already added subcommands")
+            RUNTIME_ERROR("Already added subcommands");
         }
         auto &dst = std::get<1>(m_up2u);
         dst.m_posArgs.assign(std::begin(arg_names), std::end(arg_names));

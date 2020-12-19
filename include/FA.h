@@ -440,7 +440,7 @@ auto C_DFA<T_Inputs,T_Action,C_Traits>::findDfaClosure(const C_DfaClosures &Q, i
             // Found
             return i;
     }
-    RUNTIME_ERROR("State " <<state <<" not found")
+    RUNTIME_ERROR("State {} not found", state);
 }
 
 template<class T_Inputs, class T_Action, class C_Traits>
@@ -597,7 +597,7 @@ void C_DFA<T_Inputs,T_Action,C_Traits>::minDfa(
             Fmin[i->m_Tag] = a2c.begin()->first;
             if (a2c.size() > 1)
                 // Impossible
-                RUNTIME_ERROR("a2c.size() == " <<a2c.size())
+                RUNTIME_ERROR("a2c.size() == ()", a2c.size());
         }
     }
     for (const auto &i: deltaFat)
@@ -614,7 +614,7 @@ void C_DFA<T_Inputs,T_Action,C_Traits>::minDfa(
                         // Aleady added
                         goto PostInsertion;
 
-                    RUNTIME_ERROR("Contradicted mapping")
+                    RUNTIME_ERROR("Contradicted mapping");
                 }
             }
             C_Traits::inputUnion(dst_i[value], j.second);
@@ -760,7 +760,7 @@ int C_DFA<T_Inputs,T_Action,C_Traits>::nfa2dfa(
             {
                 auto action = pickAction(i.m_Tag, conflict);
                 if (action == T_Action())
-                    RUNTIME_ERROR("Interrupted")
+                    RUNTIME_ERROR("Interrupted");
 
                 F[i.m_Tag] = action;
             }

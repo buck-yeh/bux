@@ -65,7 +65,10 @@ void appendAsciiLiteral(uint32_t utf32, std::string &dst)
             dst.append(buf, t.ptr);
         }
         else
-            RUNTIME_ERROR("std::to_chars() error: "<<make_error_code(t.ec))
+        {
+            const auto ecode = make_error_code(t.ec);
+            RUNTIME_ERROR("std::to_chars() error: {}:{}", ecode.category().name(), ecode.value());
+        }
     }
 }
 
@@ -109,7 +112,7 @@ std::string asciiLiteral(std::string_view utf8)
             appendAsciiLiteral(u32, ret);
         else
             // On error
-            RUNTIME_ERROR("C_UnicodeIn::get() error "<<t)
+            RUNTIME_ERROR("C_UnicodeIn::get() error {}", t);
     }
     return ret;
 }
@@ -149,7 +152,7 @@ long long C_IntegerLex::value_() const
     size_t end;
     auto ret = std::stoll(m_numStr, &end, m_radix);
     if (end < m_numStr.size())
-        RUNTIME_ERROR("Not entirely number"<<m_numStr)
+        RUNTIME_ERROR("Not entirely number {}", m_numStr);
 
     return ret;
 }

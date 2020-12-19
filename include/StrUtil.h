@@ -1,11 +1,11 @@
 #ifndef StrUtilH
 #define StrUtilH
 
-#include <cstdlib>      // strtol(), strtoul(), wcstol(), wcstoul()
 #include <functional>   // std::function<>
-#include <limits>       // std::numeric_limits<>
 #include <string>       // std::string
 #include <string_view>  // std::string_view
+#include <istream>      // std::basic_istream<>
+#include <ostream>      // std::basic_ostream<>
 
 namespace bux {
 

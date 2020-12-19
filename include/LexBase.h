@@ -166,7 +166,7 @@ public:
         const auto t = value_();
         const auto ret = static_cast<T>(t);
         if (ret != t)
-            RUNTIME_ERROR("Cast overflow "<<ret<<" != "<<t)
+            RUNTIME_ERROR("Cast overflow {} != {}", ret, t);
 
         return ret;
     }

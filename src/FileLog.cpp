@@ -156,7 +156,7 @@ void C_FileLog::configPath(const std::string &_pathFmt)
 */
 {
     if (_pathFmt.empty())
-        RUNTIME_ERROR("Null path format")
+        RUNTIME_ERROR("Null path format");
 
     std::scoped_lock _(m_Lock.m_LockOut);
     m_PathFmt = fs::absolute(_pathFmt).string();
@@ -213,7 +213,7 @@ std::ostream &C_FileLog::getResource()
                 m_Out.open(s, m_OpenMode);
             }
             if (!m_Out.is_open())
-                RUNTIME_ERROR(s)
+                RUNTIME_ERROR(s);
 
             m_CurrPath = s;
         }

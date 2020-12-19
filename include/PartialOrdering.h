@@ -290,7 +290,7 @@ void C_PartialOrdering<T,FC_Equ>::makeLinear(
             q.splice(q.begin(), l);
             break;
         default:
-            LOGIC_ERROR("Unknown policy "<<int(policy))
+            LOGIC_ERROR("Unknown policy {}", int(policy));
         }
     }
 }

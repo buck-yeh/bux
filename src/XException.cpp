@@ -46,12 +46,12 @@ LONG WINAPI usrSEH(_EXCEPTION_POINTERS *pInfo)
     if (EXCEPTION_CONTINUE_SEARCH == ret)
     {
         if (const EXCEPTION_RECORD *er =pInfo->ExceptionRecord)
-            RUNTIME_ERROR(std::hex
-                <<   "code 0x"<<er->ExceptionCode
-                <<", flags 0x"<<er->ExceptionFlags
-                <<", extra 0x"<<static_cast<void*>(er->ExceptionRecord)
-                <<   ", ip 0x"<<static_cast<void*>(er->ExceptionAddress)
-                <<    ", arg#"<<er->NumberParameters)
+            RUNTIME_ERROR("code 0x{:x}, flags 0x{:x}, extra 0x{:x}, ip 0x{:x}, arg#{:x}",
+                er->ExceptionCode,
+                er->ExceptionFlags,
+                static_cast<void*>(er->ExceptionRecord),
+                static_cast<void*>(er->ExceptionAddress),
+                er->NumberParameters);
     }
     return EXCEPTION_CONTINUE_SEARCH;
 }
@@ -96,8 +96,6 @@ void catchSE(bool useOldHookFirst)
         TlsSetValue(TLSInd_FlagsSE, LPVOID(flags));
     }
 }
-#else
-void catchSE(bool) {}
 #endif
 
 } // namespace bux

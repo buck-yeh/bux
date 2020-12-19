@@ -48,7 +48,7 @@ std::string expand_env(const char *s)
     if (done)
         return ret;
 #endif
-    RUNTIME_ERROR("Fail to expand \""<<s<<'"')
+    RUNTIME_ERROR("Fail to expand \"{}\"", s);
 }
 
 //
@@ -96,19 +96,18 @@ void FC_BufferedParse::operator()(const char *data, size_t n)
         // Out of memory
         const size_t n_parsed =m_YetToParse.size();
         m_YetToParse.clear();
-        std::ostringstream out;
-        out <<"std::bad_alloc#" <<(int)state;
+        auto out = fmt::format("std::bad_alloc#{}", (int)state);
         switch (state)
         {
         case ON_APPEND:
-            out <<"# appending " <<n <<" bytes to " <<n_parsed <<" bytes";
+            out += fmt::format("# appending {} bytes to {} bytes", n, n_parsed);
             break;
         case ON_TRUNCATE:
-            out <<"# truncating " <<n2 <<" bytes from " <<n_parsed <<" bytes";
+            out += fmt::format("# truncating {} bytes from {} bytes", n2, n_parsed);
             break;
         default:;
         }
-        RUNTIME_ERROR(out.str())
+        RUNTIME_ERROR(out);
     }
 }
 

@@ -31,7 +31,7 @@ size_t parseEscapeChar(std::string_view s, uint32_t &c, size_t pos)
 {
     const size_t n = s.size();
     if (pos >= n)
-        RUNTIME_ERROR("Pos " <<pos <<" passes end of string")
+        RUNTIME_ERROR("Pos {} passes end of string", pos);
 
     auto i = pos;
     c = static_cast<unsigned char>(s[i++]);

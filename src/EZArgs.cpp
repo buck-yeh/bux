@@ -14,7 +14,7 @@ C_EZArgs &C_EZArgs::add_flag(
     const std::function<void(std::string_view)> &parse)
 {
     if (!trigger && !parse)
-        RUNTIME_ERROR("Either trigger or parse handler must be provided")
+        RUNTIME_ERROR("Either trigger or parse handler must be provided");
 
     auto &dst = m_flags.emplace_back();
     if (!name.empty() && name[0] == '-')
@@ -23,7 +23,7 @@ C_EZArgs &C_EZArgs::add_flag(
         else
         {
             m_flags.pop_back();
-            RUNTIME_ERROR("Invalid flag name: "<<name)
+            RUNTIME_ERROR("Invalid flag name: {}", name);
         }
     else
         dst.m_name = name;
@@ -50,7 +50,7 @@ C_EZArgs &C_EZArgs::add_subcommand(std::string_view name, const std::function<vo
     case 2:
         break;
     case 1:
-        RUNTIME_ERROR("Already set as positional arguments")
+        RUNTIME_ERROR("Already set as positional arguments");
     }
     auto &ret = std::get<2>(m_up2u).try_emplace(std::string(name), C_EZArgs(description)).first->second;
     ret.m_helpShielded  = m_helpShielded;

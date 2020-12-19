@@ -159,7 +159,7 @@ std::string_view to_utf8(T_Utf32 uc)
     static thread_local T_Utf8 buf[MAX_UTF8];
     const auto bytes = u32toutf8(uc, buf);
     if (bytes <= 0)
-        RUNTIME_ERROR("u32toutf8(u+" <<std::hex <<uc <<") returns " <<bytes)
+        RUNTIME_ERROR("u32toutf8(u+{:x}) returns {}", uc, bytes);
 
     return {reinterpret_cast<char*>(buf), size_t(bytes)};
 }
@@ -179,7 +179,7 @@ std::string to_utf8(std::istream &in, T_Encoding codepage)
         ret.append(reinterpret_cast<char*>(u8), n);
 
     if (n < 0)
-        RUNTIME_ERROR("UTF-8 conversion error "<<n)
+        RUNTIME_ERROR("UTF-8 conversion error {}", n);
 
     return ret;
 }
@@ -553,7 +553,7 @@ T_Utf16 C_UnicodeIn::C_Source::getUtf16(size_t pos, bool reverseWord) const
 {
     const size_t off = m_AvailBeg +pos *2;
     if (off +2 > m_ReadBuf.size())
-        RUNTIME_ERROR("End of char " <<(off+2) <<" passes end of buffer")
+        RUNTIME_ERROR("End of char {} passes end of buffer", off+2);
 
     const char *p = m_ReadBuf.data() + off;
     if (reverseWord)
@@ -576,7 +576,7 @@ void C_UnicodeIn::C_Source::pop(size_t bytes)
     if (m_AvailBeg > m_ReadBuf.size())
     {
         m_AvailBeg -= bytes; // rollback
-        RUNTIME_ERROR("m_AvailBeg overflow")
+        RUNTIME_ERROR("m_AvailBeg overflow");
     }
 }
 
@@ -683,7 +683,7 @@ void C_MBCStr::appendStr(T_Utf32 u32) const
         T_Utf8 buf[MAX_UTF8];
         const auto rc = u32toutf8(u32, buf);
         if (rc < 0)
-            RUNTIME_ERROR("MBC string conversion error " <<rc <<" after " <<m_str.size() <<" bytes converted")
+            RUNTIME_ERROR("MBC string conversion error {} after {} bytes converted", rc, m_str.size());
 
         m_str.append(reinterpret_cast<char*>(buf), rc);
     }

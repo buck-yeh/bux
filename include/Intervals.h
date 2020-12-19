@@ -92,7 +92,7 @@ template<class T>
 C_IntervalsByTraits<T,true>::C_IntervalsByTraits(value_type i)
 {
     if (i.first > i.second)
-        RUNTIME_ERROR('(' <<i.first <<',' <<i.second <<')')
+        RUNTIME_ERROR("({},{})", i.first, i.second);
 
     m_Intervals.emplace_back(i);
 }
