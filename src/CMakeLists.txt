@@ -2,7 +2,7 @@
 
 string(APPEND CMAKE_CXX_FLAGS " -Wall -Wextra -Wshadow -Wconversion -Wno-parentheses -Wno-unknown-pragmas -g3 -O3 -std=c++2a")
 
-add_library(Bux STATIC
+add_library(bux STATIC
         AtomiX.cpp
         EZArgs.cpp
         FA.cpp FileLog.cpp
@@ -12,4 +12,4 @@ add_library(Bux STATIC
         XConsole.cpp
         XException.cpp
         )
-target_include_directories(Bux PRIVATE ../include)
+target_include_directories(bux PRIVATE ../include)

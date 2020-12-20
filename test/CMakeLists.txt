@@ -4,7 +4,7 @@ string(APPEND CMAKE_CXX_FLAGS " -Wall -Wextra -Wshadow -Wconversion -Wno-parenth
 
 add_executable(test_expand_env test_expand_env.cpp)
 target_include_directories(test_expand_env PRIVATE ../include)
-target_link_libraries(test_expand_env Bux fmt)
+target_link_libraries(test_expand_env bux fmt)
 
 add_test(NAME test_home
          COMMAND test_expand_env home
