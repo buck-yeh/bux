@@ -3,7 +3,7 @@
 # NOTE: Please fill out the license field for your package! If it is unknown,
 # then please put 'unknown'.
 
-# Maintainer: Buck Yeh <buck.yeh@gmail.com>
+# Maintainer: Buck Yeh <buck.yeh at gmail dot com>
 pkgname=bux
 pkgver=1.0.0
 pkgrel=1
