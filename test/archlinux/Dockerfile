@@ -19,14 +19,15 @@ PS1=\"\\[\\033[01;37m\\]\\D{%m/%d %H:%M:%S} \\[\\033[01;32m\\]\\u@\\h\[\\033[00m
 alias ll=\'ls -lF --color=auto --time-style=\"+%y/%m/%d %H:%M:%S\"\'\n\
 export LANG=en_US.UTF-8\n\
 locale-gen\n' >> ~/.bashrc
-COPY --chown=guest:guest PKGBUILD CMakeLists.txt test_expand_env.cpp test_in.txt /home/guest/Duty/
+COPY --chown=guest:guest PKGBUILD aur_poc /home/guest/Duty/
 RUN  cd ~/Duty && \
      makepkg -s
 WORKDIR /home/guest/Duty
 
 USER root
-RUN  pacman -U --noconfirm /home/guest/Duty/bux-*.pkg.tar.zst
+RUN  pacman -U --noconfirm /home/guest/Duty/bux-*.pkg.tar.*
 USER guest
-RUN  cmake . && \
+RUN  cd aur_pos && \
+     cmake . && \
      make && \
      ctest .

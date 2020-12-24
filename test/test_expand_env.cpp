@@ -1,8 +1,8 @@
-#include "StrUtil.h"    // bux::expand_env()
-#include <fstream>      // std::ifstream
-#include <iostream>     // std::cout
-#include <cstdlib>      // std::getenv()
-#include <cstring>      // std::strcmp()
+#include <bux/StrUtil.h>    // bux::expand_env()
+#include <fstream>          // std::ifstream
+#include <iostream>         // std::cout
+#include <cstdlib>          // std::getenv()
+#include <cstring>          // std::strcmp()
 
 enum
 {
