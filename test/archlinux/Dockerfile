@@ -19,7 +19,8 @@ PS1=\"\\[\\033[01;37m\\]\\D{%m/%d %H:%M:%S} \\[\\033[01;32m\\]\\u@\\h\[\\033[00m
 alias ll=\'ls -lF --color=auto --time-style=\"+%y/%m/%d %H:%M:%S\"\'\n\
 export LANG=en_US.UTF-8\n\
 locale-gen\n' >> ~/.bashrc
-COPY --chown=guest:guest PKGBUILD aur_poc /home/guest/Duty/
+COPY --chown=guest:guest PKGBUILD /home/guest/Duty/
+COPY --chown=guest:guest aur_poc/* /home/guest/Duty/aur_poc/
 RUN  cd ~/Duty && \
      makepkg -s
 WORKDIR /home/guest/Duty
@@ -27,7 +28,7 @@ WORKDIR /home/guest/Duty
 USER root
 RUN  pacman -U --noconfirm /home/guest/Duty/bux-*.pkg.tar.*
 USER guest
-RUN  cd aur_pos && \
+RUN  cd ~/Duty/aur_poc && \
      cmake . && \
      make && \
      ctest .
