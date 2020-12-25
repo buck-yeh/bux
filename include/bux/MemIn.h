@@ -19,7 +19,8 @@ struct C_IMemBuf: std::basic_streambuf<_CharT,_Traits>
     }
     C_IMemBuf(std::basic_string_view<_CharT,_Traits> buffer)
     {
-        this->setg(buffer.begin(), buffer.begin(), buffer.end());
+        const auto beg = const_cast<_CharT*>(buffer.begin());
+        this->setg(beg, beg, const_cast<_CharT*>(buffer.end()));
     }
 };
 
