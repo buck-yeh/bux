@@ -1,5 +1,5 @@
-#ifndef UnicodeCvtH
-#define UnicodeCvtH
+#ifndef bux_UnicodeCvt_H_
+#define bux_UnicodeCvt_H_
 
 #include "XQue.h"       // bux::C_Queue<>
 #include <cstdint>      // std::uint8_t, std::uint16_t, std::uint32_t
@@ -191,4 +191,4 @@ using bux::T_Utf32;
 using bux::T_Utf16;
 using bux::T_Utf8;
 
-#endif // UnicodeCvtH
+#endif // bux_UnicodeCvt_H_

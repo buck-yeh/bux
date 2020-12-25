@@ -1,5 +1,5 @@
-#ifndef __SafeArith_H
-#define __SafeArith_H
+#ifndef bux_SafeArith_H_
+#define bux_SafeArith_H_
 
 #include <limits>       // std::numeric_limits<>
 
@@ -98,5 +98,5 @@ struct C_CmpRet<FLAG_integer,false,FLAG_overflow,T>
 
 } //namespace bux
 
-#endif // __SafeArith_H
+#endif // bux_SafeArith_H_
 

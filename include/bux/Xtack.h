@@ -1,5 +1,5 @@
-#ifndef __Xtack_H
-#define __Xtack_H
+#ifndef bux_Xtack_H_
+#define bux_Xtack_H_
 
 #include <iterator> // std::iterator_traits<>, std::distance()
 #include <ostream>  // std::basic_ostream<>
@@ -513,4 +513,4 @@ SPECIALIZE_DTORFREESTACK(class T,T*)
 
 #endif // #ifndef _MSC_VER
 
-#endif // __Xtack_H
+#endif // bux_Xtack_H_

@@ -111,12 +111,6 @@ void FC_BufferedParse::operator()(const char *data, size_t n)
     }
 }
 
-FC_ParseLine::FC_ParseLine(const FH_ApplyLine &apply, char delimeter):
-    m_Apply(apply),
-    m_Delim(delimeter)
-{
-}
-
 size_t FC_ParseLine::parse(const char *data, size_t n)
 {
     size_t left =n;
@@ -129,10 +123,6 @@ size_t FC_ParseLine::parse(const char *data, size_t n)
         data +=jump;
     }
     return n -left;
-}
-
-FC_ParseCRLF::FC_ParseCRLF(const FH_ApplyLine &apply): m_Apply(apply)
-{
 }
 
 size_t FC_ParseCRLF::parse(const char *data, size_t n)

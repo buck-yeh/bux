@@ -1,5 +1,5 @@
-#ifndef XQueH
-#define XQueH
+#ifndef bux_XQue_H_
+#define bux_XQue_H_
 
 #include <cstddef>  // size_t
 #include <utility>  // std::swap()
@@ -248,4 +248,4 @@ void C_Queue<T>::pop()
 
 } // namespace bux
 
-#endif // XQueH
+#endif // bux_XQue_H_

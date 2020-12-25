@@ -1,5 +1,5 @@
-#ifndef SerializeH
-#define SerializeH
+#ifndef bux_Serialize_H_
+#define bux_Serialize_H_
 
 #include <array>        // std::array<>
 #include <cstring>      // memcpy()
@@ -96,4 +96,4 @@ size_t save_hashed_str(std::ostream &out, const std::string &s);
 
 } // namespace bux
 
-#endif // SerializeH
+#endif // bux_Serialize_H_

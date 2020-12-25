@@ -1,5 +1,5 @@
-#ifndef AtomiX_h_
-#define AtomiX_h_
+#ifndef bux_AtomiX_h_
+#define bux_AtomiX_h_
 
 #include <atomic>       // std::atomic_flag
 #include <functional>   // std::function<>
@@ -72,4 +72,4 @@ private:
 
 } // namespace bux
 
-#endif // AtomiX_h_
+#endif // bux_AtomiX_h_

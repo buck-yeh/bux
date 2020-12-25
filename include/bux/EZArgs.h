@@ -1,5 +1,5 @@
-#ifndef EZArgs_H_
-#define EZArgs_H_
+#ifndef bux_EZArgs_H_
+#define bux_EZArgs_H_
 
 #include "XException.h" // RUNTIME_ERROR()
 #include <algorithm>    // std::sort()
@@ -157,4 +157,4 @@ C_EZArgs &C_EZArgs::position_args(const C1 &arg_names, const C2 &count_optionals
 
 } //namespace bux
 
-#endif // EZArgs_H_
+#endif // bux_EZArgs_H_

@@ -1,5 +1,5 @@
-#ifndef LexBaseH
-#define LexBaseH
+#ifndef bux_LexBase_H_
+#define bux_LexBase_H_
 
 #ifdef __BORLANDC__
 #   pragma warn -8058
@@ -217,4 +217,4 @@ auto createLex(T_Args &&...args)
 
 } //namespace bux
 
-#endif  // LexBaseH
+#endif  // bux_LexBase_H_

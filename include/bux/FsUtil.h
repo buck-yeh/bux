@@ -1,5 +1,5 @@
-#ifndef FsUtil_H_
-#define FsUtil_H_
+#ifndef bux_FsUtil_H_
+#define bux_FsUtil_H_
 
 #include <concepts>     // std::convertible_to<>
 #include <filesystem>   // std::filesystem::path
@@ -34,4 +34,4 @@ std::filesystem::path search_dirs(const std::filesystem::path &in_path, const T 
 
 } // namespace bux
 
-#endif  // FsUtil_H_
+#endif  // bux_FsUtil_H_

@@ -1,5 +1,5 @@
-#ifndef LoggerH
-#define LoggerH
+#ifndef bux_Logger_H_
+#define bux_Logger_H_
 
 #include "SyncStream.h"     // bux::C_UseTraceLog
 #include "XPlatform.h"      // CUR_FUNC_
@@ -110,4 +110,4 @@ using bux::LL_VERBOSE;
 #define FUNLOG SCOPELOG(CUR_FUNC_)
 #define FUNLOGX(fmtStr, ...) SCOPELOGX(CUR_FUNC_,fmtStr, ##__VA_ARGS__)
 
-#endif // LoggerH
+#endif // bux_Logger_H_

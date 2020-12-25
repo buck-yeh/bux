@@ -1,5 +1,5 @@
-#ifndef XConsoleH
-#define XConsoleH
+#ifndef bux_XConsole_H_
+#define bux_XConsole_H_
 
 #include <string>   // std::string
 
@@ -14,4 +14,4 @@ bool testWritability(const char *file);
 
 } // namespace bux
 
-#endif // XConsoleH
+#endif // bux_XConsole_H_

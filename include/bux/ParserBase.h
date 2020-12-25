@@ -1,5 +1,5 @@
-#ifndef ParserBaseH
-#define ParserBaseH
+#ifndef bux_ParserBase_H_
+#define bux_ParserBase_H_
 
 #include "LexBase.h"    // bux::T_LexID, bux::C_LexInfoT<>, ...
 #include <functional>   // std::function<>
@@ -194,4 +194,4 @@ int toInt(const C_LexInfoT<T_Lex,C_Ptr> &lex)
 
 } //namespace bux
 
-#endif // ParserBaseH
+#endif // bux_ParserBase_H_

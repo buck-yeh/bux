@@ -1,5 +1,5 @@
-#ifndef IntervalsH
-#define IntervalsH
+#ifndef bux_Intervals_H_
+#define bux_Intervals_H_
 
 #include "XException.h" // RUNTIME_ERROR()
 #include <limits>       // std::numeric_limits<>
@@ -339,4 +339,4 @@ void C_IntervalsByTraits<T,true>::complement()
 
 } // namespace bux
 
-#endif // IntervalsH
+#endif // bux_Intervals_H_

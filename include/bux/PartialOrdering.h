@@ -1,5 +1,5 @@
-#ifndef __PartialOrdering_H
-#define __PartialOrdering_H
+#ifndef bux_PartialOrdering_H_
+#define bux_PartialOrdering_H_
 
 #include <functional>   // std::equal_to<>, std::function<>
 #include <list>         // std::list<>
@@ -326,4 +326,4 @@ bool C_PartialOrdering<T,FC_Equ>::related(const T &a, const T &b) const
 
 } // namespace bux
 
-#endif // __PartialOrdering_H
+#endif // bux_PartialOrdering_H_

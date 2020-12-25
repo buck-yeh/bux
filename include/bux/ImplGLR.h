@@ -1,5 +1,5 @@
-#ifndef ImplGLRH
-#define ImplGLRH
+#ifndef bux_ImplGLR_H_
+#define bux_ImplGLR_H_
 
 /*! \file
     This header is constantly included by ParserGen-generated *.cpp files.
@@ -82,4 +82,4 @@ std::shared_ptr<C_LexDataT<T>> tryDupLex(const C_LexInfoT<const I_LexAttr,std::s
 } // namespace GLR
 } //namespace bux
 
-#endif // ImplGLRH
+#endif // bux_ImplGLR_H_
