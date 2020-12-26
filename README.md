@@ -30,12 +30,12 @@ The libraty is `<sstream>`-free and uses [fmt](https://github.com/fmtlib/fmt) li
    target_compile_options(foo PRIVATE -std=c++2a)
    target_link_libraries(foo bux fmt)
    ~~~
-4. Include `bux` header files by prefixing header name with `bux/', for example:
+4. Include the header files by prefixing header name with `bux/`, for example:
    ~~~c++
    #include <bux/StrUtil.h>
    ~~~
    *p.s.* Header files are in `/usr/include/bux` and compiler is expected to search `/usr/include` by default.
-5. If directly using `gcc/clang` is intended, the only required flag is `-lbux`
+5. If directly using `gcc` or `clang` is intended, the only required flag is `-lbux`
 ## Install from `github` in any of [Linux distros](https://distrowatch.com/)
 1. Make sure you have installed `cmake` `make` `gcc` `git` `fmt`
 2. ~~~bash
@@ -53,11 +53,11 @@ The libraty is `<sstream>`-free and uses [fmt](https://github.com/fmtlib/fmt) li
    target_link_directories(foo PRIVATE "$env{BUX_DIR}/src") 
    target_link_libraries(foo bux fmt)
    ~~~
-4. Include `bux` header files by prefixing header name with `bux/', for example:
+4. Include the header files by prefixing header name with `bux/`, for example:
    ~~~c++
    #include <bux/StrUtil.h>
    ~~~
-5. If directly using `gcc/clang` is intended, the required flags are `-I$BUX_DIR/include -L$BUX_DIR/src -lbux`
+5. If directly using `gcc` or `clang` is intended, the required flags are `-I$BUX_DIR/include -L$BUX_DIR/src -lbux`
 
 # Header Intors
 ## Containers
