@@ -89,15 +89,15 @@ struct I_LexAttr
 /*! Convenient base of all token types, terminals or non-terminals, for a specific parser framework.
 */
 {
-    virtual ~I_LexAttr() =default;
+    virtual ~I_LexAttr() = default;
 };
 
 struct I_Parser
 {
     // Pure virtuals
-    virtual ~I_Parser() =default;
-    virtual void add(T_LexID token, unsigned line, unsigned col, I_LexAttr *unownedAttr) =0;
-    virtual std::string_view setSource(std::string_view src) =0;
+    virtual ~I_Parser() = default;
+    virtual void add(T_LexID token, unsigned line, unsigned col, I_LexAttr *unownedAttr) = 0;
+    virtual std::string_view setSource(std::string_view src) = 0;
 };
 
 template<class F_Pred>

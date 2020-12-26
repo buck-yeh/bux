@@ -9,7 +9,7 @@ namespace bux {
 //
 //      Types
 //
-template <class _CharT, class _Traits =std::char_traits<_CharT> >
+template <class _CharT, class _Traits>
 struct C_OMemBuf: std::basic_streambuf<_CharT,_Traits>
 {
     C_OMemBuf(_CharT *buffer, size_t size)
@@ -18,7 +18,7 @@ struct C_OMemBuf: std::basic_streambuf<_CharT,_Traits>
         { setp(buffer.begin(), buffer.end()); }
 };
 
-template <class _CharT, class _Traits =std::char_traits<_CharT> >
+template <class _CharT, class _Traits>
 struct C_OMemBufAsMember
 {
     // Data
@@ -29,23 +29,24 @@ struct C_OMemBufAsMember
     C_OMemBufAsMember(std::span<_CharT> buffer): m_Buffer(buffer) {}
 };
 
-template <class _CharT, class _Traits =std::char_traits<_CharT> >
-class C_OMemStream:
+template <class _CharT, class _Traits =std::char_traits<_CharT>>
+class C_OMemStreamT:
     private C_OMemBufAsMember<_CharT,_Traits>,
     public std::basic_ostream<_CharT,_Traits> // Inheritance order matters
 {
 public:
 
     // Ctor
-    C_OMemStream(_CharT *buffer, size_t size):
+    C_OMemStreamT(_CharT *buffer, size_t size):
         C_OMemBufAsMember<_CharT,_Traits>(buffer, size),
         std::basic_ostream<_CharT,_Traits>(&this->m_Buffer)
         {}
-    C_OMemStream(std::span<_CharT> buffer):
+    C_OMemStreamT(std::span<_CharT> buffer):
         C_OMemBufAsMember<_CharT,_Traits>(buffer),
         std::basic_ostream<_CharT,_Traits>(&this->m_Buffer)
         {}
 };
+using C_OMemStream = C_OMemStreamT<char>;
 
 } // namespace bux
 

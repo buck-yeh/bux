@@ -18,10 +18,10 @@ template<class T_Char>
 struct I_Scanner
 {
     // Pure virtuals
-    virtual ~I_Scanner() =default;
-    virtual void add(unsigned col, T_Char c) =0;
-    virtual void setLine(unsigned line) =0;
-    virtual void setSource(std::string_view src) =0;
+    virtual ~I_Scanner() = default;
+    virtual void add(unsigned col, T_Char c) = 0;
+    virtual void setLine(unsigned line) = 0;
+    virtual void setSource(std::string_view src) = 0;
 };
 
 struct C_ActionRet
@@ -29,7 +29,7 @@ struct C_ActionRet
     T_LexID                 m_id;
     I_LexAttr               *m_pAttr;   ///< newed
 
-    constexpr C_ActionRet(T_LexID id, I_LexAttr *unownedAttr =nullptr): m_id(id), m_pAttr(unownedAttr)
+    constexpr C_ActionRet(T_LexID id, I_LexAttr *unownedAttr = nullptr): m_id(id), m_pAttr(unownedAttr)
         {}
     C_ActionRet(): m_pAttr(nullptr)
         {}
@@ -72,7 +72,7 @@ struct C_LexTraits<C_LexUTF32>
     }
     static void setId(C_LexUTF32 &ch, T_LexID id) noexcept
     {
-        ch.m_U32 =id;
+        ch.m_U32 = id;
     }
 };
 
@@ -159,7 +159,7 @@ void scanFile(std::string_view filename, std::istream &in, I_Scanner<T_Char> &sc
         {
         case '\n':  // New line
             scanner.setLine(++line);
-            col =1;
+            col = 1;
             break;
         case '\t':  // TAB
             col += 4 - (col - 1) % 4;

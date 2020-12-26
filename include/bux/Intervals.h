@@ -104,8 +104,8 @@ struct IsIteratorImpl
 };
 
 template<class I>
-using IsIterator =IsIteratorImpl<typename std::remove_reference<I>::type,
-    std::is_pointer<typename std::remove_reference<I>::type>::value||
+using IsIterator = IsIteratorImpl<typename std::remove_reference<I>::type,
+    std::is_pointer<typename std::remove_reference<I>::type>::value ||
     std::is_class<typename std::remove_reference<I>::type>::value>;
 
 template<class I>

@@ -9,7 +9,7 @@ namespace bux {
 //
 //      Types
 //
-template <class _CharT, class _Traits =std::char_traits<_CharT> >
+template <class _CharT, class _Traits>
 struct C_IMemBuf: std::basic_streambuf<_CharT,_Traits>
 {
     C_IMemBuf(const _CharT *buffer, size_t size)
@@ -24,7 +24,7 @@ struct C_IMemBuf: std::basic_streambuf<_CharT,_Traits>
     }
 };
 
-template <class _CharT, class _Traits =std::char_traits<_CharT> >
+template <class _CharT, class _Traits>
 struct C_IMemBufAsMember
 {
     // Data
@@ -35,23 +35,24 @@ struct C_IMemBufAsMember
     C_IMemBufAsMember(std::basic_string_view<_CharT,_Traits> buffer): m_Buffer(buffer) {}
 };
 
-template <class _CharT, class _Traits =std::char_traits<_CharT> >
-class C_IMemStream:
+template <class _CharT, class _Traits = std::char_traits<_CharT>>
+class C_IMemStreamT:
     private C_IMemBufAsMember<_CharT,_Traits>,
     public std::basic_istream<_CharT,_Traits> // Inheritance order matters
 {
 public:
 
     // Ctors
-    C_IMemStream(const _CharT *buffer, size_t size):
+    C_IMemStreamT(const _CharT *buffer, size_t size):
         C_IMemBufAsMember<_CharT,_Traits>(buffer, size),
         std::basic_istream<_CharT,_Traits>(&this->m_Buffer)
         {}
-    C_IMemStream(std::basic_string_view<_CharT,_Traits> buffer):
+    C_IMemStreamT(std::basic_string_view<_CharT,_Traits> buffer):
         C_IMemBufAsMember<_CharT,_Traits>(buffer),
         std::basic_istream<_CharT,_Traits>(&this->m_Buffer)
         {}
 };
+using C_IMemStream = C_IMemStreamT<char>;
 
 } // namespace bux
 

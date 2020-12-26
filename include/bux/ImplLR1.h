@@ -2,7 +2,7 @@
 #define bux_ImplLR1_H_
 
 /*! \file
-    This header is constantly included by ParserGen-generated *.cpp files.
+    This header is constantly included by parsergen-generated *.cpp files.
 */
 
 #include "ParserBase.h" // bux::FC_GetRelLexT<>, LexBase.h
