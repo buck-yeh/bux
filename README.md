@@ -1,13 +1,13 @@
 # Brief
-Supplemental static library whatever is required in sense of general purpose but is not directly supported from Modern C++. Or whatever reusable originated from my side projects. 
+Supplemental static library of whatever is seen required in sense of general purpose but is not directly supported from [Modern C++](https://www.modernescpp.com/index.php/what-is-modern-c). Or whatever reusable originated from my side projects. 
 
-The libraty is `<sstream>`-free and uses [fmt](https://github.com/fmtlib/fmt) library heavily as long as [C++20 \<format\>](https://en.cppreference.com/w/cpp/utility/format) is not there yet.
+The library is `<sstream>`-free and uses [fmt](https://github.com/fmtlib/fmt) library heavily as long as [C++20 \<format\>](https://en.cppreference.com/w/cpp/utility/format) is not there yet.
 
 # Table of Contents
    * [Installation &amp; Usage](#installation--usage)
       * [In ArchLinux](#in-archlinux)
       * [Install from github in any of Linux distros](#install-from-github-in-any-of-linux-distros)
-   * [Header Intors](#header-intors)
+   * [Header Intros](#header-intors)
       * [Containers](#containers)
       * [Input/Output](#inputoutput)
       * [Logger](#logger)
@@ -59,16 +59,16 @@ The libraty is `<sstream>`-free and uses [fmt](https://github.com/fmtlib/fmt) li
    ~~~
 5. If directly using `gcc` or `clang` is intended, the required flags are `-I$BUX_DIR/include -L$BUX_DIR/src -lbux`
 
-# Header Intors
+# Header Intros
 ## Containers
 * [Intervals.h](include/bux/Intervals.h) - `std::C_Intervals<T>` defines its own arithmetics but is currently ever used by [`scannergen`](https://github.com/buck-yeh/parsergen/tree/main/ScannerGen)
 * [PartialOrdering.h](include/bux/PartialOrdering.h) - Define [partial ordering](https://en.wikipedia.org/wiki/Partially_ordered_set) as container in order to generate a compatible [linear ordering](https://en.wikipedia.org/wiki/Total_order). 
-* [XQue.h](include/bux/XQue.h) - An effiecient generic queue. 
+* [XQue.h](include/bux/XQue.h) - An efficient generic queue. 
 * [Xtack.h](include/bux/Xtack.h) - Generic stack types. 
 
 ## Input/Output
-* [EZArgs.h](include/bux/EZArgs.h) - Inspired by Python [argparse.ArgumentParser](https://docs.python.org/3/library/argparse.html#argumentparser-objects) with interfaces making sense to Modren C++
-* [LogStream.h](include/bux/LogStream.h) - Marginal uitilities for `std::ostream` but frequently used by loggings & exception messages.
+* [EZArgs.h](include/bux/EZArgs.h) - Inspired by Python [argparse.ArgumentParser](https://docs.python.org/3/library/argparse.html#argumentparser-objects) with interfaces making sense to Modern C++
+* [LogStream.h](include/bux/LogStream.h) - Marginal utilities for `std::ostream` but frequently used by loggings & exception messages.
 * [MemIn.h](include/bux/MemIn.h) - In-memory `std::istream` with source array of known size
 * [MemOut.h](include/bux/MemOut.h) - In-memory `std::ostream` with destination buffer of known size
 * [Serialize.h](include/bux/Serialize.h) - Simple functions to define serialization/deserialization in a symmetric way.
@@ -80,10 +80,10 @@ The libraty is `<sstream>`-free and uses [fmt](https://github.com/fmtlib/fmt) li
 * [Logger.h](include/bux/Logger.h) - Routines for various logger singletons.
 
 ## Parser/scanner related
-* [FA.h](include/bux/FA.h) - Supports to finite automaton, *aka* finit state machine, *aka* regular expression, emphasizing on minimizing [NFA](https://en.wikipedia.org/wiki/Nondeterministic_finite_automaton) into [DFA](https://en.wikipedia.org/wiki/Deterministic_finite_automaton).
+* [FA.h](include/bux/FA.h) - Supports to finite automaton, *aka* finite state machine, *aka* regular expression, emphasizing on minimizing [NFA](https://en.wikipedia.org/wiki/Nondeterministic_finite_automaton) into [DFA](https://en.wikipedia.org/wiki/Deterministic_finite_automaton).
 * [GLR.h](include/bux/GLR.h) - Implementation of [**G**eneralized **LR** parser](https://en.wikipedia.org/wiki/GLR_parser)
-* [ImplGLR.h](include/bux/ImplGLR.h) - Stuffs constantly needed by parsergen-generated *.cpp files for syntaxes claassified as GLR.
-* [ImplLR1.h](include/bux/ImplLR1.h) - Stuffs constantly needed by parsergen-generated *.cpp files for syntaxes claassified as LR1.
+* [ImplGLR.h](include/bux/ImplGLR.h) - Stuffs constantly needed by parsergen-generated *.cpp files for syntaxes classified as GLR.
+* [ImplLR1.h](include/bux/ImplLR1.h) - Stuffs constantly needed by parsergen-generated *.cpp files for syntaxes classified as LR1.
 * [ImplScanner.h](include/bux/ImplScanner.h) - Generic implementation of scanner, *aka* [lexical analyzer](https://en.wikipedia.org/wiki/Lexical_analysis), mainly used by [`scannergen`](https://github.com/buck-yeh/parsergen/tree/main/ScannerGen)
 * [LexBase.h](include/bux/LexBase.h) - Bases to create [lexical tokens](https://en.wikipedia.org/wiki/Lexical_analysis#Token) and parsers. 
 * [LR1.h](include/bux/LR1.h) - Implementation of [**LR1** parser](https://en.wikipedia.org/wiki/Canonical_LR_parser)
@@ -97,9 +97,9 @@ The libraty is `<sstream>`-free and uses [fmt](https://github.com/fmtlib/fmt) li
 * [XPlatform.h](include/bux/XPlatform.h) - Platform-specific macros.
 
 ## Thread Safety
-* [AtomiX.h](include/bux/AtomiX.h) - Spin lock on [`std::atomic_flag`](https://en.cppreference.com/w/cpp/atomic/atomic_flag) & a maaping cache type using it.
+* [AtomiX.h](include/bux/AtomiX.h) - Spin lock on [`std::atomic_flag`](https://en.cppreference.com/w/cpp/atomic/atomic_flag) & a mapping cache type using it.
 * [Sync.h](include/bux/Sync.h) - Bases to develop sync objects.
-* [SyncStream.h](include/bux/SyncStream.h) - Basic supports to synchronise `std::ostream`
+* [SyncStream.h](include/bux/SyncStream.h) - Basic supports to synchronize `std::ostream`
 
 ## Misc.
 * [SafeArith.h](include/bux/SafeArith.h) - Supports to safe arithmetics. *(Not used recently)*
