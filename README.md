@@ -36,7 +36,7 @@ The library is `<sstream>`-free and uses [fmt](https://github.com/fmtlib/fmt) li
    ~~~
    *p.s.* Header files are in `/usr/include/bux` and compiler is expected to search `/usr/include` by default.
 5. If directly using `gcc` or `clang` is intended, the only required flag is `-lbux`
-## Install from `github` in any of [Linux distros](https://distrowatch.com/)
+## Install from github in any of [Linux distros](https://distrowatch.com/)
 1. Make sure you have installed `cmake` `make` `gcc` `git` `fmt`
 2. ~~~bash
    git clone -b main --single-branch https://github.com/buck-yeh/bux.git .
