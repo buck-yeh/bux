@@ -14,6 +14,7 @@ The libraty is `<sstream>`-free and uses [fmt](https://github.com/fmtlib/fmt) li
       * [Parser/scanner related](#parserscanner-related)
       * [System](#system)
       * [Thread Safety](#thread-safety)
+      * [Misc.](#misc)
 
 *(Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc))*
 
