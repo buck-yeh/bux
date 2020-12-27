@@ -69,8 +69,8 @@ The library is `<sstream>`-free and uses [fmt](https://github.com/fmtlib/fmt) li
 ## Input/Output
 * [EZArgs.h](include/bux/EZArgs.h) - Inspired by Python [argparse.ArgumentParser](https://docs.python.org/3/library/argparse.html#argumentparser-objects) with interfaces making sense to Modern C++
 * [LogStream.h](include/bux/LogStream.h) - Marginal utilities for `std::ostream` but frequently used by loggings & exception messages.
-* [MemIn.h](include/bux/MemIn.h) - In-memory `std::istream` with source array of known size
-* [MemOut.h](include/bux/MemOut.h) - In-memory `std::ostream` with destination buffer of known size
+* [MemIn.h](include/bux/MemIn.h) - In-memory `std::istream` with source array of known size.
+* [MemOut.h](include/bux/MemOut.h) - In-memory `std::ostream` with destination buffer of known size. *(Not used recently)*
 * [Serialize.h](include/bux/Serialize.h) - Simple functions to define serialization/deserialization in a symmetric way.
 * [StrUtil.h](include/bux/StrUtil.h) - String utilities mostly related to input (parsing).
 * [UnicodeCvt.h](include/bux/UnicodeCvt.h) - Encode any text stream to unicodes (`utf8`/`utf16`/`utf32`)
@@ -94,7 +94,7 @@ The library is `<sstream>`-free and uses [fmt](https://github.com/fmtlib/fmt) li
 ## System
 * [FsUtil.h](include/bux/FsUtil.h) - Utilities solely related to [\<filesystem\>](https://en.cppreference.com/w/cpp/header/filesystem)
 * [XConsole.h](include/bux/XConsole.h) - Cross-platform console functions.
-* [XPlatform.h](include/bux/XPlatform.h) - Platform-specific macros.
+* [XPlatform.h](include/bux/XPlatform.h) - Most possibly macros & typedefs defined in per-platform fashions.
 
 ## Thread Safety
 * [AtomiX.h](include/bux/AtomiX.h) - Spin lock on [`std::atomic_flag`](https://en.cppreference.com/w/cpp/atomic/atomic_flag) & a mapping cache type using it.
@@ -103,5 +103,5 @@ The library is `<sstream>`-free and uses [fmt](https://github.com/fmtlib/fmt) li
 
 ## Misc.
 * [SafeArith.h](include/bux/SafeArith.h) - Supports to safe arithmetics. *(Not used recently)*
-* [XAutoPtr.h](include/bux/XAutoPtr.h) - Safe [`std::auto_ptr`](https://en.cppreference.com/w/cpp/memory/auto_ptr) dated back to pre-C++11, similar to [`std::unique_ptr`](https://en.cppreference.com/w/cpp/memory/unique_ptr)
+* [XAutoPtr.h](include/bux/XAutoPtr.h) - Safe [`std::auto_ptr`](https://en.cppreference.com/w/cpp/memory/auto_ptr) dated back to pre-C++11 years. *It ain't broke ...*
 * [XException.h](include/bux/XException.h) - Facilitate throwing `std::runtime_error`, `std::logic_error`, as well as [any others](https://en.cppreference.com/w/cpp/header/stdexcept), with location & message.

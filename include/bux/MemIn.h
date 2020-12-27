@@ -10,25 +10,22 @@ namespace bux {
 //      Types
 //
 template <class _CharT, class _Traits>
-struct C_IMemBuf: std::basic_streambuf<_CharT,_Traits>
-{
-    C_IMemBuf(const _CharT *buffer, size_t size)
-    {
-        this->setg(const_cast<_CharT*>(buffer), const_cast<_CharT*>(buffer),
-            const_cast<_CharT*>(buffer)+size);
-    }
-    C_IMemBuf(std::basic_string_view<_CharT,_Traits> buffer)
-    {
-        const auto beg = const_cast<_CharT*>(buffer.begin());
-        this->setg(beg, beg, const_cast<_CharT*>(buffer.end()));
-    }
-};
-
-template <class _CharT, class _Traits>
 struct C_IMemBufAsMember
 {
     // Data
-    C_IMemBuf<_CharT,_Traits> m_Buffer;
+    struct C_IMemBuf: std::basic_streambuf<_CharT,_Traits>
+    {
+        C_IMemBuf(const _CharT *buffer, size_t size)
+        {
+            this->setg(const_cast<_CharT*>(buffer), const_cast<_CharT*>(buffer),
+                const_cast<_CharT*>(buffer)+size);
+        }
+        C_IMemBuf(std::basic_string_view<_CharT,_Traits> buffer)
+        {
+            const auto beg = const_cast<_CharT*>(buffer.begin());
+            this->setg(beg, beg, const_cast<_CharT*>(buffer.end()));
+        }
+    } m_Buffer;
 
     // Ctor
     C_IMemBufAsMember(const _CharT *buffer, size_t size): m_Buffer(buffer, size) {}
