@@ -44,7 +44,7 @@ The library is `<sstream>`-free and uses [fmt](https://github.com/fmtlib/fmt) li
    make -j
    BUX_DIR="/full/path/to/current/dir"
    ~~~
-   *p.s.* You can install any tagged version by replacing `main` with the desired [tag name](https://github.com/buck-yeh/bux/tags).
+   *p.s.* You can install a tagged version by replacing `main` with [tag name](https://github.com/buck-yeh/bux/tags).
 3. To define target executable `foo` using `bux` in `CMakeLists.txt`
    ~~~cmake
    add_executable(foo foo.cpp)
@@ -73,7 +73,7 @@ The library is `<sstream>`-free and uses [fmt](https://github.com/fmtlib/fmt) li
 * [MemOut.h](include/bux/MemOut.h) - In-memory `std::ostream` with destination buffer of known size. *(Not used recently)*
 * [Serialize.h](include/bux/Serialize.h) - Simple functions to define serialization/deserialization in a symmetric way.
 * [StrUtil.h](include/bux/StrUtil.h) - String utilities mostly related to input (parsing).
-* [UnicodeCvt.h](include/bux/UnicodeCvt.h) - Encode any text stream to unicodes (`utf8`/`utf16`/`utf32`)
+* [UnicodeCvt.h](include/bux/UnicodeCvt.h) - Encode text stream to unicodes (`utf8`/`utf16`/`utf32`)
 
 ## Logger
 * [FileLog.h](include/bux/FileLog.h) - Thread-safe file log which can be configured to automatically change the output path, *iow* to output to different files,  according to the current timestamp.
@@ -104,4 +104,4 @@ The library is `<sstream>`-free and uses [fmt](https://github.com/fmtlib/fmt) li
 ## Misc.
 * [SafeArith.h](include/bux/SafeArith.h) - Supports to safe arithmetics. *(Not used recently)*
 * [XAutoPtr.h](include/bux/XAutoPtr.h) - Safe [`std::auto_ptr`](https://en.cppreference.com/w/cpp/memory/auto_ptr) dated back to pre-C++11 years. *It ain't broke ...*
-* [XException.h](include/bux/XException.h) - Facilitate throwing `std::runtime_error`, `std::logic_error`, as well as [any others](https://en.cppreference.com/w/cpp/header/stdexcept), with location & message.
+* [XException.h](include/bux/XException.h) - Facilitate throwing `std::runtime_error`, `std::logic_error`, as well as [other exceptions](https://en.cppreference.com/w/cpp/header/stdexcept), with location & message.
