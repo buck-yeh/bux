@@ -1,5 +1,5 @@
 # Brief
-Supplemental static library of whatever is seen required in sense of general purpose but is not directly supported from [Modern C++](https://www.modernescpp.com/index.php/what-is-modern-c). Or whatever reusable originated from my side projects. 
+Supplemental static library of whatever is seen required in sense of general purpose but is not directly supported from [Modern C++](https://www.modernescpp.com/index.php/what-is-modern-c). Or whatever is deemed reusable from my side projects. 
 
 The library is `<sstream>`-free and uses [fmt](https://github.com/fmtlib/fmt) library heavily as long as [C++20 \<format\>](https://en.cppreference.com/w/cpp/utility/format) is not there yet.
 
@@ -19,7 +19,7 @@ The library is `<sstream>`-free and uses [fmt](https://github.com/fmtlib/fmt) li
 *(Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc))*
 
 # Installation & Usage
-## In [ArchLinux](https://archlinux.org/)
+## in [ArchLinux](https://archlinux.org/)
 1. Make sure you have installed [`yay`](https://aur.archlinux.org/packages/yay/) or any other [pacman wrapper](https://wiki.archlinux.org/index.php/AUR_helpers)
 2. ~~~bash
    yay -Ss bux
@@ -36,7 +36,7 @@ The library is `<sstream>`-free and uses [fmt](https://github.com/fmtlib/fmt) li
    ~~~
    *p.s.* Header files are in `/usr/include/bux` and compiler is expected to search `/usr/include` by default.
 5. If directly using `gcc` or `clang` is intended, the only required flag is `-lbux`
-## Install from github in any of [Linux distros](https://distrowatch.com/)
+## from github in any of [Linux distros](https://distrowatch.com/)
 1. Make sure you have installed `cmake` `make` `gcc` `git` `fmt`
 2. ~~~bash
    git clone -b main --single-branch https://github.com/buck-yeh/bux.git .
@@ -104,4 +104,4 @@ The library is `<sstream>`-free and uses [fmt](https://github.com/fmtlib/fmt) li
 ## Misc.
 * [SafeArith.h](include/bux/SafeArith.h) - Supports to safe arithmetics. *(Not used recently)*
 * [XAutoPtr.h](include/bux/XAutoPtr.h) - Safe [`std::auto_ptr`](https://en.cppreference.com/w/cpp/memory/auto_ptr) dated back to pre-C++11 years. *It ain't broke ...*
-* [XException.h](include/bux/XException.h) - Facilitate throwing `std::runtime_error`, `std::logic_error`, as well as [other exceptions](https://en.cppreference.com/w/cpp/header/stdexcept), with location & message.
+* [XException.h](include/bux/XException.h) - Macros to throw `std::runtime_error`, `std::logic_error`, as well as [other exceptions](https://en.cppreference.com/w/cpp/header/stdexcept), with location & message.
