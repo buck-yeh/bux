@@ -5,9 +5,9 @@ The library is `<sstream>`-free and uses [fmt](https://github.com/fmtlib/fmt) li
 
 # Table of Contents
    * [Installation &amp; Usage](#installation--usage)
-      * [In ArchLinux](#in-archlinux)
-      * [Install from github in any of Linux distros](#install-from-github-in-any-of-linux-distros)
-   * [Header Intros](#header-intors)
+      * [in ArchLinux](#in-archlinux)
+      * [from github in any of Linux distros](#from-github-in-any-of-linux-distros)
+   * [Header Intros](#header-intros)
       * [Containers](#containers)
       * [Input/Output](#inputoutput)
       * [Logger](#logger)
