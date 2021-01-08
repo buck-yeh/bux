@@ -113,7 +113,7 @@ void C_ScannerImpl<T_Input,T_State,T_Char,C_Traits>::add(unsigned col, T_Char c)
 
         // Match the char against the transit table
         const T_LexID idTop = C_Traits::id(m_ReadCh.back());
-        if (idTop < MIN_TOKEN_ID)
+        if (m_stateRecs && idTop < MIN_TOKEN_ID)
         {
             const auto gotos = m_stateRecs[m_CurState].m_goto;
             T_State nextState;
