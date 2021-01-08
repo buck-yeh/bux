@@ -69,8 +69,8 @@ The library is [\<sstream\>](https://en.cppreference.com/w/cpp/header/sstream)-f
 ## Input/Output
 * [EZArgs.h](include/bux/EZArgs.h) - Inspired by Python [argparse.ArgumentParser](https://docs.python.org/3/library/argparse.html#argumentparser-objects) with interfaces making sense to Modern C++
 * [LogStream.h](include/bux/LogStream.h) - Marginal utilities for `std::ostream` but frequently used by loggings & exception messages.
-* [MemIn.h](include/bux/MemIn.h) - In-memory `std::istream` with source array of known size.
-* [MemOut.h](include/bux/MemOut.h) - In-memory `std::ostream` with destination buffer of known size. *(Not used recently)*
+* [MemIn.h](include/bux/MemIn.h) - Drop-in replacement of C++98-deprecated [`std::istrstream`](https://en.cppreference.com/w/cpp/io/istrstream).
+* [MemOut.h](include/bux/MemOut.h) - Drop-in replacement of C++98-deprecated [`std::ostrstream`](https://en.cppreference.com/w/cpp/io/ostrstream). *(Not used recently)*
 * [Serialize.h](include/bux/Serialize.h) - Simple functions to define serialization/deserialization in a symmetric way.
 * [StrUtil.h](include/bux/StrUtil.h) - String utilities mostly related to input (parsing).
 * [UnicodeCvt.h](include/bux/UnicodeCvt.h) - Encode text stream to unicodes (`utf8`/`utf16`/`utf32`)
@@ -82,14 +82,14 @@ The library is [\<sstream\>](https://en.cppreference.com/w/cpp/header/sstream)-f
 ## Parser/scanner related
 * [FA.h](include/bux/FA.h) - Supports to finite automaton, *aka* finite state machine, *aka* regular expression, emphasizing on minimizing [NFA](https://en.wikipedia.org/wiki/Nondeterministic_finite_automaton) into [DFA](https://en.wikipedia.org/wiki/Deterministic_finite_automaton).
 * [GLR.h](include/bux/GLR.h) - Implementation of [**G**eneralized **LR** parser](https://en.wikipedia.org/wiki/GLR_parser)
-* [ImplGLR.h](include/bux/ImplGLR.h) - Stuffs constantly needed by parsergen-generated *.cpp files for syntaxes classified as GLR.
-* [ImplLR1.h](include/bux/ImplLR1.h) - Stuffs constantly needed by parsergen-generated *.cpp files for syntaxes classified as LR1.
+* [ImplGLR.h](include/bux/ImplGLR.h) - Stuffs constantly needed by [`parsergen`](https://github.com/buck-yeh/parsergen/tree/main/ParserGen)-generated *.cpp files for syntaxes classified as GLR.
+* [ImplLR1.h](include/bux/ImplLR1.h) - Stuffs constantly needed by [`parsergen`](https://github.com/buck-yeh/parsergen/tree/main/ParserGen)-generated *.cpp files for syntaxes classified as LR1.
 * [ImplScanner.h](include/bux/ImplScanner.h) - Generic implementation of scanner, *aka* [lexical analyzer](https://en.wikipedia.org/wiki/Lexical_analysis), mainly used by [`scannergen`](https://github.com/buck-yeh/parsergen/tree/main/ScannerGen)
-* [LexBase.h](include/bux/LexBase.h) - Bases to create [lexical tokens](https://en.wikipedia.org/wiki/Lexical_analysis#Token) and parsers. 
+* [LexBase.h](include/bux/LexBase.h) - Basic supports to create [lexical tokens](https://en.wikipedia.org/wiki/Lexical_analysis#Token) and parsers. 
 * [LR1.h](include/bux/LR1.h) - Implementation of [**LR1** parser](https://en.wikipedia.org/wiki/Canonical_LR_parser)
 * [ParserBase.h](include/bux/ParserBase.h) - Advanced supports to all parsers.
 * [Range2Type.h](include/bux/Range2Type.h) - `bux::fittestType()` called by [`parsergen`](https://github.com/buck-yeh/parsergen/tree/main/ParserGen) & [`scannergen`](https://github.com/buck-yeh/parsergen/tree/main/ScannerGen).
-* [ScannerBase.h](include/bux/ScannerBase.h) - Advanced supports to all scanners.
+* [ScannerBase.h](include/bux/ScannerBase.h) - Generic supports to all scanners.
 
 ## System
 * [FsUtil.h](include/bux/FsUtil.h) - Utilities solely related to [\<filesystem\>](https://en.cppreference.com/w/cpp/header/filesystem)
