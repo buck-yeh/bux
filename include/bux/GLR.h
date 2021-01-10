@@ -31,6 +31,8 @@ class C_Parser;
 typedef std::function<void(C_Parser &parser)> F_OncePostShift;
 typedef std::function<void(C_Parser&, const F_GetProduced&, C_LexPtr&, F_OncePostShift&)> FH_Reduce;
 
+class C_Parser;
+
 struct I_ParserPolicy
 {
     // Types
@@ -42,13 +44,13 @@ struct I_ParserPolicy
     };
 
     // Virtuals
-    virtual std::vector<T_ActionId> action(T_StateID state, T_LexID token) const =0;
+    virtual std::vector<T_ActionId> action(T_StateID state, T_LexID token) const = 0;
     virtual bool changeToken(T_LexID &token, C_LexPtr &attr) const;
-    virtual size_t getAcceptId() const =0;
+    virtual size_t getAcceptId() const = 0;
     virtual bool getTokenName(T_LexID token, std::string &name) const;
-    virtual T_StateID nextState(T_StateID state, T_LexID lex) const =0;
-    virtual void getReduceInfo(size_t prodId, C_ReduceInfo &info) const =0;
-    virtual void onError(void *userData, const C_SourcePos &pos, const std::string &message) const = 0;
+    virtual T_StateID nextState(T_StateID state, T_LexID lex) const = 0;
+    virtual void getReduceInfo(size_t prodId, C_ReduceInfo &info) const = 0;
+    virtual void onError(C_Parser &parser, const C_SourcePos &pos, const std::string &message) const = 0;
 
     // Nonvirtuals
     std::string printToken(T_LexID token) const;
@@ -64,7 +66,7 @@ public:
     // Nonvirtuals
     C_Parser(const I_ParserPolicy &policy);
     void eachAccepted(std::function<void(C_LexPtr &)> apply);
-    void onError(const C_SourcePos &pos, const std::string &message) const;
+    void onError(const C_SourcePos &pos, const std::string &message);
     void userData(void *p) { m_userData = p; }
     void *userData() const { return m_userData; }
 

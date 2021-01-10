@@ -53,23 +53,6 @@ union U_K2V
 };
 
 template<class T, bool>
-struct C_PtrTraits_;
-template<class T>
-using C_PtrTraits = C_PtrTraits_<T,std::is_const<T>::value>;
-
-template<class T>
-struct C_PtrTraits_<T,true>
-{
-    static auto to_voidptr(T *p) { return const_cast<void*>(static_cast<const void*>(p)); }
-};
-
-template<class T>
-struct C_PtrTraits_<T,false>
-{
-    static auto to_voidptr(T *p) { return static_cast<void*>(p); }
-};
-
-template<class T, bool>
 struct T_CoConst_;
 template<class T_Data, class T_Dep>
 using T_CoConst = typename T_CoConst_<T_Data,std::is_const<T_Dep>::value>::type;
@@ -85,39 +68,9 @@ struct T_CoConst_<T,false>
     using type = T;
 };
 
-template<class T, bool>
-struct C_BackTraits_;
-template<class T>
-using C_BackTraits = C_BackTraits_<T,std::is_pointer<T>::value>;
-
-template<class T>
-struct C_BackTraits_<T,true>
-{
-    using T_RetType = T;
-
-    static auto from_voidptr(void *p) { return reinterpret_cast<T_RetType>(p); }
-};
-
-template<class T>
-struct C_BackTraits_<T,false>
-{
-    using T_CastType = std::remove_reference_t<T>;
-    using T_RetType  = T_CastType &;
-
-    static auto from_voidptr(void *p) { return *reinterpret_cast<T_CastType*>(p); }
-};
-
 //
 //      Function Templates
 //
-template<class T>
-auto to_voidptr(T *t) { return C_PtrTraits<T>::to_voidptr(t); }
-template<class T>
-auto to_voidptr(T &t) { return C_PtrTraits<T>::to_voidptr(&t); }
-
-template<class T>
-auto voidptr_to(void *p) { return C_BackTraits<T>::from_voidptr(p); }
-
 template<class T_Key, class T_Value, class T_ValueOrSize, class T_Traits>
 T_Value index2value(U_K2V<T_Key,T_Value> k2v, T_ValueOrSize valOrSz, T_LexID key)
 {

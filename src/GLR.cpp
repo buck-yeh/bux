@@ -172,7 +172,7 @@ Again:
                     if (i->m_attr)
                         out += HRTN(*i->m_attr);
 
-                    out += fmt::format("\ts={}\tt=", i->m_StateID, m_policy.printToken(i->m_TokenID));
+                    out += fmt::format("\ts={}\tt={}", i->m_StateID, m_policy.printToken(i->m_TokenID));
                     i = i->m_prev;
                 }
             }
@@ -189,9 +189,9 @@ void C_Parser::eachAccepted(std::function<void(C_LexPtr &)> apply)
         apply(i->m_attr);
 }
 
-void C_Parser::onError(const C_SourcePos &pos, const std::string &message) const
+void C_Parser::onError(const C_SourcePos &pos, const std::string &message)
 {
-    m_policy.onError(m_userData, pos, message);
+    m_policy.onError(*this, pos, message);
 }
 
 auto C_Parser::reduceOn(size_t id, C_StateLR1Ptr iTop, const C_SourcePos &pos) -> std::optional<T_Reduced>
