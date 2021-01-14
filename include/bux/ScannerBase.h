@@ -79,16 +79,20 @@ struct C_LexTraits<C_LexUTF32>
 //
 //      Externals
 //
+[[nodiscard]]
 std::string escseq2str(std::string);
+[[nodiscard]]
 bool isIdentifier(std::string_view s) noexcept;
+[[nodiscard]]
 size_t parseEscapeChar(std::string_view s, uint32_t &c, size_t pos =0);
+[[nodiscard]]
 size_t skipIdentifier(std::string_view s, size_t pos) noexcept;
 
 //
 //      Function Templates
 //
 template<class T_LexCh>
-auto toString(const T_LexCh *c, size_t start, size_t end) noexcept(noexcept(
+[[nodiscard]] auto toString(const T_LexCh *c, size_t start, size_t end) noexcept(noexcept(
     C_LexTraits<T_LexCh>::appendUTF8(std::declval<std::string&>(), T_LexCh())))
 {
     std::string buf;
@@ -97,45 +101,48 @@ auto toString(const T_LexCh *c, size_t start, size_t end) noexcept(noexcept(
 }
 
 template<T_LexID _ID, class T_LexCh>
-auto createCharLiteral(const T_LexCh *c, size_t n)
+[[nodiscard]] auto createCharLiteral(const T_LexCh *c, size_t n)
 {
     uint32_t key;
-    parseEscapeChar(toString(c,1,n-1), key);
+    const auto len = parseEscapeChar(toString(c,1,n-1), key);
+    if (len + 2 != n)
+        RUNTIME_ERROR("parseEscapeChar() returns {} != {}", len, n -2);
+
     return C_ActionRet{_ID, createLex(key)};
 }
 
 template<T_LexID _ID, class T_LexCh>
-auto createDecNum(const T_LexCh *c, size_t n)
+[[nodiscard]] auto createDecNum(const T_LexCh *c, size_t n)
 {
     return C_ActionRet{_ID, new C_IntegerLex(toString(c,0,n), 10)};
 }
 
 template<T_LexID _ID, class T_LexCh>
-auto createHexNum(const T_LexCh *c, size_t n)
+[[nodiscard]] auto createHexNum(const T_LexCh *c, size_t n)
 {
     return C_ActionRet{_ID, new C_IntegerLex(toString(c,0,n), 16)};
 }
 
 template<T_LexID _ID, class T_LexCh>
-C_ActionRet createNothing(const T_LexCh *, size_t)
+[[nodiscard]] C_ActionRet createNothing(const T_LexCh *, size_t)
 {
     return _ID;
 }
 
 template<T_LexID _ID, class T_LexCh>
-auto createOctNum(const T_LexCh *c, size_t n)
+[[nodiscard]] auto createOctNum(const T_LexCh *c, size_t n)
 {
     return C_ActionRet{_ID, new C_IntegerLex(toString(c,1,n), 8)};
 }
 
 template<T_LexID _ID, class T_LexCh, size_t TRIMLEFT = 0, size_t TRIMRIGHT = 0>
-auto createPlainString(const T_LexCh *c, size_t n)
+[[nodiscard]] auto createPlainString(const T_LexCh *c, size_t n)
 {
     return C_ActionRet{_ID, createLex(toString(c, TRIMLEFT, n-TRIMRIGHT))};
 }
 
 template<T_LexID _ID, class T_LexCh, size_t TRIMLEFT = 0, size_t TRIMRIGHT = 0>
-auto createEscapeString(const T_LexCh *c, size_t n)
+[[nodiscard]] auto createEscapeString(const T_LexCh *c, size_t n)
 {
     return C_ActionRet{_ID, createLex(escseq2str(toString(c, TRIMLEFT, n-TRIMRIGHT)))};
 }
