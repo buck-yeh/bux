@@ -254,7 +254,7 @@ std::string C_EZArgs::help_full(const char *argv[]) const
 
             std::string optionals;
             if (lo.m_unlimited)
-                optionals = "[...]";
+                optionals = "...";
 
             size_t ub = lo.m_posArgs.size();
             for (auto i: lo.m_posCounts)
