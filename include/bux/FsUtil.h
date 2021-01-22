@@ -19,8 +19,7 @@ concept ConstPathList = requires(T t){
 //
 //      Function Templates
 //
-template<ConstPathList T>
-std::filesystem::path search_dirs(const std::filesystem::path &in_path, const T &dirs)
+std::filesystem::path search_dirs(const std::filesystem::path &in_path, const ConstPathList auto &dirs)
 {
     if (!std::filesystem::exists(in_path) && !in_path.has_root_path())
         for (auto &i: dirs)
