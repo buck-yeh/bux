@@ -32,9 +32,9 @@ std::string I_ParserPolicy::printToken(T_LexID token) const
         return "<@> aka bux::ROOT_NID";
     default:
         if (token >= TOKENGEN_LB)
-            return fmt::format("bux::TOKENGEN_LB+{}", token - TOKENGEN_LB);
+            return fmt::format(FMT_STRING("bux::TOKENGEN_LB+{}"), token - TOKENGEN_LB);
 
-        auto out = fmt::format("0x{:x}", token);
+        auto out = fmt::format(FMT_STRING("0x{:x}"), token);
         if (isascii(token))
             out.append(" or \'").append(asciiLiteral(char(token))) += '\'';
 
@@ -159,20 +159,20 @@ Again:
         {
             out += "\nStack dump";
             if (n > 1)
-                out += fmt::format(" on {} paths", n);
+                out += fmt::format(FMT_STRING(" on {} paths"), n);
 
             out += ':';
             size_t ind{};
             for (auto i: m_curTops)
             {
-                out += fmt::format("\nPath[{}]:", ind++);
+                out += fmt::format(FMT_STRING("\nPath[{}]:"), ind++);
                 while (i)
                 {
-                    out += fmt::format("\n({},{})\t", i->m_pos.m_Line, i->m_pos.m_Col);
+                    out += fmt::format(FMT_STRING("\n({},{})\t"), i->m_pos.m_Line, i->m_pos.m_Col);
                     if (i->m_attr)
                         out += HRTN(*i->m_attr);
 
-                    out += fmt::format("\ts={}\tt={}", i->m_StateID, m_policy.printToken(i->m_TokenID));
+                    out += fmt::format(FMT_STRING("\ts={}\tt={}"), i->m_StateID, m_policy.printToken(i->m_TokenID));
                     i = i->m_prev;
                 }
             }

@@ -96,14 +96,14 @@ void FC_BufferedParse::operator()(const char *data, size_t n)
         // Out of memory
         const size_t n_parsed =m_YetToParse.size();
         m_YetToParse.clear();
-        auto out = fmt::format("std::bad_alloc#{}", (int)state);
+        auto out = fmt::format(FMT_STRING("std::bad_alloc#{}"), (int)state);
         switch (state)
         {
         case ON_APPEND:
-            out += fmt::format("# appending {} bytes to {} bytes", n, n_parsed);
+            out += fmt::format(FMT_STRING("# appending {} bytes to {} bytes"), n, n_parsed);
             break;
         case ON_TRUNCATE:
-            out += fmt::format("# truncating {} bytes from {} bytes", n2, n_parsed);
+            out += fmt::format(FMT_STRING("# truncating {} bytes from {} bytes"), n2, n_parsed);
             break;
         default:;
         }

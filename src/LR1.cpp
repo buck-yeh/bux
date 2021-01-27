@@ -33,11 +33,11 @@ std::string I_ParserPolicy::printToken(T_LexID token) const
         return "<@> aka bux::ROOT_NID";
     default:
         if (token >= TOKENGEN_LB)
-            return fmt::format("bux::TOKENGEN_LB+{}", token - TOKENGEN_LB);
+            return fmt::format(FMT_STRING("bux::TOKENGEN_LB+{}"), token - TOKENGEN_LB);
 
-        std::string out = fmt::format("0x{:x}", token);
+        std::string out = fmt::format(FMT_STRING("0x{:x}"), token);
         if (isascii(token))
-            out += fmt::format(" or \'{}\'", asciiLiteral(char(token)));
+            out += fmt::format(FMT_STRING(" or \'{}\'"), asciiLiteral(char(token)));
         return out;
     }
 }
@@ -116,7 +116,7 @@ Again:
         else
             // Unrecoverable
         {
-            auto out = fmt::format("Syntax error on state={} token={}", m_ErrState, m_Policy.printToken(m_ErrToken));
+            auto out = fmt::format(FMT_STRING("Syntax error on state={} token={}"), m_ErrState, m_Policy.printToken(m_ErrToken));
             if (auto *attr =info.m_attr.get())
                 out.append(" of attr type ").append(HRTN(*attr));
             else
@@ -126,14 +126,14 @@ Again:
                 out += "\nEmpty stack";
             else
             {
-                out += fmt::format("\nStack[{}] Dump:", m_CurStack.size()-1);
+                out += fmt::format(FMT_STRING("\nStack[{}] Dump:"), m_CurStack.size()-1);
                 bool first = true;
                 for (const auto &i: m_CurStack)
                 {
                     if (first)
                         first = false;
                     else
-                        out += fmt::format("\n({},{})\t{}\ts={}\tt={}",
+                        out += fmt::format(FMT_STRING("\n({},{})\t{}\ts={}\tt={}"),
                                 i.m_pos.m_Line, i.m_pos.m_Col, i.m_attr?HRTN(*i):"", i.m_StateID, m_Policy.printToken(i.m_TokenID));
                 }
             }
