@@ -77,6 +77,7 @@ The library is [\<sstream\>](https://en.cppreference.com/w/cpp/header/sstream)-f
 ## Logger
 * [FileLog.h](include/bux/FileLog.h) - Thread-safe file log which can be configured to automatically change the output path, *iow* to output to different files,  according to the current timestamp.
 * [Logger.h](include/bux/Logger.h) - Routines for various logger singletons.
+* [LogLevel.h](include/bux/LogLevel.h) - LL_FATAL, LL_ERROR, LL_WARNING, LL_INFO, LL_VERBOSE
 
 ## Parser/scanner related
 * [FA.h](include/bux/FA.h) - Supports to finite automaton, *aka* finite state machine, *aka* regular expression, emphasizing on minimizing [NFA](https://en.wikipedia.org/wiki/Nondeterministic_finite_automaton) into [DFA](https://en.wikipedia.org/wiki/Deterministic_finite_automaton).
@@ -86,7 +87,7 @@ The library is [\<sstream\>](https://en.cppreference.com/w/cpp/header/sstream)-f
 * [ImplScanner.h](include/bux/ImplScanner.h) - Generic implementation of scanner, *aka* [lexical analyzer](https://en.wikipedia.org/wiki/Lexical_analysis), mainly used by [`scannergen`](https://github.com/buck-yeh/parsergen/tree/main/ScannerGen)
 * [LexBase.h](include/bux/LexBase.h) - Basic supports to create [lexical tokens](https://en.wikipedia.org/wiki/Lexical_analysis#Token) and parsers. 
 * [LR1.h](include/bux/LR1.h) - Implementation of [**LR1** parser](https://en.wikipedia.org/wiki/Canonical_LR_parser)
-* [ParserBase.h](include/bux/ParserBase.h) - Advanced supports to all parsers.
+* [ParserBase.h](include/bux/ParserBase.h) - Common supports to all parsers.
 * [Range2Type.h](include/bux/Range2Type.h) - `bux::fittestType()` called by [`parsergen`](https://github.com/buck-yeh/parsergen/tree/main/ParserGen) & [`scannergen`](https://github.com/buck-yeh/parsergen/tree/main/ScannerGen).
 * [ScannerBase.h](include/bux/ScannerBase.h) - Generic supports to all scanners.
 
