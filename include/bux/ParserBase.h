@@ -2,10 +2,13 @@
 #define bux_ParserBase_H_
 
 #include "LexBase.h"    // bux::T_LexID, bux::C_LexInfoT<>, ...
-#include <functional>   // std::function<>
-#include <type_traits>  // std::is_const<>, std::is_pointer<>, std::add_const_t<>
+#include "LogLevel.h"   // bux::E_LogLevel
 #include <algorithm>    // std::lower_bound()
+#include <array>        // std::array<>
+#include <functional>   // std::function<>
 #include <limits>       // std::numeric_limits<>
+#include <string_view>  // std::string_view
+#include <type_traits>  // std::is_const<>, std::is_pointer<>, std::add_const_t<>
 
 namespace bux {
 
@@ -66,6 +69,40 @@ template<class T>
 struct T_CoConst_<T,false>
 {
     using type = T;
+};
+
+class C_ParserLogCount
+{
+public:
+
+    // Nonvirtuals
+    auto getCount(E_LogLevel ll) const { return m_count.at(ll); }
+    void log(E_LogLevel ll, const C_SourcePos &pos, std::string_view message);
+
+protected:
+
+    // Data
+    std::array<unsigned,5>  m_count{}; static_assert(LL_VERBOSE+1 == 5);
+
+    // Virtuals
+    virtual std::string toStr(const C_SourcePos &pos) const;
+    virtual void println(const std::string &line) = 0;
+};
+
+class C_ParserOStreamCount: public C_ParserLogCount
+{
+public:
+
+    // Ctor
+    C_ParserOStreamCount(std::ostream &out): m_out(out) {}
+
+private:
+
+    // Data
+    std::ostream &m_out;
+
+    // Implement C_ParserLogCount
+    void println(const std::string &line) override;
 };
 
 //

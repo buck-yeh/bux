@@ -53,27 +53,29 @@ bool shouldLog(E_LogLevel level)
 //
 //      Implement Classes
 //
-C_EntryLog::C_EntryLog(const char *scopeName)
+C_EntryLog::C_EntryLog(std::string_view scopeName)
 {
+    deeper();
     if (bux::shouldLog(LL_VERBOSE))
     {
-        m_ScopeName = scopeName;
-        fmt::print(C_UseLogger(LL_VERBOSE).stream(), "@{}@{} {{\n", m_Id, m_ScopeName);
+        m_Id = getId();
+        fmt::print(C_UseLogger(LL_VERBOSE).stream(), "@{}@{} {{\n", *m_Id, scopeName);
     }
-    deeper();
 }
 
 C_EntryLog::~C_EntryLog()
 {
-    --g_EntryLevel;
-    if (m_ScopeName)
-        fmt::print(C_UseLogger(LL_VERBOSE).stream(), "@{}{}", m_Id,
+    if (m_Id)
+    {
+        fmt::print(C_UseLogger(LL_VERBOSE).stream(), "@{}{}", *m_Id,
             []{
                 if (auto n = std::uncaught_exceptions())
                     return "@} due to "+std::to_string(n)+" uncaught exceptions\n";
 
                 return std::string{"@}\n"};
             }());
+    }
+    --g_EntryLevel;
 }
 
 void C_EntryLog::deeper()
@@ -89,7 +91,7 @@ int C_EntryLog::getId()
 
 C_UseLogger::C_UseLogger(E_LogLevel level): C_UseTraceLog(logger())
 {
-    fmt::print(m_Resource, "{}:{}", "FEWIV"[level], std::string(g_EntryLevel+1,'|'));
+    fmt::print(m_Resource, "{}:{}", "FEWIV"[level], std::string(g_EntryLevel,'|'));
 }
 
 } // namespace bux

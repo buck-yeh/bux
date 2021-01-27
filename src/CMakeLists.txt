@@ -6,7 +6,7 @@ add_library(bux STATIC
         AtomiX.cpp
         EZArgs.cpp
         FA.cpp FileLog.cpp
-        LexBase.cpp Logger.cpp LogStream.cpp LR1.cpp GLR.cpp
+        LexBase.cpp Logger.cpp LogStream.cpp LR1.cpp GLR.cpp ParserBase.cpp
         ScannerBase.cpp Serialize.cpp StrUtil.cpp SyncStream.cpp
         UnicodeCvt.cpp
         XConsole.cpp

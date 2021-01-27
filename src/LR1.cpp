@@ -122,17 +122,21 @@ Again:
             else
                 out += " with null attr";
 
-            out += fmt::format("\nStack[{}] Dump:", m_CurStack.size()-1);
-            bool first = true;
-            for (const auto &i: m_CurStack)
+            if (m_CurStack.empty())
+                out += "\nEmpty stack";
+            else
             {
-                if (first)
-                    first = false;
-                else
-                    out += fmt::format("\n({},{})\t{}\ts={}\tt={}",
-                            i.m_pos.m_Line, i.m_pos.m_Col, i.m_attr?HRTN(*i):"", i.m_StateID, m_Policy.printToken(i.m_TokenID));
+                out += fmt::format("\nStack[{}] Dump:", m_CurStack.size()-1);
+                bool first = true;
+                for (const auto &i: m_CurStack)
+                {
+                    if (first)
+                        first = false;
+                    else
+                        out += fmt::format("\n({},{})\t{}\ts={}\tt={}",
+                                i.m_pos.m_Line, i.m_pos.m_Col, i.m_attr?HRTN(*i):"", i.m_StateID, m_Policy.printToken(i.m_TokenID));
+                }
             }
-
             onError(m_ErrPos, out);
             if (token == TID_EOF)
                 m_Accepted = true;
@@ -206,7 +210,7 @@ void C_Parser::panicRollback(C_StateStackLR1 &unreadStack)
 
 bool C_Parser::recover(T_LexID token, C_LexInfo &info, C_StateStackLR1 &unreadStack)
 {
-    bool isLast =true;
+    bool isLast = true;
     for (auto i = m_CurStack.size(); i; --i, isLast = false)
     {
         if (!isLast && m_CurStack[i].m_TokenID == m_Policy.m_IdError)

@@ -1,4 +1,3 @@
-# Brief
 Supplemental static library of whatever is seen required in sense of general purpose but is not directly supported from [Modern C++](https://www.modernescpp.com/index.php/what-is-modern-c). Or whatever is deemed reusable from my side projects. 
 
 The library is [\<sstream\>](https://en.cppreference.com/w/cpp/header/sstream)-free and uses [fmt library](https://github.com/fmtlib/fmt) heavily as long as [C++20 \<format\>](https://en.cppreference.com/w/cpp/utility/format) is not there yet.
