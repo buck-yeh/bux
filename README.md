@@ -1,6 +1,8 @@
-Supplemental static library of whatever is seen required in sense of general purpose but is not directly supported from [Modern C++](https://www.modernescpp.com/index.php/what-is-modern-c). Or whatever is deemed reusable from my side projects. 
+- Supplemental static library of whatever is seen required in sense of general purpose but is not directly supported from [Modern C++](https://www.modernescpp.com/index.php/what-is-modern-c). Or whatever is deemed reusable from my side projects. 
 
-The library is [\<sstream\>](https://en.cppreference.com/w/cpp/header/sstream)-free and uses [fmt library](https://github.com/fmtlib/fmt) heavily as long as [C++20 \<format\>](https://en.cppreference.com/w/cpp/utility/format) is not there yet.
+- The library is [\<sstream\>](https://en.cppreference.com/w/cpp/header/sstream)-free and uses [fmt library](https://github.com/fmtlib/fmt) heavily as long as [C++20 \<format\>](https://en.cppreference.com/w/cpp/utility/format) is not there yet.
+
+- 💡 There is Doxygen-generated API reference on [github pages](https://buck-yeh.github.io/bux/html/index.html). But Doxygen has been known for being Modern C++ insensitive for so many years. Keywords like **concept**, any of attributes, ... etc can be misinterpreted or simply dropped. Viewer's discretion is advised.
 
 # Table of Contents
    * [Installation &amp; Usage](#installation--usage)
