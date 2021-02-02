@@ -1,6 +1,10 @@
+/*! \mainpage
+    Source browser of github repo [bux](https://github.com/buck-yeh/bux)
+*/
+
 /*! \namespace bux
- *  \brief THE common namespace of \c bux library
- */
+    \brief THE common namespace of \c bux library
+*/
 
 /// \example bux/test/test_expand_env.cpp
 /// \example parsergen/ParserGen/main.cpp

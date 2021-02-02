@@ -12,7 +12,7 @@ namespace bux {
 //
 /*! \brief
     Any given type is safely instantiated even though C_DtorFreeStack<T>
-    does better for bytewize types.
+    does better for bytewise types.
 */
 template<class T>
 class C_StackBase
