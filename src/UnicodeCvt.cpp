@@ -203,6 +203,7 @@ C_UnicodeIn::C_UnicodeIn(std::string_view sv, T_Encoding codepage):
     C_UnicodeIn(FC_ReadMem(sv.data(),sv.size()), codepage)
 {
 }
+
 C_UnicodeIn::C_UnicodeIn(std::istream &in, T_Encoding codepage):
     m_Src([&](char &ch) {
         return static_cast<bool>(in.get(ch));

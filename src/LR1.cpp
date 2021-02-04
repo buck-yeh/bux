@@ -179,7 +179,7 @@ T_StateID C_Parser::currentState() const
     return m_CurStack.top().m_StateID;
 }
 
-void C_Parser::onError(const C_SourcePos &pos, const std::string &message)
+void C_Parser::onError(const C_SourcePos &pos, std::string_view message)
 {
     m_Policy.onError(*this, pos, message);
 }

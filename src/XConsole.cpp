@@ -162,7 +162,7 @@ namespace bux {
 //
 //      Functions
 //
-void getKeyPunch(const std::string &msg, int &key, const char *keyFilter)
+void getKeyPunch(std::string_view msg, int &key, const char *keyFilter)
 {
     std::cerr <<msg;
     int c;

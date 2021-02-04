@@ -189,7 +189,7 @@ void C_Parser::eachAccepted(std::function<void(C_LexPtr &)> apply)
         apply(i->m_attr);
 }
 
-void C_Parser::onError(const C_SourcePos &pos, const std::string &message)
+void C_Parser::onError(const C_SourcePos &pos, std::string_view message)
 {
     m_policy.onError(*this, pos, message);
 }

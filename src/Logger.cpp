@@ -20,14 +20,15 @@ E_LogLevel g_LogLevel = LL_VERBOSE;  // default for now
 
 I_SyncOstream &logger()
 {
+    auto        &ret = user::logger();
     static bool first = true;
     if (first)
     {
-        static std::atomic_flag lock = ATOMIC_FLAG_INIT;
-        C_SpinLock       _(lock);
+        static constinit std::atomic_flag lock = ATOMIC_FLAG_INIT;
+        C_SpinLock  _(lock);
         if (first)
         {
-            C_UseOstream(user::logger()) <<std::boolalpha <<
+            C_UseOstream(ret) <<std::boolalpha <<
 #ifndef _WIN32
                 "********** LOGS BEGUN **********\n";
 #elif defined(_DEBUG)
@@ -38,7 +39,7 @@ I_SyncOstream &logger()
             first = false;
         }
     }
-    return user::logger();
+    return ret;
 }
 
 bool shouldLog(E_LogLevel level)

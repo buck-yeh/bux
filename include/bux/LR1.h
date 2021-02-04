@@ -59,7 +59,7 @@ struct I_ParserPolicy
         ///< Goto table
     virtual void getReduceInfo(size_t id, C_ReduceInfo &info) const =0;
         ///< Get reduction if available
-    virtual void onError(C_Parser &parser, const C_SourcePos &pos, const std::string &message) const =0;
+    virtual void onError(C_Parser &parser, const C_SourcePos &pos, std::string_view message) const =0;
         ///< Report error (to log or to throw)
 
     // Nonvirtuals
@@ -81,7 +81,7 @@ public:
     // Nonvirtuals
     bool accepted() const { return m_Accepted; }
     auto &getFinalLex() { return m_CurStack.top(); }
-    void onError(const C_SourcePos &pos, const std::string &message);
+    void onError(const C_SourcePos &pos, std::string_view message);
     void reservePostShift(std::function<void()> calledOnce, unsigned shifts);
 
     // Implement I_Parser

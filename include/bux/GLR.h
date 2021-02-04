@@ -50,7 +50,7 @@ struct I_ParserPolicy
     virtual bool getTokenName(T_LexID token, std::string &name) const;
     virtual T_StateID nextState(T_StateID state, T_LexID lex) const = 0;
     virtual void getReduceInfo(size_t prodId, C_ReduceInfo &info) const = 0;
-    virtual void onError(C_Parser &parser, const C_SourcePos &pos, const std::string &message) const = 0;
+    virtual void onError(C_Parser &parser, const C_SourcePos &pos, std::string_view message) const = 0;
 
     // Nonvirtuals
     std::string printToken(T_LexID token) const;
@@ -66,7 +66,7 @@ public:
     // Nonvirtuals
     C_Parser(const I_ParserPolicy &policy);
     void eachAccepted(std::function<void(C_LexPtr &)> apply);
-    void onError(const C_SourcePos &pos, const std::string &message);
+    void onError(const C_SourcePos &pos, std::string_view message);
     void userData(void *p) { m_userData = p; }
     void *userData() const { return m_userData; }
 

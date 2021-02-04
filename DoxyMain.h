@@ -5,6 +5,10 @@
 /*! \namespace bux
     \brief THE common namespace of \c bux library
 */
+/*! \namespace bux::user
+    \brief Function prototypes declared in this subnamespace are required to be implemented by user so that
+           functions declared under namespace \c bux in the same header can be linked properly without errors.
+*/
 
 /// \example bux/test/test_expand_env.cpp
 /// \example parsergen/ParserGen/main.cpp
