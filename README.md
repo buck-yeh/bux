@@ -2,7 +2,7 @@
 
 - The library is [\<sstream\>](https://en.cppreference.com/w/cpp/header/sstream)-free and uses [fmt library](https://github.com/fmtlib/fmt) heavily as long as [C++20 \<format\>](https://en.cppreference.com/w/cpp/utility/format) is not there yet.
 
-- 💡 There is also Doxygen-generated API reference [here](https://buck-yeh.github.io/bux/html/index.html) but Doxygen has been known for being Modern C++ insensitive for so many years. Keywords like **concept**, any of attributes, ... etc can be misinterpreted or simply dropped. Viewer's discretion is advised.
+- 💡 There is also Doxygen-generated API reference [here](https://buck-yeh.github.io/bux/html/index.html) but Doxygen has been known for being insensitive to Modern C++ for so many years. Keywords like **concept**, any of attributes, ... etc can be misinterpreted or simply dropped. Viewer's discretion is advised.
 
 # Table of Contents
    * [Installation &amp; Usage](#installation--usage)
