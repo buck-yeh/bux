@@ -59,7 +59,7 @@ struct C_LexTraits<C_LexUTF32>
 #ifdef _WIN32
         return __isascii(int(ch.m_U32)) ?1U :2U;
 #else
-        return wcwidth(wchar_t(ch.m_U32));
+        return (unsigned)wcwidth(wchar_t(ch.m_U32));
 #endif
     }
     static constexpr auto id(C_LexUTF32 ch) noexcept

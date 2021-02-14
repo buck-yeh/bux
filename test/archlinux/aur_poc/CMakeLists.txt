@@ -7,7 +7,7 @@ enable_testing()
 string(APPEND CMAKE_CXX_FLAGS " -Wall -Wextra -Wshadow -Wconversion -Wno-parentheses -Wno-unknown-pragmas -O2 -std=c++2a")
 
 add_executable(test_expand_env test_expand_env.cpp)
-target_link_libraries(test_expand_env bux fmt)
+target_link_libraries(test_expand_env bux fmt stdc++)
 
 add_test(NAME test_home
          COMMAND test_expand_env home

@@ -176,7 +176,7 @@ std::string to_utf8(std::istream &in, T_Encoding codepage)
     int n;
     std::string ret;
     while ((n = cvt.get(u8)) > 0)
-        ret.append(reinterpret_cast<char*>(u8), n);
+        ret.append(reinterpret_cast<char*>(u8), size_t(n));
 
     if (n < 0)
         RUNTIME_ERROR("UTF-8 conversion error {}", n);
@@ -686,7 +686,7 @@ void C_MBCStr::appendStr(T_Utf32 u32) const
         if (rc < 0)
             RUNTIME_ERROR("MBC string conversion error {} after {} bytes converted", rc, m_str.size());
 
-        m_str.append(reinterpret_cast<char*>(buf), rc);
+        m_str.append(reinterpret_cast<char*>(buf), size_t(rc));
     }
     else
         m_pushCh(m_str, static_cast<char>(u32));

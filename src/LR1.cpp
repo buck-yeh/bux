@@ -36,8 +36,8 @@ std::string I_ParserPolicy::printToken(T_LexID token) const
             return fmt::format(FMT_STRING("bux::TOKENGEN_LB+{}"), token - TOKENGEN_LB);
 
         std::string out = fmt::format(FMT_STRING("0x{:x}"), token);
-        if (isascii(token))
-            out += fmt::format(FMT_STRING(" or \'{}\'"), asciiLiteral(char(token)));
+        if (isascii(int(token)))
+            out += fmt::format(FMT_STRING(" or \'{}\'"), asciiLiteral(token));
         return out;
     }
 }

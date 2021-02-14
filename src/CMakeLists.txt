@@ -1,6 +1,10 @@
-#set(CMAKE_CXX_COMPILER "clang++")
-
 string(APPEND CMAKE_CXX_FLAGS " -Wall -Wextra -Wshadow -Wconversion -Wno-parentheses -Wno-unknown-pragmas -g3 -O3 -std=c++2a")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        message("Clang")
+        string(APPEND CMAKE_CXX_FLAGS " -Wno-potentially-evaluated-expression")
+else()
+        message("Not Clang")
+endif()
 
 add_library(bux STATIC
         AtomiX.cpp

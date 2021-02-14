@@ -113,41 +113,41 @@ void FC_BufferedParse::operator()(const char *data, size_t n)
 
 size_t FC_ParseLine::parse(const char *data, size_t n)
 {
-    size_t left =n;
+    size_t left = n;
     while (const char *p = static_cast<const char*>(memchr(data, m_Delim, left)))
     {
         std::string s(data, p);
         m_Apply(s);
-        const size_t jump =p -data +1;
-        left -=jump;
-        data +=jump;
+        const auto jump = size_t(p - data + 1);
+        left -= jump;
+        data += jump;
     }
-    return n -left;
+    return n - left;
 }
 
 size_t FC_ParseCRLF::parse(const char *data, size_t n)
 {
-    size_t left =n;
+    size_t left = n;
     const char *p;
-    while (left && (p =static_cast<const char*>(memchr(data, '\r', left))) != 0)
+    while (left && (p = static_cast<const char*>(memchr(data, '\r', left))) != 0)
     {
-        const char *const dend =data +left;
+        const char *const dend = data + left;
     CheckCRLF:
-        if (dend -p < 2)
+        if (dend - p < 2)
             break;
 
         if (p[1] != '\n')
         {
-            p =(const char*)memchr(p+1, '\r', left);
+            p = (const char*)memchr(p+1, '\r', left);
             goto CheckCRLF;
         }
 
         m_Apply({data, p});
-        const size_t jump =p -data +2;
-        left -=jump;
-        data +=jump;
+        const auto jump = size_t(p - data + 2);
+        left -= jump;
+        data += jump;
     }
-    return n -left;
+    return n - left;
 }
 
 } // namespace bux

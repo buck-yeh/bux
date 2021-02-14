@@ -58,7 +58,7 @@
    ~~~c++
    #include <bux/StrUtil.h>
    ~~~
-5. If directly using `gcc` or `clang` is intended, the required flags are `-I$BUX_DIR/include -L$BUX_DIR/src -lbux`
+5. If directly using command `gcc` or `clang` is intended, the required flags are `-I$BUX_DIR/include -L$BUX_DIR/src -lbux`
 
 # Header Intros
 ## Containers

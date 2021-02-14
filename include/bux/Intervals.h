@@ -2,25 +2,19 @@
 #define bux_Intervals_H_
 
 #include "XException.h" // RUNTIME_ERROR()
+#include <concepts>     // std::integral<>
+#include <iterator>     // std::input_iterator<>
 #include <limits>       // std::numeric_limits<>
-#include <vector>       // std::vector<>
-#include <type_traits>  // std::is_integral<>, std::remove_reference<>, std::is_pointer<>, std::is_class<>
 #include <ostream>      // std::basic_ostream<>
-#include <iterator>     // std::iterator_traits<>
+#include <vector>       // std::vector<>
 
 namespace bux {
 
 //
 //      Types
 //
-template<class T, bool IS_INTEGER>
-class C_IntervalsByTraits;
-
-template<class T>
-using C_Intervals = C_IntervalsByTraits<T, std::is_integral<T>::value>;
-
-template<class T>
-class C_IntervalsByTraits<T,true>
+template<std::integral T> requires (!std::same_as<char,T>)
+class C_Intervals
 {
 public:
 
@@ -29,20 +23,37 @@ public:
     typedef typename std::vector<value_type>::const_iterator const_iterator;
 
     // Ctors
-    C_IntervalsByTraits() {}
-    C_IntervalsByTraits(const C_IntervalsByTraits &other): m_Intervals(other.m_Intervals) {}
-    C_IntervalsByTraits(C_IntervalsByTraits &&other) { swap(other); }
-    C_IntervalsByTraits(T id);
-    C_IntervalsByTraits(value_type i);
-    template<class I> C_IntervalsByTraits(I start, I end);
+    C_Intervals() {}
+    C_Intervals(const C_Intervals &other): m_Intervals(other.m_Intervals) {}
+    C_Intervals(C_Intervals &&other) { swap(other); }
+    C_Intervals(T id);
+    C_Intervals(value_type i);
+    C_Intervals(T start, T end): C_Intervals(value_type(start, end)) {}
+    template<std::input_iterator I>
+    C_Intervals(I start, I end) requires std::same_as<char, std::remove_cvref_t<decltype(*start)>> && (sizeof(T) > 1)
+    {
+        while (start != end)
+            operator|=(T(*start++)); // The cast can be an undefined behavior but I don't care for now.
+    }
+    template<std::input_iterator I>
+    C_Intervals(I start, I end) requires
+        std::same_as<value_type, std::remove_cvref_t<decltype(*start)>> || (
+        !std::same_as<char, std::remove_cvref_t<decltype(*start)>> &&
+        std::integral<std::remove_cvref_t<decltype(*start)>> &&
+        std::cmp_less_equal(std::numeric_limits<T>::min(), std::numeric_limits<std::remove_cvref_t<decltype(*start)>>::min()) &&
+        std::cmp_less_equal(std::numeric_limits<std::remove_cvref_t<decltype(*start)>>::max(), std::numeric_limits<T>::max()))
+    {
+        while (start != end)
+            operator|=(*start++);
+    }
 
     // Nonvirtuals - Assignments
-    void operator=(const C_IntervalsByTraits &other)   { m_Intervals =other.m_Intervals; }
-    void operator=(C_IntervalsByTraits &&other)        { swap(other); }
-    void operator|=(const C_IntervalsByTraits &other);
-    void operator&=(const C_IntervalsByTraits &other);
-    void operator-=(const C_IntervalsByTraits &other);
-    bool operator==(const C_IntervalsByTraits &other) const { return m_Intervals == other.m_Intervals; }
+    void operator=(const C_Intervals &other)   { m_Intervals =other.m_Intervals; }
+    void operator=(C_Intervals &&other)        { swap(other); }
+    void operator|=(const C_Intervals &other);
+    void operator&=(const C_Intervals &other);
+    void operator-=(const C_Intervals &other);
+    bool operator==(const C_Intervals &other) const { return m_Intervals == other.m_Intervals; }
 
     // Nonvirtuals - Immutables
     const_iterator begin() const    { return m_Intervals.begin(); }
@@ -52,7 +63,7 @@ public:
 
     // Nonvirtuals - Mutables
     void complement();
-    void swap(C_IntervalsByTraits &other) { m_Intervals.swap(other.m_Intervals); }
+    void swap(C_Intervals &other) { m_Intervals.swap(other.m_Intervals); }
 
 private:
 
@@ -63,9 +74,9 @@ private:
 //
 //      Function Templates
 //
-template<class T, class charT, class traits=std::char_traits<charT>>
+template<std::integral T, class charT, class traits=std::char_traits<charT>>
 std::basic_ostream<charT,traits> &
-operator<<(std::basic_ostream<charT,traits> &out, const C_IntervalsByTraits<T,true> &x)
+operator<<(std::basic_ostream<charT,traits> &out, const C_Intervals<T> &x)
 {
     bool first =true;
     for (auto i: x)
@@ -82,14 +93,14 @@ operator<<(std::basic_ostream<charT,traits> &out, const C_IntervalsByTraits<T,tr
 //
 //      Implement Class Templates
 //
-template<class T>
-C_IntervalsByTraits<T,true>::C_IntervalsByTraits(T id)
+template<std::integral T> requires (!std::same_as<char,T>)
+C_Intervals<T>::C_Intervals(T id)
 {
     m_Intervals.emplace_back(id, id);
 }
 
-template<class T>
-C_IntervalsByTraits<T,true>::C_IntervalsByTraits(value_type i)
+template<std::integral T> requires (!std::same_as<char,T>)
+C_Intervals<T>::C_Intervals(value_type i)
 {
     if (i.first > i.second)
         RUNTIME_ERROR("({},{})", i.first, i.second);
@@ -97,60 +108,8 @@ C_IntervalsByTraits<T,true>::C_IntervalsByTraits(value_type i)
     m_Intervals.emplace_back(i);
 }
 
-template<class I, bool CAN_BE_ITERATOR>
-struct IsIteratorImpl
-{
-    static const bool value = false;
-};
-
-template<class I>
-using IsIterator = IsIteratorImpl<typename std::remove_reference<I>::type,
-    std::is_pointer<typename std::remove_reference<I>::type>::value ||
-    std::is_class<typename std::remove_reference<I>::type>::value>;
-
-template<class I>
-struct IsIteratorImpl<I,true>
-{
-    static const bool value = std::is_base_of<std::input_iterator_tag,
-        typename std::iterator_traits<I>::iterator_category>::value;
-};
-
-template<class I, bool IS_ITERATOR>
-struct C_SmartAddIntervalImpl;
-
-template<class I>
-using C_SmartAddInterval =C_SmartAddIntervalImpl<I, IsIterator<I>::value>;
-
-template<class I>
-struct C_SmartAddIntervalImpl<I,true>
-{
-    template<class C_DstType>
-    static void add(C_DstType &dst, I start, I end)
-    {
-        while (start != end)
-            dst |= C_DstType(*start++);
-    }
-};
-
-template<class I>
-struct C_SmartAddIntervalImpl<I,false>
-{
-    template<class C_DstType>
-    static void add(C_DstType &dst, I start, I end)
-    {
-        dst |= C_DstType(typename C_DstType::value_type(start, end));
-    }
-};
-
-template<class T>
-template<class I>
-C_IntervalsByTraits<T,true>::C_IntervalsByTraits(I start, I end)
-{
-    C_SmartAddInterval<I>::add(*this, start, end);
-}
-
-template<class T>
-void C_IntervalsByTraits<T,true>::operator|=(const C_IntervalsByTraits<T,true> &other)
+template<std::integral T> requires (!std::same_as<char,T>)
+void C_Intervals<T>::operator|=(const C_Intervals<T> &other)
 {
     decltype(m_Intervals) dst;
     const_iterator
@@ -227,8 +186,8 @@ void C_IntervalsByTraits<T,true>::operator|=(const C_IntervalsByTraits<T,true> &
     dst.swap(m_Intervals);
 }
 
-template<class T>
-void C_IntervalsByTraits<T,true>::operator&=(const C_IntervalsByTraits<T,true> &other)
+template<std::integral T> requires (!std::same_as<char,T>)
+void C_Intervals<T>::operator&=(const C_Intervals<T> &other)
 {
     decltype(m_Intervals) dst;
     const_iterator ia = other.m_Intervals.begin();
@@ -260,8 +219,8 @@ void C_IntervalsByTraits<T,true>::operator&=(const C_IntervalsByTraits<T,true> &
     dst.swap(m_Intervals);
 }
 
-template<class T>
-void C_IntervalsByTraits<T,true>::operator-=(const C_IntervalsByTraits<T,true> &other)
+template<std::integral T> requires (!std::same_as<char,T>)
+void C_Intervals<T>::operator-=(const C_Intervals<T> &other)
 {
     auto ib =other.m_Intervals.begin(),
          eb =other.m_Intervals.end();
@@ -308,8 +267,8 @@ void C_IntervalsByTraits<T,true>::operator-=(const C_IntervalsByTraits<T,true> &
     } // for (auto ia =m_Intervals.begin(); ia != m_Intervals.end() && ib != eb;)
 }
 
-template<class T>
-void C_IntervalsByTraits<T,true>::complement()
+template<std::integral T> requires (!std::same_as<char,T>)
+void C_Intervals<T>::complement()
 {
     if (m_Intervals.empty())
     {

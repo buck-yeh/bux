@@ -15,9 +15,9 @@ void appendAsciiLiteral(uint32_t utf32, std::string &dst)
 {
     if (utf32 < 0x100U)
     {
-        if (isprint(utf32))
+        if (isprint(int(utf32)))
         {
-            if (strchr("\\\'\"", utf32))
+            if (strchr("\\\'\"", int(utf32)))
                 dst += '\\';
 
             dst += char(utf32);
@@ -57,10 +57,10 @@ void appendAsciiLiteral(uint32_t utf32, std::string &dst)
         if (t.ec == std::errc())
             // On success
         {
-            const size_t n = t.ptr - buf;
+            const auto n = t.ptr - buf;
             dst += n <= 4? "\\u": "\\U";
             if (const auto nonzeros = n % 4)
-                dst.append(4-nonzeros, '0');
+                dst.append(size_t(4-nonzeros), '0');
 
             dst.append(buf, t.ptr);
         }

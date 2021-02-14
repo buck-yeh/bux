@@ -73,6 +73,7 @@ public:
         std::string_view description = {});
     void details(std::string_view s) { m_details = s; }
     [[nodiscard]]C_ErrorOrIndex parse(size_t argc, const char *argv[]) const;
+    [[nodiscard]]auto parse(int argc, const char *argv[]) const { return parse(size_t(argc), argv); }
     template<class S, class N = size_t>
     C_EZArgs &position_args(std::initializer_list<S> arg_names, std::initializer_list<N> count_optionals = {}, bool unlimited = false);
     template<class C1, class C2 = std::initializer_list<size_t>>

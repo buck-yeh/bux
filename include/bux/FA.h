@@ -755,6 +755,7 @@ int C_DFA<T_Inputs,T_Action,C_Traits>::nfa2dfa(
                 conflict.insert(j.m_Tag);
         }
         if (!conflict.empty())
+        {
             if (conflict.size() > 1)
                 // Solve conflict
             {
@@ -766,6 +767,7 @@ int C_DFA<T_Inputs,T_Action,C_Traits>::nfa2dfa(
             }
             else
                 F[i.m_Tag] = *conflict.begin();
+        }
     }
 
     for (const auto &i: deltaNfa)

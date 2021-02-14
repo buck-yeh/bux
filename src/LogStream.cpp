@@ -1,27 +1,29 @@
 #include "LogStream.h"
-#include <cstring>      // strstr(), strlen()
-#include <ostream>      // std::ostream
-#include <chrono>       // std::chrono::system_clock
-#include <cinttypes>    // imaxdiv()
+#include <cstring>          // strstr(), strlen()
+#include <ostream>          // std::ostream
+#include <chrono>           // std::chrono::system_clock
+#include <cinttypes>        // imaxdiv()
 
 #ifdef __unix__
-#include <cxxabi.h>     // abi::__cxa_demangle()
+#include <cxxabi.h>         // abi::__cxa_demangle()
 #endif
 
 #ifdef __GNUC__
 #ifndef _GNU_SOURCE
-#define _GNU_SOURCE     // or _BSD_SOURCE or _SVID_SOURCE
+#define _GNU_SOURCE         // or _BSD_SOURCE or _SVID_SOURCE
 #endif
 #include <unistd.h>
 #include <sys/syscall.h>    // for SYS_xxx definitions
 
 #define TID_    syscall(SYS_gettid)
 #elif defined(_WIN32)
-#include <windows.h>    // GetCurrentThreadId()
+#include <windows.h>        // GetCurrentThreadId()
 
 #define TID_    GetCurrentThreadId()
 #else
-#define TID_    "=?"
+#include <thread>           // std::this_thread::get_id()
+
+#define TID_    std::this_thread::get_id()
 #endif
 
 namespace bux {

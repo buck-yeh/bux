@@ -105,13 +105,13 @@ int FC_GetChar::operator()()
 
 void FC_GetChar::bufferOff()
 {
-    m_curAttr.c_lflag &= ~ICANON;
+    m_curAttr.c_lflag &= unsigned(~ICANON);
     m_dirty = true;
 }
 
 void FC_GetChar::echoOff()
 {
-    m_curAttr.c_lflag &= ~ECHO;
+    m_curAttr.c_lflag &= unsigned(~ECHO);
     m_dirty = true;
 }
 

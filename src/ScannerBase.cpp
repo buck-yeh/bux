@@ -75,7 +75,7 @@ size_t parseEscapeChar(std::string_view s, uint32_t &c, size_t pos)
         DecodeDigits:
             if (const auto start = s.data() + i; auto off = std::from_chars(start, s.data()+s.size(), c, radix).ptr - start)
             {
-                i += off;
+                i += size_t(off);
                 break;
             }
         WastedBackslash:

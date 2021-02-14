@@ -142,7 +142,7 @@ C_ErrorOrIndex C_EZArgs::parse(size_t argc, const char *argv[]) const
         {
             const auto flag = arg + 2;
             const auto eqsign = strchr(flag, '=');
-            const auto flag_name = eqsign? std::string_view(flag, eqsign-flag): std::string_view(flag);
+            const auto flag_name = eqsign? std::string_view(flag, size_t(eqsign-flag)): std::string_view(flag);
             for (auto cur = this; cur; cur = cur->m_owner)
                 for (auto &def: cur->m_flags)
                     if (def.m_name == flag_name)

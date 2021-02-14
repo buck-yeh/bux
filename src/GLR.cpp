@@ -35,8 +35,8 @@ std::string I_ParserPolicy::printToken(T_LexID token) const
             return fmt::format(FMT_STRING("bux::TOKENGEN_LB+{}"), token - TOKENGEN_LB);
 
         auto out = fmt::format(FMT_STRING("0x{:x}"), token);
-        if (isascii(token))
-            out.append(" or \'").append(asciiLiteral(char(token))) += '\'';
+        if (isascii(int(token)))
+            out.append(" or \'").append(asciiLiteral(token)) += '\'';
 
         return out;
     }
@@ -216,7 +216,7 @@ auto C_Parser::reduceOn(size_t id, C_StateLR1Ptr iTop, const C_SourcePos &pos) -
             if (n >= size)
                 onError(pos, "Production["+std::to_string(id)+"] out of range "+std::to_string(n)+'/'+std::to_string(size));
 
-            return *arr.rbegin()[n];
+            return *arr.rbegin()[int(n)];
         }, r->m_attr, ps);
 
     r->m_pos = size? arr.back()->m_pos: pos;
