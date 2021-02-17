@@ -11,6 +11,7 @@
 */
 
 /// \example bux/test/hrtn.cpp
+/// \example bux/test/test_atomix.cpp
 /// \example bux/test/test_expand_env.cpp
 /// \example bux/test/test_PO.cpp
 /// \example parsergen/ParserGen/main.cpp

@@ -115,6 +115,7 @@
 * [SyncStream.h](include/bux/SyncStream.h) - Basic supports to synchronize `std::ostream`
 
 ## Misc.
+* [ParaUtil.h](include/bux/ParaUtil.h) - Iterator type for sheer numbers, expected to be used when calling parallel algorithms, *e.g.* `std::for_each(std::execution::par, ...)` without data allocation.
 * [SafeArith.h](include/bux/SafeArith.h) - Supports to safe arithmetics. *(Not used recently)*
 * [XAutoPtr.h](include/bux/XAutoPtr.h) - Safe [`std::auto_ptr`](https://en.cppreference.com/w/cpp/memory/auto_ptr) dated back to pre-C++11 years. *It ain't broke ...*
 * [XException.h](include/bux/XException.h) - Macros to throw `std::runtime_error`, `std::logic_error`, as well as [other exceptions](https://en.cppreference.com/w/cpp/header/stdexcept), with location & message.
