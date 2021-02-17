@@ -3,8 +3,9 @@
 CMakeCache.txt
 CMakeFiles
 Makefile
-cmake_install.cmake
-CTestTestfile.cmake
+*.cmake
 Testing
+test_atomix
 test_expand_env
+test_PO
 hrtn

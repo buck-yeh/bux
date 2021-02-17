@@ -59,6 +59,17 @@
    #include <bux/StrUtil.h>
    ~~~
 5. If directly using command `gcc` or `clang` is intended, the required flags are `-I$BUX_DIR/include -L$BUX_DIR/src -lbux`
+6. Subdirectory `test/` is excluded by default. To build with it, reconfigure `cmake` with:
+   ~~~bash
+   rm CMakeCache.txt
+   cmake . -DBUILD_TEST=1
+   make
+   ~~~
+   And test all of them:
+   ~~~bash
+   cd test
+   ctest .
+   ~~~
 
 # Header Intros
 ## Containers

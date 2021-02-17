@@ -25,3 +25,18 @@ add_test(NAME test_pass_env
          COMMAND test_expand_env env "USER"
          )
 set_tests_properties(test_pass_env PROPERTIES PASS_REGULAR_EXPRESSION "$ENV{USER}")
+
+find_package(Catch2 REQUIRED)
+include(Catch)
+
+add_executable(test_PO test_PO.cpp)
+target_include_directories(test_PO PRIVATE ../include)
+target_link_libraries(test_PO PRIVATE bux stdc++ m)
+catch_discover_tests(test_PO)
+#add_test(NAME test_PO_All COMMAND test_PO)
+
+add_executable(test_atomix test_atomix.cpp)
+target_include_directories(test_atomix PRIVATE ../include)
+target_link_libraries(test_atomix PRIVATE bux stdc++ tbb m)
+catch_discover_tests(test_atomix)
+#add_test(NAME test_atomix_All COMMAND test_atomix)

@@ -5,6 +5,7 @@
 #include <cstdint>      // std::uint8_t, std::uint16_t, std::uint32_t
 #include <functional>   // std::function<>
 #include <iosfwd>       // Forwarded std::istream
+#include <optional>     // std::optional<>
 #include <string>       // std::string
 #include <string_view>  // std::string_view
 #include <vector>       // std::vector<>
@@ -40,7 +41,7 @@ typedef std::uint32_t T_Utf32;  ///< UTF-32 to cover the full range of codespace
 typedef std::uint16_t T_Utf16;  ///< UTF-16: You need T_Utf16[2] to hold full range of unicode.
 typedef std::uint8_t  T_Utf8;   ///< UTF-8: You need T_Utf8[4] to hold full range of unicode.
 
-typedef std::function<bool(char&)> FH_ReadChar;
+typedef std::function<std::optional<char>()> FH_ReadChar;
 
 #ifdef _WIN32
 typedef unsigned T_Encoding;

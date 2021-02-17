@@ -13,7 +13,10 @@ namespace bux {
 //
 //      Types
 //
-template<std::integral T> requires (!std::same_as<char,T>)
+template<class T>
+concept IntervalPt = std::integral<T> && !std::same_as<char,T>;
+
+template<IntervalPt T>
 class C_Intervals
 {
 public:
@@ -30,7 +33,7 @@ public:
     C_Intervals(value_type i);
     C_Intervals(T start, T end): C_Intervals(value_type(start, end)) {}
     template<std::input_iterator I>
-    C_Intervals(I start, I end) requires std::same_as<char, std::remove_cvref_t<decltype(*start)>> && (sizeof(T) > 1)
+    C_Intervals(I start, I end) requires std::same_as<char, std::remove_cvref_t<decltype(*start)>>
     {
         while (start != end)
             operator|=(T(*start++)); // The cast can be an undefined behavior but I don't care for now.
@@ -38,10 +41,10 @@ public:
     template<std::input_iterator I>
     C_Intervals(I start, I end) requires
         std::same_as<value_type, std::remove_cvref_t<decltype(*start)>> || (
-        !std::same_as<char, std::remove_cvref_t<decltype(*start)>> &&
-        std::integral<std::remove_cvref_t<decltype(*start)>> &&
-        std::cmp_less_equal(std::numeric_limits<T>::min(), std::numeric_limits<std::remove_cvref_t<decltype(*start)>>::min()) &&
-        std::cmp_less_equal(std::numeric_limits<std::remove_cvref_t<decltype(*start)>>::max(), std::numeric_limits<T>::max()))
+            (!std::same_as<char,std::remove_cvref_t<decltype(*start)>>) &&
+            std::integral<std::remove_cvref_t<decltype(*start)>> &&
+            std::cmp_less_equal(std::numeric_limits<T>::min(), std::numeric_limits<std::remove_cvref_t<decltype(*start)>>::min()) &&
+            std::cmp_less_equal(std::numeric_limits<std::remove_cvref_t<decltype(*start)>>::max(), std::numeric_limits<T>::max()) )
     {
         while (start != end)
             operator|=(*start++);
@@ -74,7 +77,7 @@ private:
 //
 //      Function Templates
 //
-template<std::integral T, class charT, class traits=std::char_traits<charT>>
+template<IntervalPt T, class charT, class traits=std::char_traits<charT>>
 std::basic_ostream<charT,traits> &
 operator<<(std::basic_ostream<charT,traits> &out, const C_Intervals<T> &x)
 {
@@ -93,13 +96,13 @@ operator<<(std::basic_ostream<charT,traits> &out, const C_Intervals<T> &x)
 //
 //      Implement Class Templates
 //
-template<std::integral T> requires (!std::same_as<char,T>)
+template<IntervalPt T>
 C_Intervals<T>::C_Intervals(T id)
 {
     m_Intervals.emplace_back(id, id);
 }
 
-template<std::integral T> requires (!std::same_as<char,T>)
+template<IntervalPt T>
 C_Intervals<T>::C_Intervals(value_type i)
 {
     if (i.first > i.second)
@@ -108,7 +111,7 @@ C_Intervals<T>::C_Intervals(value_type i)
     m_Intervals.emplace_back(i);
 }
 
-template<std::integral T> requires (!std::same_as<char,T>)
+template<IntervalPt T>
 void C_Intervals<T>::operator|=(const C_Intervals<T> &other)
 {
     decltype(m_Intervals) dst;
@@ -186,7 +189,7 @@ void C_Intervals<T>::operator|=(const C_Intervals<T> &other)
     dst.swap(m_Intervals);
 }
 
-template<std::integral T> requires (!std::same_as<char,T>)
+template<IntervalPt T>
 void C_Intervals<T>::operator&=(const C_Intervals<T> &other)
 {
     decltype(m_Intervals) dst;
@@ -219,7 +222,7 @@ void C_Intervals<T>::operator&=(const C_Intervals<T> &other)
     dst.swap(m_Intervals);
 }
 
-template<std::integral T> requires (!std::same_as<char,T>)
+template<IntervalPt T>
 void C_Intervals<T>::operator-=(const C_Intervals<T> &other)
 {
     auto ib =other.m_Intervals.begin(),
@@ -267,7 +270,7 @@ void C_Intervals<T>::operator-=(const C_Intervals<T> &other)
     } // for (auto ia =m_Intervals.begin(); ia != m_Intervals.end() && ib != eb;)
 }
 
-template<std::integral T> requires (!std::same_as<char,T>)
+template<IntervalPt T>
 void C_Intervals<T>::complement()
 {
     if (m_Intervals.empty())

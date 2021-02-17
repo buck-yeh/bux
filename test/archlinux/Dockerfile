@@ -29,6 +29,6 @@ USER root
 RUN  pacman -U --noconfirm /home/guest/Duty/bux-*.pkg.tar.*
 USER guest
 RUN  cd ~/Duty/aur_poc && \
-     cmake . && \
+     cmake . -DBUILD_TEST=1 && \
      make && \
      ctest .

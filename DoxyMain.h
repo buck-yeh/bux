@@ -10,7 +10,9 @@
            functions declared under namespace \c bux in the same header can be linked properly without errors.
 */
 
+/// \example bux/test/hrtn.cpp
 /// \example bux/test/test_expand_env.cpp
+/// \example bux/test/test_PO.cpp
 /// \example parsergen/ParserGen/main.cpp
 /// \example parsergen/ParserGen/GrammarStrip.cpp
 /// \example parsergen/ScannerGen/main.cpp

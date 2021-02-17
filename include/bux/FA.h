@@ -5,16 +5,11 @@
 
 #include "XException.h" // RUNTIME_ERROR()
 #include <algorithm>    // std::set_difference()
-#include <functional>   // std::function<>
+#include <concepts>     // std::convertible_to<>, std::invocable<>
 #include <list>         // std::list<>
 #include <map>          // std::map<>
 #include <set>          // std::set<>
 #include <vector>       // std::vector<>
-
-#if defined (__BORLANDC__) && __BORLANDC__ >= 0x530
- #pragma warn -8091
- #pragma warn -8092
-#endif
 
 namespace bux {
 
@@ -31,9 +26,8 @@ public:
     C_NfaState();
     C_NfaState(const C_NfaState &a) = default;
     C_NfaState &operator=(const C_NfaState &a) = default;
-    bool operator<(const C_NfaState &a) const   { return id < a.id; }
+    auto operator<=>(const C_NfaState &a) const { return id <=> a.id; }
     bool operator==(const C_NfaState &a) const  { return id == a.id; }
-    bool operator!=(const C_NfaState &a) const  { return id != a.id; }
 
 private:
 
@@ -44,8 +38,8 @@ private:
 
 enum
 {
-    FA_OPTIONAL     =1<<0,
-    FA_REPEATABLE   =1<<1
+    FA_OPTIONAL     = 1<<0,
+    FA_REPEATABLE   = 1<<1
 };
 
 template<class T_Inputs>
@@ -137,16 +131,33 @@ class C_DFA
 public:
 
     // Types
-    typedef std::function<void(int,const T_Action&)> FH_GetFinalState;
-    typedef std::function<void(int,const T_Inputs&,int)> FH_GetTransition;
     typedef std::set<T_Action> C_Conflict;
-    typedef std::function<T_Action(int,const C_Conflict&)> FH_PickAction;
 
     // Nonvirtuals
-    C_DFA(const C_NFA<T_Inputs,T_Action,C_Traits> &nfa,
-        FH_PickAction pickAction = [](int,const C_Conflict&) { return T_Action(); });
-    void eachFinalState(const FH_GetFinalState &) const;
-    void eachTransition(const FH_GetTransition &) const;
+    template<class F_PickAction>
+    C_DFA(const C_NFA<T_Inputs,T_Action,C_Traits> &nfa, F_PickAction pickAction) requires
+        requires (int tag, const C_Conflict &conflict) {
+            { pickAction(tag, conflict) }->std::convertible_to<T_Action>;
+        }
+    {
+        C_FinalMap      Fraw;
+        C_TransitionMap deltaRaw;
+        auto n = nfa2dfa(nfa, Fraw, deltaRaw, pickAction);
+        minDfa(Fraw, deltaRaw, n, F, delta);
+    }
+    template<class F_Get>
+    void eachFinalState(F_Get get) const requires std::invocable<F_Get,int,const T_Action&>
+    {
+        for (const auto &i: F)
+            get(i.first, i.second);
+    }
+    template<class F_Get>
+    void eachTransition(F_Get get) const requires std::invocable<F_Get,int,const T_Inputs&,int>
+    {
+        for (const auto &i: delta)
+            for (const auto &j: i.second)
+                get(i.first, j.second, j.first);
+    }
     bool isFinal(int state, T_Action &action) const;
         // Return true and assign action if state is final; return false otherwise
     static int startingState()      { return 0; }
@@ -197,8 +208,9 @@ private:
     static typename C_DfaClosures::const_iterator findDfaClosure(const C_DfaClosures &Q, int state);
     static void minDfa(const C_FinalMap &Ffat, const C_TransitionMap &deltaFat,
         int totalFatStates, C_FinalMap &Fmin, C_TransitionMap &deltaMin);
+    template<class F_PickAction>
     static int nfa2dfa(const C_NFA<T_Inputs,T_Action,C_Traits> &nfa, C_FinalMap &F,
-        C_TransitionMap &delta, const FH_PickAction &pickAction);
+        C_TransitionMap &delta, F_PickAction pickAction);
         // Return total of the resulting DFA states
 };
 
@@ -369,16 +381,6 @@ void C_NFA<T_Inputs,T_Action,C_Traits>::setAction(T_Action &&action)
 }
 
 template<class T_Inputs, class T_Action, class C_Traits>
-C_DFA<T_Inputs,T_Action,C_Traits>::C_DFA(const C_NFA<T_Inputs,T_Action,C_Traits> &nfa, FH_PickAction pickAction)
-{
-    //nfa2dfa(nfa, F, delta, pickAction);
-    C_FinalMap              Fraw;
-    C_TransitionMap         deltaRaw;
-    auto n = nfa2dfa(nfa, Fraw, deltaRaw, pickAction);
-    minDfa(Fraw, deltaRaw, n, F, delta);
-}
-
-template<class T_Inputs, class T_Action, class C_Traits>
 void C_DFA<T_Inputs,T_Action,C_Traits>::buildA2C(
     const C_FinalMap        &Ffat,
     const C_DfaClosure      &closure,
@@ -414,21 +416,6 @@ void C_DFA<T_Inputs,T_Action,C_Traits>::createClosure(C_NfaClosure &c, const C_S
         c.insert(add.begin(), add.end());
         test.swap(add);
     }
-}
-
-template<class T_Inputs, class T_Action, class C_Traits>
-void C_DFA<T_Inputs,T_Action,C_Traits>::eachFinalState(const FH_GetFinalState &get) const
-{
-    for (const auto &i: F)
-        get(i.first, i.second);
-}
-
-template<class T_Inputs, class T_Action, class C_Traits>
-void C_DFA<T_Inputs,T_Action,C_Traits>::eachTransition(const FH_GetTransition &get) const
-{
-    for (const auto &i: delta)
-        for (const auto &j: i.second)
-            get(i.first, j.second, j.first);
 }
 
 template<class T_Inputs, class T_Action, class C_Traits>
@@ -624,11 +611,9 @@ void C_DFA<T_Inputs,T_Action,C_Traits>::minDfa(
 }
 
 template<class T_Inputs, class T_Action, class C_Traits>
-int C_DFA<T_Inputs,T_Action,C_Traits>::nfa2dfa(
-    const C_NFA<T_Inputs,T_Action,C_Traits>  &nfa,
-    C_FinalMap              &F,
-    C_TransitionMap         &delta,
-    const FH_PickAction     &pickAction )
+template<class F_PickAction>
+int C_DFA<T_Inputs,T_Action,C_Traits>::nfa2dfa(const C_NFA<T_Inputs,T_Action,C_Traits> &nfa,
+    C_FinalMap &F, C_TransitionMap &delta, F_PickAction pickAction)
 {
     // Figure 7.5 (p245): Algorithm NFA->DFA
     std::list<C_TaggedNfaClosure> Q;    // collector of all states

@@ -1,10 +1,10 @@
 #ifndef bux_AtomiX_h_
 #define bux_AtomiX_h_
 
-#include <atomic>       // std::atomic_flag
-#include <functional>   // std::function<>
-#include <map>          // std::map<>
-#include <thread>       // std::this_thread::yield()
+#include <atomic>   // std::atomic_flag
+#include <concepts> // std::constructible_from<>, std::invocable<>
+#include <map>      // std::map<>
+#include <thread>   // std::this_thread::yield()
 
 namespace bux {
 
@@ -33,7 +33,9 @@ class C_SpinCacheT
 public:
 
     // Nonvirtuals
-    const T_Value &operator()(const T_Key &key, const std::function<void(T_Value&)> &set_value)
+    template<class T_KeyIn, class F>
+    const T_Value &operator()(T_KeyIn key, F set_value) requires
+        std::constructible_from<T_Key,T_KeyIn> && std::invocable<F,T_Value&>
     {
         bux::C_SpinLock  lockMap{m_lock};
         const auto ins_ret = m_map.try_emplace(key);
@@ -59,6 +61,7 @@ public:
 
 private:
 
+    // Types
     struct C_Mapped
     {
         T_Value                 m_value;

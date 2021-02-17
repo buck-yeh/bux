@@ -21,16 +21,13 @@ class FC_ReadMem
 public:
 
     // Nonvirtuals
-    FC_ReadMem(const char *src, size_t n) noexcept: m_Src(src), m_End(src+n)
-    {}
-    bool operator()(char &c) noexcept
+    FC_ReadMem(const char *src, const char *end) noexcept: m_Src(src), m_End(end) {}
+    std::optional<char> operator()() noexcept
     {
         if (m_Src < m_End)
-        {
-            c = *m_Src++;
-            return true;
-        }
-        return false;
+            return *m_Src++;
+
+        return {};
     }
 
 private:
@@ -200,13 +197,16 @@ C_UnicodeIn::C_UnicodeIn(FH_ReadChar &&readc, T_Encoding codepage):
 }
 
 C_UnicodeIn::C_UnicodeIn(std::string_view sv, T_Encoding codepage):
-    C_UnicodeIn(FC_ReadMem(sv.data(),sv.size()), codepage)
+    C_UnicodeIn(FC_ReadMem(sv.begin(),sv.end()), codepage)
 {
 }
 
 C_UnicodeIn::C_UnicodeIn(std::istream &in, T_Encoding codepage):
-    m_Src([&](char &ch) {
-        return static_cast<bool>(in.get(ch));
+    m_Src([&]()->std::optional<char> {
+        char ch;
+        if (static_cast<bool>(in.get(ch)))
+            return ch;
+        return {};
     }),
     m_CodePage(codepage)
 {
@@ -591,9 +591,11 @@ void C_UnicodeIn::C_Source::read(size_t bytes)
             m_AvailBeg = 0;
         }
         bytes -= m_ReadBuf.size();
-        char c;
-        for (size_t i = 0; i < bytes && m_ReadCh(c); ++i)
-            m_ReadBuf += c;
+        for (size_t i = 0; i < bytes; ++i)
+            if (auto c = m_ReadCh())
+                m_ReadBuf += *c;
+            else
+                break;
     }
 }
 
@@ -605,11 +607,10 @@ void C_UnicodeIn::C_Source::readTillCtrl()
         m_AvailBeg = 0;
     }
 
-    char c;
-    while (m_ReadCh(c))
+    while (auto c = m_ReadCh())
     {
-        m_ReadBuf += c;
-        if (0 == (c &0xE0))
+        m_ReadBuf += *c;
+        if (0 == (*c &0xE0))
             // Control char
             break;
     }

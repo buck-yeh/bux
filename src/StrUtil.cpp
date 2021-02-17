@@ -1,6 +1,5 @@
 #include "StrUtil.h"
 #include "XException.h"     // RUNTIME_ERROR()
-#include <cstring>          // memchr()
 #ifdef _WIN32
     #include <processenv.h> // ExpandEnvironmentStringsA()
 #elif defined(__unix__) || defined(__unix) || defined(__gnu_linux__)
@@ -49,105 +48,6 @@ std::string expand_env(const char *s)
         return ret;
 #endif
     RUNTIME_ERROR("Fail to expand \"{}\"", s);
-}
-
-//
-//      Implement Classes
-//
-void FC_ParseNone::operator()(const char *data, size_t n)
-{
-    m_Apply({data, n});
-}
-
-void FC_BufferedParse::operator()(const char *data, size_t n)
-{
-    enum
-    {
-        ON_START,
-        ON_APPEND,
-        ON_TRUNCATE,
-        ON_CLEAR
-    } state =ON_START;
-    size_t n2;
-    try
-    {
-        if (!m_YetToParse.empty())
-        {
-            state =ON_APPEND;
-            m_YetToParse.append(data, n);
-            data =m_YetToParse.data();
-            n =m_YetToParse.size();
-        }
-        n2 =parse(data, n);
-        if (n2 < n)
-        {
-            state =ON_TRUNCATE;
-            std::string s(data+n2, n-n2);
-            m_YetToParse.swap(s);
-        }
-        else
-        {
-            state =ON_CLEAR;
-            m_YetToParse.clear();
-        }
-    }
-    catch (const std::bad_alloc &)
-    {
-        // Out of memory
-        const size_t n_parsed =m_YetToParse.size();
-        m_YetToParse.clear();
-        auto out = fmt::format(FMT_STRING("std::bad_alloc#{}"), (int)state);
-        switch (state)
-        {
-        case ON_APPEND:
-            out += fmt::format(FMT_STRING("# appending {} bytes to {} bytes"), n, n_parsed);
-            break;
-        case ON_TRUNCATE:
-            out += fmt::format(FMT_STRING("# truncating {} bytes from {} bytes"), n2, n_parsed);
-            break;
-        default:;
-        }
-        RUNTIME_ERROR(out);
-    }
-}
-
-size_t FC_ParseLine::parse(const char *data, size_t n)
-{
-    size_t left = n;
-    while (const char *p = static_cast<const char*>(memchr(data, m_Delim, left)))
-    {
-        std::string s(data, p);
-        m_Apply(s);
-        const auto jump = size_t(p - data + 1);
-        left -= jump;
-        data += jump;
-    }
-    return n - left;
-}
-
-size_t FC_ParseCRLF::parse(const char *data, size_t n)
-{
-    size_t left = n;
-    const char *p;
-    while (left && (p = static_cast<const char*>(memchr(data, '\r', left))) != 0)
-    {
-        const char *const dend = data + left;
-    CheckCRLF:
-        if (dend - p < 2)
-            break;
-
-        if (p[1] != '\n')
-        {
-            p = (const char*)memchr(p+1, '\r', left);
-            goto CheckCRLF;
-        }
-
-        m_Apply({data, p});
-        const auto jump = size_t(p - data + 2);
-        left -= jump;
-        data += jump;
-    }
-    return n - left;
 }
 
 } // namespace bux

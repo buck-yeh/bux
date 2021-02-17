@@ -1,9 +1,8 @@
 #ifndef bux_PartialOrdering_H_
 #define bux_PartialOrdering_H_
 
-#include <functional>   // std::equal_to<>, std::function<>
+#include <concepts>     // std::constructible_from<>, std::equality_comparable<>, std::invocable<>
 #include <list>         // std::list<>
-#include "XException.h" // LOGIC_ERROR()
 
 namespace bux {
 
@@ -16,7 +15,7 @@ enum E_MakeLinearPolicy
     MLP_DEPTH_FIRST
 };
 
-template<class T, class FC_Equ = std::equal_to<T>>
+template<std::equality_comparable T>
 class C_PartialOrdering
 /*! \e DEFINITIONs:
     Let R be a partial ordering and aRb. Then a is said to be "left-related"
@@ -30,35 +29,33 @@ public:
     typedef std::list<T> C_ValList;
 
     // Nonvirtuals
-    explicit C_PartialOrdering(const FC_Equ &equator = {});
-    [[nodiscard]]bool addOrder(const T &a, const T &b);
+    template<class T1, class T2>
+    [[nodiscard]]bool addOrder(T1 a, T2 b);
         // Return true if given order (a,b) is successfully added
     template<class T2>
     bool anyLeft(const T2 &R) const;
     template<class T2>
     bool anyRight(const T2 &L) const;
-    void clear();
+    void clear()                        { m_Relation.clear(); }
     size_t depthToLeft(T t) const;
         // Return 0 for the leftmosts.
     bool empty() const { return m_Relation.empty(); }
-    template<class T2>
-    void getRelated(T2 &&L, std::function<void(const T&)> R, size_t maxDepth = 0) const;
-    void getRelated(C_ValList L, std::function<void(const T&)> R, size_t maxDepth = 0) const;
-    template<class T2>
-    void getRelated(std::function<void(const T&)> L, T2 &&R, size_t maxDepth = 0) const;
-    void getRelated(std::function<void(const T&)> L, C_ValList R, size_t maxDepth = 0) const;
-    void makeLinear(const std::function<void(const T&)> &apply, E_MakeLinearPolicy policy = MLP_BREADTH_FIRST) const;
+    template<class T2, class F>
+    void getRelated(T2 L, F R, size_t maxDepth = 0) const requires std::constructible_from<T,T2> && std::invocable<F,T>;
+    template<class F>
+    void getRelated(C_ValList L, F R, size_t maxDepth = 0) const requires std::invocable<F,T>;
+    template<class F, class T2>
+    void getRelated(F L, T2 R, size_t maxDepth = 0) const requires std::constructible_from<T,T2> && std::invocable<F,T>;
+    template<class F>
+    void getRelated(F L, C_ValList R, size_t maxDepth = 0) const requires std::invocable<F,T>;
+    template<class F>
+    void makeLinear(F apply, E_MakeLinearPolicy policy = MLP_BREADTH_FIRST) const requires std::invocable<F,T>;
     bool related(const T &a, const T &b) const;
 
 private:
 
-    // Types
-    typedef std::pair<T,T> C_Edge;
-    typedef std::list<C_Edge>  C_Relation;
-
     // Data
-    const FC_Equ            m_Equ;
-    C_Relation              m_Relation;
+    std::list<std::pair<T,T>>   m_Relation;
 
     // Nonvirtuals
     bool find(const C_ValList &src, T t) const;
@@ -68,11 +65,11 @@ private:
 //
 //      Function Templates
 //
-template<class C, class T, class FC_Equ>
-void addUnique(C &c, T &&value, FC_Equ equ)
+template<class C, class T>
+void addUnique(C &c, T &&value)
 {
     for (auto &i: c)
-        if (equ(i, value))
+        if (i == value)
             return;
 
     c.emplace_back(std::forward<T>(value));
@@ -81,17 +78,11 @@ void addUnique(C &c, T &&value, FC_Equ equ)
 //
 //      Implement Class Templates
 //
-template<class T, class FC_Equ>
-C_PartialOrdering<T,FC_Equ>::C_PartialOrdering(const FC_Equ &equator):
-    m_Equ(equator)
+template<std::equality_comparable T>
+template<class T1, class T2>
+bool C_PartialOrdering<T>::addOrder(T1 a, T2 b)
 {
-}
-
-template<class T, class FC_Equ>
-bool C_PartialOrdering<T,FC_Equ>::addOrder(const T &a, const T &b)
-{
-    if (m_Equ(a, b))
-        // a == b
+    if (a == b)
         return false;
 
     if (related(b, a))
@@ -99,7 +90,7 @@ bool C_PartialOrdering<T,FC_Equ>::addOrder(const T &a, const T &b)
         return false;
 
     for (auto &i: m_Relation)
-        if (m_Equ(a, i.first) && m_Equ(b, i.second))
+        if (a == i.first && b == i.second)
             // Already added
             return true;
 
@@ -107,83 +98,78 @@ bool C_PartialOrdering<T,FC_Equ>::addOrder(const T &a, const T &b)
     return true;
 }
 
-template<class T, class FC_Equ>
-size_t C_PartialOrdering<T,FC_Equ>::depthToLeft(T t) const
+template<std::equality_comparable T>
+size_t C_PartialOrdering<T>::depthToLeft(T t) const
 {
     size_t ret =0;
     for (auto &i: m_Relation)
-        if (m_Equ(t, i.second))
+        if (t == i.second)
         {
             const size_t cur = depthToLeft(i.first) +1;
             if (cur > ret)
-                ret =cur;
+                ret = cur;
         }
     return ret;
 }
 
-template<class T, class FC_Equ>
-void C_PartialOrdering<T,FC_Equ>::clear()
-{
-    m_Relation.clear();
-}
-
-template<class T, class FC_Equ>
-bool C_PartialOrdering<T,FC_Equ>::find(const C_ValList &src, T t) const
+template<std::equality_comparable T>
+bool C_PartialOrdering<T>::find(const C_ValList &src, T t) const
 {
     for (auto &i: src)
-        if (m_Equ(t, i))
+        if (t == i)
             return true;
 
     return false;
 }
 
-template<class T, class FC_Equ>
+template<std::equality_comparable T>
 template<class T2>
-bool C_PartialOrdering<T,FC_Equ>::anyLeft(const T2 &R) const
+bool C_PartialOrdering<T>::anyLeft(const T2 &R) const
 {
     for (auto &i: m_Relation)
-        if (m_Equ(i.second, R))
+        if (i.second == R)
             return true;
 
     return false;
 }
 
-template<class T, class FC_Equ>
+template<std::equality_comparable T>
 template<class T2>
-bool C_PartialOrdering<T,FC_Equ>::anyRight(const T2 &L) const
+bool C_PartialOrdering<T>::anyRight(const T2 &L) const
 {
     for (auto &i: m_Relation)
-        if (m_Equ(L, i.first))
+        if (L == i.first)
             return true;
 
     return false;
 }
 
-template<class T, class FC_Equ>
-template<class T2>
-void C_PartialOrdering<T,FC_Equ>::getRelated(T2 &&L, std::function<void(const T&)> R, size_t maxDepth) const
+template<std::equality_comparable T>
+template<class T2, class F>
+void C_PartialOrdering<T>::getRelated(T2 L, F R, size_t maxDepth) const requires std::constructible_from<T,T2> && std::invocable<F,T>
 {
     getRelated({1, std::forward<T2>(L)}, R, maxDepth);
 }
 
-template<class T, class FC_Equ>
-template<class T2>
-void C_PartialOrdering<T,FC_Equ>::getRelated(std::function<void(const T&)> L, T2 &&R, size_t maxDepth) const
+template<std::equality_comparable T>
+template<class F, class T2>
+void C_PartialOrdering<T>::getRelated(F L, T2 R, size_t maxDepth) const requires std::constructible_from<T,T2> && std::invocable<F,T>
 {
     getRelated(L, {1, std::forward<T2>(R)}, maxDepth);
 }
 
-template<class T, class FC_Equ>
-void C_PartialOrdering<T,FC_Equ>::getRelated(C_ValList L, std::function<void(const T&)> R, size_t maxDepth) const
+template<std::equality_comparable T>
+template<class F>
+void C_PartialOrdering<T>::getRelated(C_ValList L, F R, size_t maxDepth) const requires std::invocable<F,T>
 {
     size_t oldSize = 0;
     C_ValList dst;
-    for (size_t i = 0; !maxDepth || i < maxDepth; ++i)
+    for (size_t depth = 0; !maxDepth || depth < maxDepth; ++depth)
     {
         for (auto &i: m_Relation)
             for (auto &j: L)
-                if (m_Equ(j, i.first))
-                    addUnique(dst, i.second, m_Equ);
+                if (j == i.first)
+                    addUnique(dst, i.second);
 
         if (oldSize == dst.size())
             break;
@@ -197,17 +183,18 @@ void C_PartialOrdering<T,FC_Equ>::getRelated(C_ValList L, std::function<void(con
         R(i);
 }
 
-template<class T, class FC_Equ>
-void C_PartialOrdering<T,FC_Equ>::getRelated(std::function<void(const T&)> L, C_ValList R, size_t maxDepth) const
+template<std::equality_comparable T>
+template<class F>
+void C_PartialOrdering<T>::getRelated(F L, C_ValList R, size_t maxDepth) const requires std::invocable<F,T>
 {
     size_t oldSize = 0;
     C_ValList dst;
-    for (size_t i = 0; !maxDepth || i < maxDepth; ++i)
+    for (size_t depth = 0; !maxDepth || depth < maxDepth; ++depth)
     {
         for (auto &i: m_Relation)
             for (auto &j: R)
-                if (m_Equ(j, i.second))
-                    addUnique(dst, i.first, m_Equ);
+                if (j == i.second)
+                    addUnique(dst, i.first);
 
         if (oldSize == dst.size())
             break;
@@ -221,15 +208,14 @@ void C_PartialOrdering<T,FC_Equ>::getRelated(std::function<void(const T&)> L, C_
         L(i);
 }
 
-template<class T, class FC_Equ>
-void C_PartialOrdering<T,FC_Equ>::makeLinear(
-    const std::function<void(const T&)> &apply,
-    E_MakeLinearPolicy                  policy ) const
+template<std::equality_comparable T>
+template<class F>
+void C_PartialOrdering<T>::makeLinear(F apply, E_MakeLinearPolicy policy) const requires std::invocable<F,T>
 {
 /*! \param [in] apply Node visitor.
     \param [in] policy How to serialize the lattice ? Breadth first or depth first.
 
-    [Excerpt from <a href="http://en.wikipedia.org/wiki/Topological_sort" target="_blank">here</a>]
+    [Excerpt from <a href="https://en.wikipedia.org/wiki/Topological_sorting" target="_blank">here</a>]
     The usual algorithm for topological sorting has running time linear in the
     number of nodes plus the number of edges (<tt>O(|V|+|E|)</tt>). It uses depth-first
     search. First, find a list of "start nodes" which have no incoming edges and
@@ -250,11 +236,11 @@ void C_PartialOrdering<T,FC_Equ>::makeLinear(
     so the algorithm can report an error.
 */
     C_ValList   q, r;
-    C_Relation  mapping = m_Relation;
+    auto        mapping = m_Relation;
     for (auto &i: mapping)
     {
-        addUnique(q, i.first, m_Equ);
-        addUnique(r, i.second, m_Equ);
+        addUnique(q, i.first);
+        addUnique(r, i.second);
     }
     pruneLeftmost(q, r);
 
@@ -268,14 +254,14 @@ void C_PartialOrdering<T,FC_Equ>::makeLinear(
         r.clear();
         for (auto i = mapping.begin(), end = mapping.end(); i != end;)
         {
-            if (m_Equ(t, i->first))
+            if (t == i->first)
             {
-                addUnique(l, i->second, m_Equ);
+                addUnique(l, i->second);
                 i = mapping.erase(i);
             }
             else
             {
-                addUnique(r, i->second, m_Equ);
+                addUnique(r, i->second);
                 ++i;
             }
         }
@@ -289,14 +275,12 @@ void C_PartialOrdering<T,FC_Equ>::makeLinear(
         case MLP_DEPTH_FIRST:
             q.splice(q.begin(), l);
             break;
-        default:
-            LOGIC_ERROR("Unknown policy {}", int(policy));
         }
     }
 }
 
-template<class T, class FC_Equ>
-void C_PartialOrdering<T,FC_Equ>::pruneLeftmost(C_ValList &l, const C_ValList &r) const
+template<std::equality_comparable T>
+void C_PartialOrdering<T>::pruneLeftmost(C_ValList &l, const C_ValList &r) const
 {
     for (auto i = l.begin(), end = l.end(); i != end;)
     {
@@ -307,13 +291,13 @@ void C_PartialOrdering<T,FC_Equ>::pruneLeftmost(C_ValList &l, const C_ValList &r
     }
 }
 
-template<class T, class FC_Equ>
-bool C_PartialOrdering<T,FC_Equ>::related(const T &a, const T &b) const
+template<std::equality_comparable T>
+bool C_PartialOrdering<T>::related(const T &a, const T &b) const
 {
     for (auto &i: m_Relation)
-        if (m_Equ(a, i.first))
+        if (a == i.first)
         {
-            if (m_Equ(i.second, b))
+            if (i.second == b)
                 // aRb
                 return true;
 
