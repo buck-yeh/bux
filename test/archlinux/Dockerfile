@@ -9,7 +9,7 @@ Server = http://ftp.tku.edu.tw/Linux/ArchLinux/$repo/os/$arch\n' | tee /etc/pacm
     fi && \
     sed -Ei 's|^#TotalDownload\s*$|TotalDownload|g' /etc/pacman.conf && \
     sed -Ei 's|^#VerbosePkgLists\s*$|VerbosePkgLists|g' /etc/pacman.conf && \
-    pacman -Sy --needed --noconfirm cmake make gcc git binutils fmt fakeroot gawk && \
+    pacman -Sy --needed --noconfirm cmake make gcc git binutils fmt fakeroot gawk tbb catch2 glibc && \
     rm -rf /root/.cache
 RUN useradd -m guest
 
@@ -29,6 +29,6 @@ USER root
 RUN  pacman -U --noconfirm /home/guest/Duty/bux-*.pkg.tar.*
 USER guest
 RUN  cd ~/Duty/aur_poc && \
-     cmake . -DBUILD_TEST=1 && \
+     cmake . && \
      make && \
      ctest .
