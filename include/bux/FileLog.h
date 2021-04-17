@@ -1,5 +1,4 @@
-#ifndef bux_FileLog_H_
-#define bux_FileLog_H_
+#pragma once
 
 #include "SyncStream.h" // bux::C_SyncOstream
 #include <chrono>       // std::chrono::system_clock
@@ -47,5 +46,3 @@ private:
 };
 
 } // namespace bux
-
-#endif // bux_FileLog_H_

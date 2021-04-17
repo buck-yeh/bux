@@ -1,5 +1,4 @@
-#ifndef bux_ParserBase_H_
-#define bux_ParserBase_H_
+#pragma once
 
 #include "LexBase.h"    // bux::T_LexID, bux::C_LexInfoT<>, ...
 #include "LogLevel.h"   // bux::E_LogLevel
@@ -183,5 +182,3 @@ int toInt(const C_LexInfoT<T_Lex,C_Ptr> &lex)
 }
 
 } //namespace bux
-
-#endif // bux_ParserBase_H_

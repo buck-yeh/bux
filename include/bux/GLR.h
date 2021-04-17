@@ -1,5 +1,4 @@
-#ifndef bux_GLR_H_
-#define bux_GLR_H_
+#pragma once
 
 #include "ParserBase.h" // bux::T_StateID, bux::F_GetProducedT<>, LexBase.h
 #include <memory>       // std::shared_ptr<>
@@ -109,5 +108,3 @@ private:
 
 } // namespace GLR
 } // namespace bux
-
-#endif // bux_GLR_H_

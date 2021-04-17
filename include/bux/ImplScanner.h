@@ -1,5 +1,4 @@
-#ifndef bux_ImplScanner_H_
-#define bux_ImplScanner_H_
+#pragma once
 
 #include "ScannerBase.h"    // bux::C_LexTraits<>, bux::I_Scanner<>, bux::C_ActionRet, ...
 #include <vector>           // std::vector<>
@@ -242,5 +241,3 @@ void C_ScannerImpl<T_Input,T_State,T_Char,C_Traits>::shrinkReadSize(size_t newSi
 }
 
 } //namespace bux
-
-#endif  // bux_ImplScanner_H_

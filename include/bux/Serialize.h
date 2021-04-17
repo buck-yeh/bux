@@ -1,6 +1,3 @@
-#ifndef bux_Serialize_H_
-#define bux_Serialize_H_
-
 #include <array>        // std::array<>
 #include <cstring>      // memcpy()
 #include <iosfwd>       // Forwarded std::istream, std::ostream
@@ -95,5 +92,3 @@ std::tuple<std::string,size_t,bool> load_hashed_str(std::istream &in);
 size_t save_hashed_str(std::ostream &out, const std::string &s);
 
 } // namespace bux
-
-#endif // bux_Serialize_H_

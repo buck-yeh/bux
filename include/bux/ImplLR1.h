@@ -1,5 +1,4 @@
-#ifndef bux_ImplLR1_H_
-#define bux_ImplLR1_H_
+#pragma once
 
 /*! \file
     This header is constantly included by parsergen-generated *.cpp files.
@@ -24,5 +23,3 @@ using bux::index2value;
 
 } // namespace LR1
 } //namespace bux
-
-#endif // bux_ImplLR1_H_

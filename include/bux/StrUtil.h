@@ -1,5 +1,4 @@
-#ifndef bux_StrUtil_H_
-#define bux_StrUtil_H_
+#pragma once
 
 #include <string>       // std::string
 
@@ -12,5 +11,3 @@ const char *ord_suffix(size_t i);
 std::string expand_env(const char *s);
 
 } // namespace bux
-
-#endif  // bux_StrUtil_H_

@@ -1,5 +1,4 @@
-#ifndef bux_LogLevel_H_
-#define bux_LogLevel_H_
+#pragma once
 
 namespace bux {
 
@@ -22,5 +21,3 @@ using bux::LL_ERROR;
 using bux::LL_WARNING;
 using bux::LL_INFO;
 using bux::LL_VERBOSE;
-
-#endif // bux_LogLevel_H_

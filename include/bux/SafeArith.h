@@ -1,5 +1,4 @@
-#ifndef bux_SafeArith_H_
-#define bux_SafeArith_H_
+#pragma once
 
 #include <limits>       // std::numeric_limits<>
 
@@ -97,6 +96,3 @@ struct C_CmpRet<FLAG_integer,false,FLAG_overflow,T>
 } // namespace Helper_
 
 } //namespace bux
-
-#endif // bux_SafeArith_H_
-

@@ -1,5 +1,4 @@
-#ifndef bux_ParaUtil_H_
-#define bux_ParaUtil_H_
+#pragma once
 
 #include <iterator>     // std::iterator<>, std::random_access_iterator_tag
 #include <type_traits>  // std::make_signed_t<>
@@ -32,5 +31,3 @@ private:
 };
 
 } //namespace bux
-
-#endif // bux_ParaUtil_H_

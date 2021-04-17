@@ -1,5 +1,4 @@
-#ifndef bux_LogStream_H_
-#define bux_LogStream_H_
+#pragma once
 
 #include <iosfwd>       // fwrd decl std::ostream
 #include <string>       // std::string
@@ -28,5 +27,3 @@ using bux::timestamp;
 */
 #define HRTN(t) bux::_HRTN(typeid(t).name())
 using bux::OXCPT;
-
-#endif // bux_LogStream_H_

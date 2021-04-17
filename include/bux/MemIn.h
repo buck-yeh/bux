@@ -1,5 +1,4 @@
-#ifndef bux_MemIn_H_
-#define bux_MemIn_H_
+#pragma once
 
 #include <istream>      // std::basic_istream<>
 #include <string_view>  // std::basic_string_view<>
@@ -52,5 +51,3 @@ public:
 using C_IMemStream = C_IMemStreamT<char>;
 
 } // namespace bux
-
-#endif  // bux_MemIn_H_

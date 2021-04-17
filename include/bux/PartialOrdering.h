@@ -1,5 +1,4 @@
-#ifndef bux_PartialOrdering_H_
-#define bux_PartialOrdering_H_
+#pragma once
 
 #include <concepts>     // std::constructible_from<>, std::equality_comparable<>, std::invocable<>
 #include <list>         // std::list<>
@@ -309,5 +308,3 @@ bool C_PartialOrdering<T>::related(const T &a, const T &b) const
 }
 
 } // namespace bux
-
-#endif // bux_PartialOrdering_H_

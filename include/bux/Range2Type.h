@@ -1,5 +1,4 @@
-#ifndef bux_Range2Type_H_
-#define bux_Range2Type_H_
+#pragma once
 
 #include <limits>       // std::numeric_limits<>
 #include <string>       // std::string
@@ -162,5 +161,3 @@ inline std::string fittestType(T lb, T ub)
 }
 
 } //namespace bux
-
-#endif // bux_Range2Type_H_

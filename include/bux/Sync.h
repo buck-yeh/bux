@@ -1,5 +1,4 @@
-#ifndef bux_Sync_H_
-#define bux_Sync_H_
+#pragma once
 
 #include <iosfwd>   // Forwarded std::ostream
 
@@ -186,5 +185,3 @@ C_RefTillEnd<T>::operator T*() const
 }
 
 } //namespace bux
-
-#endif  // bux_Sync_H_

@@ -1,5 +1,4 @@
-#ifndef bux_LR1_H_
-#define bux_LR1_H_
+#pragma once
 
 #include "ParserBase.h" // bux::T_StateID, bux::F_GetProducedT<>, LexBase.h
 #include "XAutoPtr.h"   // bux::C_AutoNode<>
@@ -149,5 +148,3 @@ struct C_NewLex: C_NewNode<C_LexDataT<T_Data>>
 
 } // namespace LR1
 } // namespace bux
-
-#endif // bux_LR1_H_

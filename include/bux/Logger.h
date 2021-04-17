@@ -1,5 +1,4 @@
-#ifndef bux_Logger_H_
-#define bux_Logger_H_
+#pragma once
 
 #include "LogLevel.h"       // bux::E_LogLevel
 #include "SyncStream.h"     // bux::C_UseTraceLog
@@ -96,5 +95,3 @@ I_SyncOstream &logger();    // provided by user of LOG(), FUNLOG(), SCOPELOG()
 
 #define FUNLOG SCOPELOG(CUR_FUNC_)
 #define FUNLOGX(fmtStr, ...) SCOPELOGX(CUR_FUNC_,fmtStr, ##__VA_ARGS__)
-
-#endif // bux_Logger_H_

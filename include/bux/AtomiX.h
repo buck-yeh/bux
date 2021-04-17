@@ -1,5 +1,4 @@
-#ifndef bux_AtomiX_h_
-#define bux_AtomiX_h_
+#pragma once
 
 #include <atomic>   // std::atomic_flag
 #include <concepts> // std::constructible_from<>, std::invocable<>
@@ -74,5 +73,3 @@ private:
 };
 
 } // namespace bux
-
-#endif // bux_AtomiX_h_

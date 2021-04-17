@@ -1,5 +1,4 @@
-#ifndef bux_XConsole_H_
-#define bux_XConsole_H_
+#pragma once
 
 #include <string_view>  // std::string_view
 
@@ -13,5 +12,3 @@ void pressAKey();
 bool testWritability(const char *file);
 
 } // namespace bux
-
-#endif // bux_XConsole_H_

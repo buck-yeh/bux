@@ -1,5 +1,4 @@
-#ifndef bux_SyncStream_H_
-#define bux_SyncStream_H_
+#pragma once
 
 #include "Sync.h"       // bux::I_SyncOstream
 #include <mutex>        // std::recursive_mutex
@@ -80,5 +79,3 @@ struct C_UseTraceLog: C_UseOstream
 };
 
 } // namespace bux
-
-#endif // bux_SyncStream_H_

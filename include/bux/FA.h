@@ -1,5 +1,4 @@
-#ifndef bux_FA_H_
-#define bux_FA_H_
+#pragma once
 
 //  FA stands for Finite Automoton
 
@@ -765,5 +764,3 @@ int C_DFA<T_Inputs,T_Action,C_Traits>::nfa2dfa(const C_NFA<T_Inputs,T_Action,C_T
 }
 
 } // namespace bux
-
-#endif // bux_FA_H_

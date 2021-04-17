@@ -1,5 +1,4 @@
-#ifndef bux_Intervals_H_
-#define bux_Intervals_H_
+#pragma once
 
 #include "XException.h" // RUNTIME_ERROR()
 #include <concepts>     // std::integral<>
@@ -300,5 +299,3 @@ void C_Intervals<T>::complement()
 }
 
 } // namespace bux
-
-#endif // bux_Intervals_H_

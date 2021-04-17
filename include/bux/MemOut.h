@@ -1,5 +1,4 @@
-#ifndef bux_MemOut_H_
-#define bux_MemOut_H_
+#pragma once
 
 #include <ostream>      // std::basic_ostream<>
 #include <span>         // std::span<>
@@ -46,5 +45,3 @@ public:
 using C_OMemStream = C_OMemStreamT<char>;
 
 } // namespace bux
-
-#endif  // bux_MemOut_H_

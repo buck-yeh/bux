@@ -1,5 +1,4 @@
-#ifndef bux_UnicodeCvt_H_
-#define bux_UnicodeCvt_H_
+#pragma once
 
 #include "XQue.h"       // bux::C_Queue<>
 #include <cstdint>      // std::uint8_t, std::uint16_t, std::uint32_t
@@ -191,5 +190,3 @@ std::wstring BOM(const std::wstring_view &ws);
 using bux::T_Utf32;
 using bux::T_Utf16;
 using bux::T_Utf8;
-
-#endif // bux_UnicodeCvt_H_

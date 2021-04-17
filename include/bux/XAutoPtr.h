@@ -1,5 +1,4 @@
-#ifndef bux_XAutoPtr_H_
-#define bux_XAutoPtr_H_
+#pragma once
 
 #include <new>          // placement new
 #include <utility>      // std::forward<>
@@ -135,5 +134,3 @@ bool C_AutoNode<T>::takeOver(C_AutoNode<T2> &another)
 }
 
 } // namespace bux
-
-#endif // bux_XAutoPtr_H_

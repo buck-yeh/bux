@@ -1,5 +1,4 @@
-#ifndef bux_ScannerBase_H_
-#define bux_ScannerBase_H_
+#pragma once
 
 #include "LexBase.h"    // bux::T_LexID, bux::I_LexAttr, bux::C_IntegerLex, bux::TID_EOF
 #include "UnicodeCvt.h" // bux::C_UnicodeIn
@@ -180,5 +179,3 @@ void scanFile(std::string_view filename, std::istream &in, I_Scanner<T_Char> &sc
 }
 
 } //namespace bux
-
-#endif  // bux_ScannerBase_H_

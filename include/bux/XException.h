@@ -1,5 +1,4 @@
-#ifndef bux_XException_H_
-#define bux_XException_H_
+#pragma once
 
 #include "XPlatform.h"  // CUR_FUNC_
 #include <stdexcept>    // std::runtime_error, std::logic_error
@@ -29,5 +28,3 @@ void catchSE(bool useOldHookFirst =true);
     ///< \brief Wrap __FILE__(__DATE__)\#__LINE__ __FUNCTION__: msg into std::logic_error
 #define RUNTIME_ERROR(fmtStr,...) THROW_AS(std::runtime_error, fmtStr, ##__VA_ARGS__)
     ///< \brief Wrap __FILE__(__DATE__)\#__LINE__ __FUNCTION__: msg into std::runtime_error
-
-#endif // bux_XException_H_
