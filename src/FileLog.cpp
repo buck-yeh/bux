@@ -1,6 +1,4 @@
 #include "FileLog.h"
-#include "XException.h" // RUNTIME_ERROR()
-#include <filesystem>   // std::filesystem::*
 
 namespace fs = std::filesystem;
 
@@ -9,31 +7,7 @@ namespace bux {
 //
 //      Class Implementation
 //
-C_FileLog::C_FileLog(const std::string &_pathFmt): m_Lock(m_Out)
-/*! \param [in] _pathFmt \ref InprocSyncReportPathFormat "Path formatting string".
-     The default string "\%Y\%m\%d.log" is for daily report.
-
-    What this constructor does is simply call configPath(_pathFmt) and
-    enableAutoMkDir(true).
-
-    Example:
-    \code
-    //
-    // Programming IVR global log files
-    //
-
-    C_FileLog   BillingLog(".\\billinglog\\%Y%m%d.bil");            // daily
-    C_FileLog   RatingLog(".\\billinglog\\%Y%m\\%d_outbound.log");  // daily
-    C_FileLog   ErrorLog(".\\log\\%Y%m%p_err.log");     // half-daily
-    C_FileLog   DbLog(".\\log\\%Y%m%d%H_db.log");       // hourly
-    C_FileLog   ActivityLog(".\\log\\%Y%mcall.log");    // monthly
-    \endcode
-*/
-{
-    configPath(_pathFmt);
-}
-
-void C_FileLog::configPath(const std::string &_pathFmt)
+void C_PathFmtLogSnap::configPath(const std::string &_pathFmt)
 /*! \anchor InprocSyncReportPathFormat
     \param [in] _pathFmt The third argument of ANSI C time function strftime(),
      see MSDN Library for help. Everytime when virtual method getResource() gets
@@ -150,7 +124,7 @@ void C_FileLog::configPath(const std::string &_pathFmt)
     </table>
     \endhtmlonly
 
-    Example: see \ref C_FileLog::C_FileLog "construct".
+    Example: see \ref C_PathFmtLogSnap::C_PathFmtLogSnap "construct".
 
     \pre _pathFmt is not empty.
 */
@@ -158,11 +132,13 @@ void C_FileLog::configPath(const std::string &_pathFmt)
     if (_pathFmt.empty())
         RUNTIME_ERROR("Null path format");
 
-    std::scoped_lock _(m_Lock.m_LockOut);
-    m_PathFmt = fs::absolute(_pathFmt).string();
+    m_PathFmts.clear();
+    m_PathFmts.emplace_back(fs::absolute(_pathFmt).string());
+    m_FileSizeLimit =
+    m_CurPathFmt    = 0;
 }
 
-void C_FileLog::enableAutoMkDir(bool yes)
+void C_PathFmtLogSnap::enableAutoMkDir(bool yes)
 /*! \param [in] yes Whether or not to create subdirectory for the openning log path.
      The default is true.
 
@@ -176,64 +152,93 @@ void C_FileLog::enableAutoMkDir(bool yes)
     m_AutoMkDir = yes;
 }
 
-std::ostream &C_FileLog::getResource()
+void C_PathFmtLogSnap::setBinaryMode(bool enabled)
 {
-    std::ostream &ret = m_Lock.getResource();
-    if (&ret == &m_Out)
-    {
-        std::string         s;
-        const auto          t = C_MyClock::now();
-        if (t != m_OldTime)
-        {
-            m_OldTime = t;
-            const auto ct = time_t(std::chrono::duration_cast<std::chrono::seconds>(t.time_since_epoch()).count());
-            auto bytes = m_PathFmt.size() * 2;
-            const auto buf = std::make_unique<char[]>(bytes);
-            bytes = strftime(buf.get(), bytes, m_PathFmt.c_str(), localtime(&ct));
-            s.assign(buf.get(), bytes);
-        }
-        if (!s.empty() && m_CurrPath != s)
-            // Different paths -- Repoen it
-        {
-            if (m_AutoMkDir)
-                (void)create_directories(fs::path(s).parent_path());
-
-            m_Out.clear();
-            if (m_CurrPath.empty())
-                // First open
-                m_Out.open(s, m_OpenMode|std::ios::ate|std::ios::in);
-            else
-                // Close the opened file
-                m_Out.close();
-
-            if (!m_Out.is_open())
-                // Mostly serve for the latter case
-            {
-                m_Out.clear();
-                m_Out.open(s, m_OpenMode);
-            }
-            if (!m_Out.is_open())
-                RUNTIME_ERROR(s);
-
-            m_CurrPath = s;
-        }
-    }
-    return ret;
-}
-
-void C_FileLog::releaseResource(std::ostream &out)
-{
-    m_Lock.releaseResource(out);
-}
-
-void C_FileLog::setBinaryMode(bool enabled)
-{
-    std::scoped_lock _(m_Lock.m_LockOut);
-    m_OpenMode =std::ios_base::out;
+    m_OpenMode = std::ios_base::out;
     if (enabled)
-        m_OpenMode |=std::ios_base::binary;
+        m_OpenMode |= std::ios_base::binary;
 
     m_CurrPath.clear(); // trigger reopen
+}
+
+std::ostream *C_PathFmtLogSnap::snap()
+{
+    const auto      t = C_MyClock::now();
+    const auto      get_new_path = [=,this](auto indFmt) {
+        const auto ct = time_t(std::chrono::duration_cast<std::chrono::seconds>(t.time_since_epoch()).count());
+        const auto &pathFmt = m_PathFmts.at(indFmt);
+        auto bytes = pathFmt.size() * 2;
+        const auto buf = std::make_unique<char[]>(bytes);
+        bytes = strftime(buf.get(), bytes, pathFmt.c_str(), localtime(&ct));
+        return std::string{buf.get(), bytes};
+    };
+    std::string nextPath;
+    if (t != m_OldTime)
+    {
+        m_OldTime = t;
+        nextPath = get_new_path(m_CurPathFmt);
+    }
+OpenNewFile:
+    if (nextPath.empty())
+        return nullptr;
+
+    if (m_CurrPath != nextPath)
+        // Different paths -- Repoen it
+    {
+        if (m_CurrPath.empty())
+            // First time
+        {
+            if (m_FileSizeLimit)
+                while (m_CurPathFmt + 1 < m_PathFmts.size() &&
+                       fs::is_regular_file(nextPath) &&
+                       fs::file_size(nextPath) >= m_FileSizeLimit)
+                    nextPath = get_new_path(++m_CurPathFmt);
+        }
+        else
+            // Find the lowest fallback
+            while (m_CurPathFmt)
+            {
+                auto s2 = get_new_path(m_CurPathFmt - 1);
+                if (fs::exists(s2))
+                    break;
+
+                --m_CurPathFmt;
+                nextPath = std::move(s2);
+            }
+
+        // At this stage, nextPath is finalized as the new log path for sure
+        if (m_AutoMkDir)
+            (void)create_directories(fs::path(nextPath).parent_path());
+
+        m_Out.clear();
+        if (m_CurrPath.empty())
+            // First open
+            m_Out.open(nextPath, m_OpenMode|std::ios::ate|std::ios::in);
+        else
+            // Close the opened file
+            m_Out.close();
+
+        if (!m_Out.is_open())
+            // Mostly serve for the latter case
+        {
+            m_Out.clear();
+            m_Out.open(nextPath, m_OpenMode);
+        }
+        if (!m_Out.is_open())
+            RUNTIME_ERROR("{}", nextPath);
+
+        m_CurrPath = nextPath;
+    }
+    else if (
+        m_FileSizeLimit &&
+        m_CurPathFmt + 1 < m_PathFmts.size() &&
+        m_Out.tellp() >= std::streamoff(m_FileSizeLimit))
+        // Size limit is reached and we can fallback to use the next path format
+    {
+        nextPath = get_new_path(++m_CurPathFmt);
+        goto OpenNewFile;
+    }
+    return &m_Out;
 }
 
 } // namespace bux

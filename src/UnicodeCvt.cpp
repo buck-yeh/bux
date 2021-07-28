@@ -1,7 +1,8 @@
 #include "UnicodeCvt.h"
 #include "XException.h"     // RUNTIME_ERROR()
+#include <fmt/format.h>     // fmt::format()
 #include <cstring>          // memcmp()
-#include <iomanip>          // std::setw(), std::setfill()
+#include <istream>          // std::istream
 
 #ifdef _WIN32
 #include <cstdlib>          // swab()
@@ -21,7 +22,7 @@ class FC_ReadMem
 public:
 
     // Nonvirtuals
-    FC_ReadMem(const char *src, const char *end) noexcept: m_Src(src), m_End(end) {}
+    FC_ReadMem(std::string_view sv) noexcept: m_Src(sv.data()), m_End(sv.data()+sv.size()) {}
     std::optional<char> operator()() noexcept
     {
         if (m_Src < m_End)
@@ -197,7 +198,7 @@ C_UnicodeIn::C_UnicodeIn(FH_ReadChar &&readc, T_Encoding codepage):
 }
 
 C_UnicodeIn::C_UnicodeIn(std::string_view sv, T_Encoding codepage):
-    C_UnicodeIn(FC_ReadMem(sv.begin(),sv.end()), codepage)
+    C_UnicodeIn(FC_ReadMem(sv), codepage)
 {
 }
 
@@ -281,7 +282,7 @@ void C_UnicodeIn::ingestMBCS()
         const auto utf16 = std::make_unique<wchar_t[]>(size);
         if (int wn = MultiByteToWideChar(m_CodePage, MB_ERR_INVALID_CHARS, m_Src.buffer(), int(size), utf16.get(), int(size)))
         {
-            FC_ReadMem      read(reinterpret_cast<char*>(utf16.get()), size_t(wn*2));
+            FC_ReadMem      read({reinterpret_cast<char*>(utf16.get()), size_t(wn*2)});
             C_Source        src(std::move(read));
             while (readUTF16(src, false));
             m_Src.pop(size);
@@ -738,11 +739,7 @@ const std::string &C_MBCStr::escJSON() const
         else if (isprint(c))
             dst += c;
         else
-        {
-            std::ostringstream out;
-            out <<std::setfill('0') <<std::setw(4) <<int{static_cast<unsigned char>(c)};
-            dst.append("\\u") += out.str();
-        }
+            dst.append("\\u") += fmt::format("{:04}", int{static_cast<unsigned char>(c)});
     });
 }
 

@@ -9,3 +9,17 @@ test_atomix
 test_expand_env
 test_PO
 hrtn
+obsolete
+.geany
+.vs
+.ninja_*
+build.ninja
+*.exe
+*.exe.*
+*.lib
+VSInheritEnvironments.txt
+test/smoke_*
+!test/smoke_*.cpp
+test/test_*
+!test/test_*.cpp
+CMakeSettings.json

@@ -7,7 +7,7 @@ namespace {
 //
 //      In-Module Globals
 //
-thread_local size_t g_EntryLevel =0;
+thread_local size_t g_EntryLevel = 0;
 
 } // namespace
 
@@ -16,9 +16,7 @@ namespace bux {
 //
 //      Globals
 //
-E_LogLevel g_LogLevel = LL_VERBOSE;  // default for now
-
-I_SyncOstream &logger()
+I_SyncLog &logger()
 {
     auto        &ret = user::logger();
     static bool first = true;
@@ -28,27 +26,21 @@ I_SyncOstream &logger()
         C_SpinLock  _(lock);
         if (first)
         {
-            C_UseOstream(ret) <<std::boolalpha <<
+            if (C_UseLog u{ret})
+            {
+                first = false;
+                *u <<std::boolalpha <<
 #ifndef _WIN32
-                "********** LOGS BEGUN **********\n";
+                    "********** LOGS BEGUN **********\n";
 #elif defined(_DEBUG)
-                "********** LOGS BEGUN ********** (Debug)\n";
+                    "********** LOGS BEGUN ********** (Debug)\n";
 #else
-                "********** LOGS BEGUN ********** (Release)\n";
+                    "********** LOGS BEGUN ********** (Release)\n";
 #endif
-            first = false;
+            }
         }
     }
     return ret;
-}
-
-bool shouldLog(E_LogLevel level)
-/*! \param [in] level Tagged level to subsequent log data
-    \retval true if log data of the specified \em level SHOULD be written to bux::logger()
-    \retval false if it SHOULD NOT
-*/
-{
-    return level <= g_LogLevel;
 }
 
 //
@@ -57,10 +49,10 @@ bool shouldLog(E_LogLevel level)
 C_EntryLog::C_EntryLog(std::string_view scopeName)
 {
     deeper();
-    if (bux::shouldLog(LL_VERBOSE))
+    if (C_UseLogger u{LL_VERBOSE})
     {
         m_Id = getId();
-        fmt::print(C_UseLogger(LL_VERBOSE).stream(), "@{}@{} {{\n", *m_Id, scopeName);
+        *u <<fmt::format("@{}@{} {{\n", *m_Id, scopeName);
     }
 }
 
@@ -68,10 +60,10 @@ C_EntryLog::~C_EntryLog()
 {
     if (m_Id)
     {
-        fmt::print(C_UseLogger(LL_VERBOSE).stream(), "@{}{}", *m_Id,
+        *C_UseLogger(LL_VERBOSE) <<fmt::format("@{}{}", *m_Id,
             []{
                 if (auto n = std::uncaught_exceptions())
-                    return "@} due to "+std::to_string(n)+" uncaught exceptions\n";
+                    return fmt::format("@}} due to {} uncaught exceptions\n", n);
 
                 return std::string{"@}\n"};
             }());
@@ -90,9 +82,10 @@ int C_EntryLog::getId()
     return id++;
 }
 
-C_UseLogger::C_UseLogger(E_LogLevel level): C_UseTraceLog(logger())
+C_UseLogger::C_UseLogger(E_LogLevel level): C_UseTraceLog(logger(), level)
 {
-    fmt::print(m_Resource, "{}:{}", "FEWIV"[level], std::string(g_EntryLevel,'|'));
+    if (auto pout = stream())
+        *pout <<fmt::format("{}:{}", "FEWIV"[level], std::string(g_EntryLevel,'|'));
 }
 
 } // namespace bux

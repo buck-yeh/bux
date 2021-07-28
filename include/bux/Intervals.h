@@ -39,11 +39,13 @@ public:
     }
     template<std::input_iterator I>
     C_Intervals(I start, I end) requires
-        std::same_as<value_type, std::remove_cvref_t<decltype(*start)>> || (
-            (!std::same_as<char,std::remove_cvref_t<decltype(*start)>>) &&
+        std::same_as<value_type, std::remove_cvref_t<decltype(*start)>> ||
+        (
+            !std::same_as<char,std::remove_cvref_t<decltype(*start)>> &&
             std::integral<std::remove_cvref_t<decltype(*start)>> &&
             std::cmp_less_equal(std::numeric_limits<T>::min(), std::numeric_limits<std::remove_cvref_t<decltype(*start)>>::min()) &&
-            std::cmp_less_equal(std::numeric_limits<std::remove_cvref_t<decltype(*start)>>::max(), std::numeric_limits<T>::max()) )
+            std::cmp_less_equal(std::numeric_limits<std::remove_cvref_t<decltype(*start)>>::max(), std::numeric_limits<T>::max())
+        )
     {
         while (start != end)
             operator|=(*start++);

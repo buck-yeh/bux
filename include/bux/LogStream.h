@@ -10,11 +10,10 @@ namespace bux {
 //
 //      Externals
 //
-extern std::ostream &timestamp(std::ostream &);
+std::ostream &timestamp(std::ostream &); // manipulator
+std::ostream &logTrace(std::ostream &);  // manipulator
 
 std::string _HRTN(const char *originalName);
-std::ostream &logTrace(std::ostream &);
-
 std::string OXCPT(const std::exception &e);
 
 } // namespace bux

@@ -1,5 +1,5 @@
 /*
-    Test cases are organized by ZOMBIES rules
+    Test cases are organized according to ZOMBIES rules
     http://blog.wingman-sw.com/tdd-guided-by-zombies
 */
 #include "bux/AtomiX.h"

@@ -7,11 +7,11 @@ namespace bux {
 //
 enum E_LogLevel
 {
-    LL_FATAL,
-    LL_ERROR,
-    LL_WARNING,
-    LL_INFO,
-    LL_VERBOSE
+    LL_FATAL,   ///< Error serious enough that the program should shut down immediately after reporting this.
+    LL_ERROR,   ///< Error not serious enough that the program can continue to run.
+    LL_WARNING, ///< Situation that should be warned but should not have sabotaged anything already.
+    LL_INFO,    ///< Information worth mentioning about the current status, be it normal or abnormal.
+    LL_VERBOSE  ///< More detailed or advanced information probably considered too much by some.
 };
 
 } // namespace bux

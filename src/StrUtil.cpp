@@ -1,3 +1,6 @@
+#ifdef _WIN32
+    #include <windows.h>    // to evade "No Target Architecture" error
+#endif
 #include "StrUtil.h"
 #include "XException.h"     // RUNTIME_ERROR()
 #ifdef _WIN32
@@ -30,7 +33,7 @@ const char *ord_suffix(size_t i)
 std::string expand_env(const char *s)
 {
 #ifdef _WIN32
-    const char buf[2048];
+    char buf[2048];
     if (const auto n = ExpandEnvironmentStringsA(s, buf, sizeof buf))
         return {buf, n};
 #elif defined(__unix__) || defined(__unix) || defined(__gnu_linux__)

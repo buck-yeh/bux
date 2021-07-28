@@ -1,6 +1,6 @@
 - Supplemental static library of whatever is seen required in sense of general purpose but is not directly supported from [Modern C++](https://www.modernescpp.com/index.php/what-is-modern-c). Or whatever is deemed reusable from my side projects. 
 
-- The library is [\<sstream\>](https://en.cppreference.com/w/cpp/header/sstream)-free and uses [fmt library](https://github.com/fmtlib/fmt) heavily as long as [C++20 \<format\>](https://en.cppreference.com/w/cpp/utility/format) is not there yet.
+- The library uses [fmt library](https://github.com/fmtlib/fmt) heavily as long as [C++20 \<format\>](https://en.cppreference.com/w/cpp/utility/format) is not there yet.
 
 - 💡 There is also Doxygen-generated API reference [here](https://buck-yeh.github.io/bux/html/index.html) but Doxygen has been known for being insensitive to Modern C++ for so many years. Keywords like **concept**, any of attributes, ... etc can be misinterpreted or simply dropped. Viewer's discretion is advised.
 
@@ -91,6 +91,8 @@
 * [FileLog.h](include/bux/FileLog.h) - Thread-safe file log which can be configured to automatically change the output path, *iow* to output to different files,  according to the current timestamp.
 * [Logger.h](include/bux/Logger.h) - Routines for various logger singletons.
 * [LogLevel.h](include/bux/LogLevel.h) - LL_FATAL, LL_ERROR, LL_WARNING, LL_INFO, LL_VERBOSE
+* [ParaLog.h](include/bux/ParaLog.h) - Logger facade to reroute log contents to child loggers 
+* [SyncLog.h](include/bux/SyncLog.h) - Basic classes to give variety of loggers.
 
 ## Parser/scanner related
 * [FA.h](include/bux/FA.h) - Supports to finite automaton, *aka* finite state machine, *aka* regular expression, emphasizing on minimizing [NFA](https://en.wikipedia.org/wiki/Nondeterministic_finite_automaton) into [DFA](https://en.wikipedia.org/wiki/Deterministic_finite_automaton).
@@ -111,8 +113,6 @@
 
 ## Thread Safety
 * [AtomiX.h](include/bux/AtomiX.h) - Spin lock on [`std::atomic_flag`](https://en.cppreference.com/w/cpp/atomic/atomic_flag) & a mapping cache type using it.
-* [Sync.h](include/bux/Sync.h) - Bases to develop sync objects.
-* [SyncStream.h](include/bux/SyncStream.h) - Basic supports to synchronize `std::ostream`
 
 ## Misc.
 * [ParaUtil.h](include/bux/ParaUtil.h) - Iterator type for sheer numbers, expected to be used when calling parallel algorithms, *e.g.* `std::for_each(std::execution::par, ...)` without data allocation.

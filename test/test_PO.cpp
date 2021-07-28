@@ -1,5 +1,5 @@
 /*
-    Test cases are organized by ZOMBIES rules
+    Test cases are organized according to ZOMBIES rules
     http://blog.wingman-sw.com/tdd-guided-by-zombies
 */
 #include "bux/PartialOrdering.h"
@@ -16,9 +16,9 @@ TEST_CASE("Empty relation", "[Z]")
     bux::C_PartialOrdering<unsigned char> po;
     REQUIRE(po.empty());
 
-    std::uniform_int_distribution<unsigned char> gen{0,255};
+    std::uniform_int_distribution<unsigned> gen{0,255};
     for (int i = 0; i < 10; ++i)
-        REQUIRE(!po.related(gen(g_rng), gen(g_rng)));
+        REQUIRE(!po.related((unsigned char)gen(g_rng), (unsigned char)gen(g_rng)));
 }
 
 TEST_CASE("One relation", "[O][I]")

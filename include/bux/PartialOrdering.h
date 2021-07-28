@@ -36,17 +36,17 @@ public:
     template<class T2>
     bool anyRight(const T2 &L) const;
     void clear()                        { m_Relation.clear(); }
-    size_t depthToLeft(T t) const;
+    std::size_t depthToLeft(T t) const;
         // Return 0 for the leftmosts.
     bool empty() const { return m_Relation.empty(); }
     template<class T2, class F>
-    void getRelated(T2 L, F R, size_t maxDepth = 0) const requires std::constructible_from<T,T2> && std::invocable<F,T>;
+    void getRelated(T2 L, F R, std::size_t maxDepth = 0) const requires std::constructible_from<T,T2> && std::invocable<F,T>;
     template<class F>
-    void getRelated(C_ValList L, F R, size_t maxDepth = 0) const requires std::invocable<F,T>;
+    void getRelated(C_ValList L, F R, std::size_t maxDepth = 0) const requires std::invocable<F,T>;
     template<class F, class T2>
-    void getRelated(F L, T2 R, size_t maxDepth = 0) const requires std::constructible_from<T,T2> && std::invocable<F,T>;
+    void getRelated(F L, T2 R, std::size_t maxDepth = 0) const requires std::constructible_from<T,T2> && std::invocable<F,T>;
     template<class F>
-    void getRelated(F L, C_ValList R, size_t maxDepth = 0) const requires std::invocable<F,T>;
+    void getRelated(F L, C_ValList R, std::size_t maxDepth = 0) const requires std::invocable<F,T>;
     template<class F>
     void makeLinear(F apply, E_MakeLinearPolicy policy = MLP_BREADTH_FIRST) const requires std::invocable<F,T>;
     bool related(const T &a, const T &b) const;
@@ -98,13 +98,13 @@ bool C_PartialOrdering<T>::addOrder(T1 a, T2 b)
 }
 
 template<std::equality_comparable T>
-size_t C_PartialOrdering<T>::depthToLeft(T t) const
+std::size_t C_PartialOrdering<T>::depthToLeft(T t) const
 {
-    size_t ret =0;
+    std::size_t ret =0;
     for (auto &i: m_Relation)
         if (t == i.second)
         {
-            const size_t cur = depthToLeft(i.first) +1;
+            const std::size_t cur = depthToLeft(i.first) +1;
             if (cur > ret)
                 ret = cur;
         }
@@ -145,25 +145,25 @@ bool C_PartialOrdering<T>::anyRight(const T2 &L) const
 
 template<std::equality_comparable T>
 template<class T2, class F>
-void C_PartialOrdering<T>::getRelated(T2 L, F R, size_t maxDepth) const requires std::constructible_from<T,T2> && std::invocable<F,T>
+void C_PartialOrdering<T>::getRelated(T2 L, F R, std::size_t maxDepth) const requires std::constructible_from<T,T2> && std::invocable<F,T>
 {
     getRelated({1, std::forward<T2>(L)}, R, maxDepth);
 }
 
 template<std::equality_comparable T>
 template<class F, class T2>
-void C_PartialOrdering<T>::getRelated(F L, T2 R, size_t maxDepth) const requires std::constructible_from<T,T2> && std::invocable<F,T>
+void C_PartialOrdering<T>::getRelated(F L, T2 R, std::size_t maxDepth) const requires std::constructible_from<T,T2> && std::invocable<F,T>
 {
     getRelated(L, {1, std::forward<T2>(R)}, maxDepth);
 }
 
 template<std::equality_comparable T>
 template<class F>
-void C_PartialOrdering<T>::getRelated(C_ValList L, F R, size_t maxDepth) const requires std::invocable<F,T>
+void C_PartialOrdering<T>::getRelated(C_ValList L, F R, std::size_t maxDepth) const requires std::invocable<F,T>
 {
-    size_t oldSize = 0;
+    std::size_t oldSize = 0;
     C_ValList dst;
-    for (size_t depth = 0; !maxDepth || depth < maxDepth; ++depth)
+    for (std::size_t depth = 0; !maxDepth || depth < maxDepth; ++depth)
     {
         for (auto &i: m_Relation)
             for (auto &j: L)
@@ -184,11 +184,11 @@ void C_PartialOrdering<T>::getRelated(C_ValList L, F R, size_t maxDepth) const r
 
 template<std::equality_comparable T>
 template<class F>
-void C_PartialOrdering<T>::getRelated(F L, C_ValList R, size_t maxDepth) const requires std::invocable<F,T>
+void C_PartialOrdering<T>::getRelated(F L, C_ValList R, std::size_t maxDepth) const requires std::invocable<F,T>
 {
-    size_t oldSize = 0;
+    std::size_t oldSize = 0;
     C_ValList dst;
-    for (size_t depth = 0; !maxDepth || depth < maxDepth; ++depth)
+    for (std::size_t depth = 0; !maxDepth || depth < maxDepth; ++depth)
     {
         for (auto &i: m_Relation)
             for (auto &j: R)

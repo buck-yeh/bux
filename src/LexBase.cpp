@@ -3,6 +3,7 @@
 #include <cctype>       // isprint()
 #include <cstring>      // strchr()
 #include <charconv>     // std::to_chars()
+#include <ios>          // std::make_error_code()
 
 namespace {
 

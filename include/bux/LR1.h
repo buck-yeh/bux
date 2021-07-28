@@ -93,13 +93,8 @@ private:
     struct C_StateLR1: C_LexInfo
     {
         // Data
-        T_StateID           m_StateID;
-        T_LexID             m_TokenID;
-
-        // Nonvirtuals
-        C_StateLR1() = default;
-        C_StateLR1(C_StateLR1 &another);
-        void operator=(C_StateLR1 &another);
+        T_StateID           m_StateID{};
+        T_LexID             m_TokenID{};
     };
     typedef C_ResourceStack<C_StateLR1> C_StateStackLR1;
 
@@ -139,7 +134,7 @@ struct C_NewLex: C_NewNode<C_LexDataT<T_Data>>
         if (!i)
             this->assign(new C_LexDataT<T_Data>, true);
         else if (!this->takeOver(i.m_attr))
-            RUNTIME_ERROR(typeid(*i).name());
+            RUNTIME_ERROR("{}", typeid(*i).name());
     }
     template<class...T_Args>
     explicit C_NewLex(T_Args&&...args):
