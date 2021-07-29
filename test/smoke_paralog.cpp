@@ -10,7 +10,7 @@
 #ifdef _WIN32
 #include <conio.h>          // _kbhit(), _getch()
 #else
-#include <ncurses.h>        // getch(), ...
+#include <curses.h>         // getch(), ...
 #endif
 
 thread_local std::mt19937 g_rng{std::random_device{"/dev/urandom"}()};
@@ -41,10 +41,8 @@ int main()
     for (int i = 0; i < 20; ++i)
         loops.emplace_back([]{
             while (!g_stop)
-            { 
-                const auto i = std::uniform_int_distribution<size_t>{0,std::size(LOG_SRC)-1}(g_rng);
-                const auto &src = LOG_SRC[i];
-
+            {
+                const auto &src = LOG_SRC[std::uniform_int_distribution<size_t>{0,std::size(LOG_SRC)-1}(g_rng)];
                 const auto sleep_ms = std::uniform_int_distribution<size_t>{0,19}(g_rng);
                 LOG(src.ll, "Hello {} and wait for {}ms", src.msg, sleep_ms);
                 std::this_thread::sleep_for(std::chrono::milliseconds(sleep_ms));
@@ -75,6 +73,9 @@ int main()
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
         }
     }
+#ifndef _WIN32
+    endwin();
+#endif
 
     for (auto &i: loops)
         i.join();

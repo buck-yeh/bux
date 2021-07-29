@@ -739,7 +739,7 @@ const std::string &C_MBCStr::escJSON() const
         else if (isprint(c))
             dst += c;
         else
-            dst.append("\\u") += fmt::format("{:04}", int{static_cast<unsigned char>(c)});
+            dst += fmt::format("\\u{:04}", int{static_cast<unsigned char>(c)});
     });
 }
 

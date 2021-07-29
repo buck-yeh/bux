@@ -45,7 +45,7 @@ target_include_directories(smoke_paralog PRIVATE ../include)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 target_link_libraries(smoke_paralog PRIVATE bux fmt::fmt)
 else()
-target_link_libraries(smoke_paralog PRIVATE bux fmt stdc++)
+target_link_libraries(smoke_paralog PRIVATE bux fmt stdc++ pthread curses)
 endif()
 
 add_executable(test_expand_env test_expand_env.cpp)

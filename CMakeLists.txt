@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 3.18)
 cmake_policy(VERSION 3.18)
 project(bux)
 
-set(GNU_LIKE_CXX_FLAGS " -Wall -Wextra -Wshadow -Wconversion -Wno-parentheses -Wno-unknown-pragmas -g3 -Og -std=c++2a")
+set(GNU_LIKE_CXX_FLAGS " -Wall -Wextra -Wshadow -Wconversion -Wno-parentheses -Wno-unknown-pragmas -g3 -Og -std=c++20")
 #string(APPEND CMAKE_CXX_FLAGS " -g3")
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
@@ -23,5 +23,6 @@ find_package(fmt CONFIG REQUIRED)
 add_subdirectory (src)
 
 if(${BUILD_TEST})
+message("Build tests too")
 add_subdirectory (test)
 endif()
