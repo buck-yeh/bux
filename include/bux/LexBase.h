@@ -15,10 +15,12 @@ namespace bux {
 //
 //      Constants
 //
+constinit const uint32_t MIN_TOKEN_ID = 0x70000000;
+// MIN_TOKEN_ID is moved out of the enum scope down below due to
+// warning: arithmetic between different enumeration types is deprecated [-Wdeprecated-enum-enum-conversion]
+
 enum: uint32_t
 {
-    MIN_TOKEN_ID            = 0x70000000,
-
     // Must-have non-lexical symbols
     TID_EOF                 = MIN_TOKEN_ID,
     ROOT_NID,                               // NID for the starting symbol <@>
