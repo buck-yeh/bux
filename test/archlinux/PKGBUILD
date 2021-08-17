@@ -57,6 +57,9 @@ check() {
 
 package() {
 	cd "$pkgname" || return 1
-	cmake --install "$pkgdir/usr"
+	mkdir -p "$pkgdir/usr/lib"
+	mkdir -p "$pkgdir/usr/include/bux"
+	cp src/libbux.a "$pkgdir/usr/lib/"
+	cp include/bux/*.h "$pkgdir/usr/include/bux/"
 	install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 }
