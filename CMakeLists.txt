@@ -26,3 +26,9 @@ if(${BUILD_TEST})
 message("Build tests too")
 add_subdirectory (test)
 endif()
+
+install(TARGETS bux
+        ARCHIVE DESTINATION lib
+        LIBRARY DESTINATION lib
+        RUNTIME DESTINATION bin)
+install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/include/bux DESTINATION include) # in ${CMAKE_INSTALL_PREFIX}/include/bux

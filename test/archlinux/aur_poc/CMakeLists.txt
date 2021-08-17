@@ -35,6 +35,6 @@ target_link_libraries(test_PO PRIVATE bux stdc++ m)
 catch_discover_tests(test_PO)
 
 add_executable(test_atomix test_atomix.cpp)
-target_link_libraries(test_atomix PRIVATE bux stdc++ m)
+target_link_libraries(test_atomix PRIVATE bux stdc++ m tbb)
 catch_discover_tests(test_atomix)
 
