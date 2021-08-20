@@ -38,13 +38,13 @@ PROJECT_NAME           = "bux API Reference"
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = 1.3.0
+PROJECT_NUMBER         = 1.4.1
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
 # quick idea about the purpose of the project. Keep the description short.
 
-PROJECT_BRIEF          = "<sstream>-free static library of whatever is seen required in general purpose but not directly supported from Modern C++. Or whatever reusable originated from my side projects."
+PROJECT_BRIEF          = "Static library of whatever are seen required in general purpose but not directly supported from Modern C++. Or whatever reusable originated from my side projects."
 
 # With the PROJECT_LOGO tag one can specify a logo or an icon that is included
 # in the documentation. The maximum height of the logo should not exceed 55
