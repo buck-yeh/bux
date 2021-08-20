@@ -80,6 +80,7 @@ I_SyncLog &logger();    // provided by user of LOG(), FUNLOG(), SCOPELOG()
 //      End-User Macros
 //
 #define LOG(ll,fmtStr, ...) do if (bux::C_UseLogger u{ll}) *u <<fmt::format(fmtStr, ##__VA_ARGS__) <<'\n'; while(false)
+#define LOG_RAW(fmtStr, ...) do if (bux::C_UseLog u{bux::logger()}) *u <<fmt::format(fmtStr, ##__VA_ARGS__) <<'\n'; while(false)
 #define SCOPELOG(scope) SCOPELOG_(__LINE__,scope)
 #define SCOPELOGX(scope,fmtStr, ...) SCOPELOGX_(__LINE__,scope,fmtStr, ##__VA_ARGS__)
 
