@@ -2,10 +2,11 @@
 #include <iostream>         // std::cerr
 
 //DEF_LOGGER_CERR()
-DEF_LOGGER_CERR(LL_INFO)
+DEF_LOGGER_CERR(LL_VERBOSE)
 
 int main()
 {
+    LOG_RAW("Raw beginning");
     LOG(LL_FATAL,   "Hello fatal");
     FUNLOG;
     LOG(LL_ERROR,   "Hello error");
@@ -13,4 +14,5 @@ int main()
     FUNLOGX("Inner");
     LOG(LL_INFO,    "Hello info");
     LOG(LL_VERBOSE, "Hello verbose");
+    LOG_RAW("Raw ending");
 }
