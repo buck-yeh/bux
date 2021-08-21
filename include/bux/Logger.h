@@ -48,17 +48,17 @@ I_SyncLog &logger();
 template<class T_Fmt, class... T_Args>
 C_EntryLog::C_EntryLog(std::string_view scopeName, T_Fmt &&fmtStr, T_Args&&...args)
 {
-    deeper();
     if (C_UseLogger u{LL_VERBOSE})
     {
         m_Id = getId();
-        const auto fmtfmt = fmt::format("@{}@{}({}) {{{{\n", *m_Id,scopeName, fmtStr);
+        const auto fmtfmt = fmt::format("@{}@{}({}) {{{{\n", *m_Id, scopeName, fmtStr);
 #if defined(FMT_VERSION) && FMT_VERSION >= 80000
         *u << fmt::format(fmt::runtime(fmtfmt), std::forward<T_Args>(args)...);
 #else
         *u << fmt::format(fmtfmt, std::forward<T_Args>(args)...);
 #endif
     }
+    deeper();
 }
 
 namespace user {

@@ -48,16 +48,17 @@ I_SyncLog &logger()
 //
 C_EntryLog::C_EntryLog(std::string_view scopeName)
 {
-    deeper();
     if (C_UseLogger u{LL_VERBOSE})
     {
         m_Id = getId();
         *u <<fmt::format("@{}@{} {{\n", *m_Id, scopeName);
     }
+    deeper();
 }
 
 C_EntryLog::~C_EntryLog()
 {
+    --g_EntryLevel;
     if (m_Id)
     {
         *C_UseLogger(LL_VERBOSE) <<fmt::format("@{}{}", *m_Id,
@@ -68,7 +69,6 @@ C_EntryLog::~C_EntryLog()
                 return std::string{"@}\n"};
             }());
     }
-    --g_EntryLevel;
 }
 
 void C_EntryLog::deeper()
