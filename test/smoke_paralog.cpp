@@ -1,7 +1,6 @@
 #include <bux/FileLog.h>    // bux::C_PathFmtLogSnap
 #include <bux/Logger.h>     // DEF_PARA_LOGGER
 #include <bux/ParaLog.h>    // bux::C_ParaLog
-#include <atomic>           // std::atomic<bool>
 #include <algorithm>        // std::for_each()
 #include <execution>        // std::execution::*
 #include <iostream>         // std::cout, std::cerr
@@ -15,7 +14,7 @@
 
 thread_local std::mt19937 g_rng{std::random_device{"/dev/urandom"}()};
 
-static std::atomic<bool> g_stop;
+static bool g_stop;
 
 static const struct { bux::E_LogLevel ll; const char *msg; } LOG_SRC[] = {
     {LL_FATAL,   "fatal"},

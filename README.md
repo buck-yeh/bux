@@ -80,7 +80,7 @@
 
 ## Input/Output
 * [EZArgs.h](include/bux/EZArgs.h) - Inspired by Python [argparse.ArgumentParser](https://docs.python.org/3/library/argparse.html#argumentparser-objects) with interfaces making sense to Modern C++
-* [LogStream.h](include/bux/LogStream.h) - Marginal utilities for `std::ostream` but frequently used by loggings & exception messages.
+* [LogStream.h](include/bux/LogStream.h) - Marginal utilities for `std::ostream`, used by loggers & exception messages.
 * [MemIn.h](include/bux/MemIn.h) - Drop-in replacement of C++98-deprecated [`std::istrstream`](https://en.cppreference.com/w/cpp/io/istrstream).
 * [MemOut.h](include/bux/MemOut.h) - Drop-in replacement of C++98-deprecated [`std::ostrstream`](https://en.cppreference.com/w/cpp/io/ostrstream). *(Not used recently)*
 * [Serialize.h](include/bux/Serialize.h) - Simple functions to define serialization/deserialization in a symmetric way.
@@ -88,11 +88,11 @@
 * [UnicodeCvt.h](include/bux/UnicodeCvt.h) - Encode text stream to unicodes (`utf8`/`utf16`/`utf32`)
 
 ## Logger
-* [FileLog.h](include/bux/FileLog.h) - Thread-safe file log which can be configured to automatically change the output path, *iow* to output to different files,  according to the current timestamp.
-* [Logger.h](include/bux/Logger.h) - Routines for various logger singletons.
+* [FileLog.h](include/bux/FileLog.h) - Snap object of file log which can be configured to automatically change the output path, *iow* to output to different files, according to the current timestamp. The object is a plugin to [ParaLog.h](include/bux/ParaLog.h) and [SyncLog.h](include/bux/SyncLog.h)
+* [Logger.h](include/bux/Logger.h) - Log macros for various needs with *singleton* `bux::logger()` in mind.
 * [LogLevel.h](include/bux/LogLevel.h) - LL_FATAL, LL_ERROR, LL_WARNING, LL_INFO, LL_VERBOSE
-* [ParaLog.h](include/bux/ParaLog.h) - Logger facade to reroute log contents to child loggers 
-* [SyncLog.h](include/bux/SyncLog.h) - Basic classes to give variety of loggers.
+* [ParaLog.h](include/bux/ParaLog.h) - Logger facade to reroute log lines to child loggers 
+* [SyncLog.h](include/bux/SyncLog.h) - Basic classes to give variety of *thread-safe* loggers.
 
 ## Parser/scanner related
 * [FA.h](include/bux/FA.h) - Supports to finite automaton, *aka* finite state machine, *aka* regular expression, emphasizing on minimizing [NFA](https://en.wikipedia.org/wiki/Nondeterministic_finite_automaton) into [DFA](https://en.wikipedia.org/wiki/Deterministic_finite_automaton).
