@@ -25,9 +25,9 @@ static const struct { bux::E_LogLevel ll; const char *msg; } LOG_SRC[] = {
 };
 
 bux::C_PathFmtLogSnap fmt_snap(2UL<<20, std::initializer_list{
-                                            "logs/%y%m%d-0000.log",
-                                            "logs/%y%m%d-%H00.log",
-                                            "logs/%y%m%d-%H%M.log"});
+                                            "logs/st%Y-%m-%d/%y%m%d.log",
+                                            "logs/st%Y-%m-%d/%y%m%d-%H.log",
+                                            "logs/st%Y-%m-%d/%y%m%d-%H%M.log"});
 DEF_PARA_LOGGER
 
 
