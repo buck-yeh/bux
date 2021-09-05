@@ -19,7 +19,7 @@ namespace bux {
 const char *ord_suffix(size_t i)
 /*! \param in i Ordinal number
     \retval "st" if i == 1
-    \retval "dn" if i == 2
+    \retval "nd" if i == 2
     \retval "rd" if i == 3
     \retval "th" else
 */
