@@ -8,6 +8,8 @@ namespace bux {
 //      Implement Classes
 //
 std::ostream *C_SyncLogger::lockLog()
+/*! Lock the logger without log level, for prefix-less log lines
+*/
 {
     m_lock.lock();
     if (const auto ret = m_impl.useLog()) [[likely]]
@@ -18,6 +20,10 @@ std::ostream *C_SyncLogger::lockLog()
 }
 
 std::ostream *C_SyncLogger::lockLog(E_LogLevel ll)
+/*! \param [in] ll Log level
+
+    Lock the logger with log level, for prefixed log lines
+*/
 {
     m_lock.lock();
     if (const auto ret = m_impl.useLog(ll)) [[likely]]
@@ -28,6 +34,10 @@ std::ostream *C_SyncLogger::lockLog(E_LogLevel ll)
 }
 
 void C_SyncLogger::unlockLog(bool flush)
+/*! \param [in] flush Indicating if the logger should flush upon unlock.
+
+    Unlock the logger, with or without log level.
+*/
 {
     m_impl.unuseLog(flush);
     m_lock.unlock();
@@ -35,6 +45,7 @@ void C_SyncLogger::unlockLog(bool flush)
 
 C_UseTraceLog::C_UseTraceLog(I_SyncLog &obj, E_LogLevel level): C_UseLog(obj, level)
 /*! \param obj Wrpper object representing the real logger.
+    \param [in] level Log level
 */
 {
     if (auto pout = stream())
