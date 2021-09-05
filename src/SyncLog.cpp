@@ -8,7 +8,9 @@ namespace bux {
 //      Implement Classes
 //
 std::ostream *C_SyncLogger::lockLog()
-/*! Lock the logger without log level, for prefix-less log lines
+/*! \return the std::ostream representitive of the locked logger
+
+    Lock the logger without log level, for prefix-less log lines
 */
 {
     m_lock.lock();
@@ -21,6 +23,7 @@ std::ostream *C_SyncLogger::lockLog()
 
 std::ostream *C_SyncLogger::lockLog(E_LogLevel ll)
 /*! \param [in] ll Log level
+    \return the std::ostream representitive of the locked logger
 
     Lock the logger with log level, for prefixed log lines
 */
