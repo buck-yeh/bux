@@ -58,14 +58,18 @@ std::ostream &timestamp(std::ostream &out)
 }
 
 std::ostream &logTrace(std::ostream &out)
-/*! Log timestamp & thread id
+/*! \param out Output stream to add trace(line prefix) to.
+    \return \em out
+
+    Log timestamp & thread id
 */
 {
     return timestamp(out) <<" tid" <<TID_ <<' ';
 }
 
 std::string _HRTN(const char *originalName)
-/*! Human Readable Type Name
+/*! \param in originalNamestream Compiler mangled or expanded type name, depending on which compiler you are using.
+    \return Human readable type name
 */
 {
     std::string ret;
@@ -122,6 +126,9 @@ std::string _HRTN(const char *originalName)
 }
 
 std::string OXCPT(const std::exception &e)
+/*! \param in e Instance of std::exception descent
+    \return Printable form with reason
+*/
 {
     return HRTN(e) + ": " + e.what();
 }

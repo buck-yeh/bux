@@ -17,6 +17,12 @@ namespace bux {
 //      Functions
 //
 const char *ord_suffix(size_t i)
+/*! \param in i Ordinal number
+    \retval "st" if i == 1
+    \retval "dn" if i == 2
+    \retval "rd" if i == 3
+    \retval "th" else
+*/
 {
     switch (i)
     {
@@ -31,6 +37,9 @@ const char *ord_suffix(size_t i)
 }
 
 std::string expand_env(const char *s)
+/*! \param in s Input string containing environment variables.
+    \return Expanded string
+*/
 {
 #ifdef _WIN32
     char buf[2048];
