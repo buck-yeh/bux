@@ -1,7 +1,7 @@
 #pragma once
 
 #include "LogLevel.h"   // E_LogLevel
-#include <concepts>     // std::convertible_to<>
+#include <concepts>     // std::convertible_to<>, std::derived_from<>
 #include <mutex>        // std::recursive_mutex
 #include <ostream>      // std::ostream
 
@@ -39,7 +39,7 @@ struct I_ReenterableLog /// Thread-unsafe implementaion is preferred for perform
             ///< If the previous call to lockLog() returned null, the behavious is undefined.
 };
 
-template<typename T_Sink, typename T_SinkRefHolder> requires requires (T_SinkRefHolder holder)
+template<class C_SinkRefHolder> requires requires (C_SinkRefHolder holder)
     {
         { holder.stream() }-> std::convertible_to<std::ostream*>;
         holder.reset();
@@ -52,7 +52,8 @@ class C_ReenterableLogger: public I_ReenterableLog
 public:
 
     // Nonvirtuals
-    explicit C_ReenterableLogger(T_Sink &ref, E_LogLevel max_ll = LL_VERBOSE): m_refHolder(ref), m_maxLevel(max_ll)
+    template<typename T>
+    explicit C_ReenterableLogger(T &ref, E_LogLevel max_ll = LL_VERBOSE): m_refHolder(ref), m_maxLevel(max_ll)
     {
     }
     E_LogLevel setLogLevel(E_LogLevel level)
@@ -88,9 +89,28 @@ public:
 private:
 
     // Data
-    T_SinkRefHolder         m_refHolder;
+    C_SinkRefHolder         m_refHolder;
     int                     m_lockCount{};
     E_LogLevel              m_maxLevel;
+};
+
+template<class C_SinkImpl>
+struct C_AutoSinkHolderT
+{
+    //using type = ...;
+};
+
+template<class C_SinkImpl, class C_SinkRefHolder = typename C_AutoSinkHolderT<C_SinkImpl>::type>
+class C_ReenterableLoggerInside: private C_SinkImpl, public C_ReenterableLogger<C_SinkRefHolder>
+{
+public:
+
+    // Ctor
+    template<class...T_Args>
+    explicit C_ReenterableLoggerInside(E_LogLevel ll, T_Args&&...args):
+        C_SinkImpl(std::forward<T_Args>(args)...),
+        C_ReenterableLogger<C_SinkRefHolder>(*static_cast<C_SinkImpl*>(this), ll)
+        {}
 };
 
 class C_SyncLogger: public I_SyncLog
@@ -126,7 +146,13 @@ struct C_OstreamHolder
     std::ostream *stream() const { return &m_out; }
     void reset() {}
 };
-using C_ReenterableOstream = C_ReenterableLogger<std::ostream, C_OstreamHolder>;
+using C_ReenterableOstream = C_ReenterableLogger<C_OstreamHolder>;
+
+template<std::derived_from<std::ostream> T_Sink>
+struct C_AutoSinkHolderT<T_Sink>
+{
+    using type = C_OstreamHolder;
+};
 
 template<typename T>
 struct I_SnapT         ///< Parasitic Type
@@ -157,7 +183,13 @@ private:
     I_SnapT<std::ostream*>  &m_snap;
     std::ostream            *m_saved{};
 };
-using C_ReenterableOstreamSnap = C_ReenterableLogger<I_SnapT<std::ostream*>, C_PersistedSnapHolder>;
+using C_ReenterableOstreamSnap = C_ReenterableLogger<C_PersistedSnapHolder>;
+
+template<std::derived_from<I_SnapT<std::ostream*>> T_Sink>
+struct C_AutoSinkHolderT<T_Sink>
+{
+    using type = C_PersistedSnapHolder;
+};
 
 class C_UseLog
 /*! Helper class to use logger in the current thread while blocking any other thread from using it.

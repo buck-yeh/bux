@@ -9,7 +9,7 @@ Server = http://free.nchc.org.tw/arch/$repo/os/$arch\n' | tee /etc/pacman.d/mirr
     fi && \
     sed -Ei 's|^#TotalDownload\s*$|TotalDownload|g' /etc/pacman.conf && \
     sed -Ei 's|^#VerbosePkgLists\s*$|VerbosePkgLists|g' /etc/pacman.conf && \
-    pacman -Sy --needed --noconfirm cmake make gcc git binutils fmt fakeroot gawk catch2 glibc tbb && \
+    pacman -Sy --needed --noconfirm cmake make gcc git binutils fmt fakeroot gawk catch2 glibc && \
     rm -rf /root/.cache
 RUN useradd -m guest
 

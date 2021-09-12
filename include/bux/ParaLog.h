@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SyncLog.h"    // bux::I_SyncLog, bux::I_ReenterableLog
+#include "SyncLog.h"    // bux::I_SyncLog, bux::I_ReenterableLog, bux::C_ReenterableOstream
 #include <concepts>     // std::derived_from<>
 #include <functional>   // std::function<>
 #include <list>         // std::list<>
@@ -25,7 +25,8 @@ public:
     using T_ChildLogger = std::unique_ptr<I_ReenterableLog>;
 
     // Nonvirtuals
-    bool addChild(auto &&snap)
+    template<std::derived_from<I_ReenterableLog> T>
+    bool addChild(std::unique_ptr<T> &&snap)
     {
         std::lock_guard _{m_lock};
         if (snap)
@@ -34,6 +35,19 @@ public:
             return true;
         }
         return false;
+    }
+    bool addChild(std::ostream &out, E_LogLevel ll = LL_VERBOSE)
+    {
+        return addChild(std::make_unique<C_ReenterableOstream>(out, ll));
+    }
+    bool addChild(I_SnapT<std::ostream*> &snap, E_LogLevel ll = LL_VERBOSE)
+    {
+        return addChild(std::make_unique<C_ReenterableOstreamSnap>(snap, ll));
+    }
+    template<class C_SinkImpl, class C_Holder = typename C_AutoSinkHolderT<C_SinkImpl>::type, E_LogLevel LL = LL_VERBOSE, class...T_Args>
+    bool addChildT(T_Args&&...args)
+    {
+        return addChild(std::make_unique<C_ReenterableLoggerInside<C_SinkImpl,C_Holder>>(LL, std::forward<T_Args>(args)...));
     }
 
     // Implement I_SyncLog

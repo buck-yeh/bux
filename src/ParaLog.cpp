@@ -15,7 +15,7 @@ std::ostream *C_ParaLog::lockLog(const std::function<std::ostream*(I_Reenterable
             used_logs.emplace_back(i.get(), ret);
     }
     if (!used_logs.empty())
-        return &m_lockedStack.emplace_back(std::move(used_logs), std::string{}).second;
+        return &m_lockedStack.emplace_back(std::move(used_logs), std::ios_base::out).second;
 
     m_lock.unlock();
     return nullptr;

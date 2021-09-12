@@ -12,35 +12,36 @@
 #include <curses.h>         // getch(), ...
 #endif
 
-thread_local std::mt19937 g_rng{std::random_device{"/dev/urandom"}()};
-
-static bool g_stop;
-
-static const struct { bux::E_LogLevel ll; const char *msg; } LOG_SRC[] = {
-    {LL_FATAL,   "fatal"},
-    {LL_ERROR,   "error"},
-    {LL_WARNING, "warning"},
-    {LL_INFO,    "info"},
-    {LL_VERBOSE, "verbose"},
-};
-
-bux::C_PathFmtLogSnap fmt_snap(2UL<<20, std::initializer_list{
-                                            "logs/st%Y-%m-%d/%y%m%d.log",
-                                            "logs/st%Y-%m-%d/%y%m%d-%H.log",
-                                            "logs/st%Y-%m-%d/%y%m%d-%H%M.log"});
 DEF_PARA_LOGGER
 
+namespace {
+
+thread_local std::mt19937 g_rng{std::random_device{"/dev/urandom"}()};
+bool g_stop{};
+
+} // namespace
 
 int main()
 {
-    bux::user::g_paraLog.addChild(std::make_unique<bux::C_ReenterableOstream>(std::cout, LL_WARNING));
-    bux::user::g_paraLog.addChild(std::make_unique<bux::C_ReenterableOstreamSnap>(fmt_snap, LL_VERBOSE));
+    bux::user::g_paraLog.addChild(std::cout, LL_WARNING);
+    bux::user::g_paraLog.addChildT<bux::C_PathFmtLogSnap>(2UL<<20, std::initializer_list{
+                                    "logs/st%Y-%m-%d/%y%m%d.log",
+                                    "logs/st%Y-%m-%d/%y%m%d-%H.log",
+                                    "logs/st%Y-%m-%d/%y%m%d-%H%M.log"});
+    bux::user::g_paraLog.addChildT<std::ofstream,bux::C_OstreamHolder,LL_ERROR>("errors.txt");
 
     std::list<std::thread> loops;
     for (int i = 0; i < 20; ++i)
         loops.emplace_back([]{
             while (!g_stop)
             {
+                static const struct { bux::E_LogLevel ll; const char *msg; } LOG_SRC[] = {
+                    {LL_FATAL,   "fatal"},
+                    {LL_ERROR,   "error"},
+                    {LL_WARNING, "warning"},
+                    {LL_INFO,    "info"},
+                    {LL_VERBOSE, "verbose"},
+                };
                 const auto &src = LOG_SRC[std::uniform_int_distribution<size_t>{0,std::size(LOG_SRC)-1}(g_rng)];
                 const auto sleep_ms = std::uniform_int_distribution<size_t>{0,19}(g_rng);
                 LOG(src.ll, "Hello {} and wait for {}ms", src.msg, sleep_ms);
