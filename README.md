@@ -8,6 +8,7 @@
    * [Installation &amp; Usage](#installation--usage)
       * [in ArchLinux](#in-archlinux)
       * [from github in any of Linux distros](#from-github-in-any-of-linux-distros)
+      * [from vcpkg in Windows](#from-vcpkg-in-windows)
    * [Header Intros](#header-intros)
       * [Containers](#containers)
       * [Input/Output](#inputoutput)
@@ -33,7 +34,7 @@
    ~~~
 4. Include the header files by prefixing header name with `bux/`, for example:
    ~~~c++
-   #include <bux/StrUtil.h>
+   #include <bux/Logger.h>
    ~~~
    *p.s.* Header files are in `/usr/include/bux` and compiler is expected to search `/usr/include` by default.
 5. If directly using `gcc` or `clang` is intended, the required compiler flags are `-std=c++2a -lbux`
@@ -56,7 +57,7 @@
    ~~~
 4. Include the header files by prefixing header name with `bux/`, for example:
    ~~~c++
-   #include <bux/StrUtil.h>
+   #include <bux/Logger.h>
    ~~~
 5. If directly using command `gcc` or `clang` is intended, the required compiler flags are `-std=c++2a -I$BUX_DIR/include -L$BUX_DIR/src -lbux`
 6. Subdirectory `test/` is excluded by default. To build with it, reconfigure `cmake` with:
@@ -69,6 +70,29 @@
    ~~~bash
    cd test
    ctest .
+   ~~~
+
+## from vcpkg in Windows
+1. ~~~PowerShell
+   PS F:\vcpkg> .\vcpkg.exe search bux
+   buck-yeh-bux             1.4.1            A supplemental C++ library with functionalities not directly supported fro...
+   The search result may be outdated. Run `git pull` to get the latest results.
+
+   If your library is not listed, please open an issue at and/or consider making a pull request:
+      https://github.com/Microsoft/vcpkg/issues
+   PS F:\vcpkg>
+   ~~~
+3. Available triplets are:
+   ~~~PowerShell
+   buck-yeh-bux:x64-windows
+   buck-yeh-bux:x64-windows-static
+   buck-yeh-bux:x64-windows-static-md
+   buck-yeh-bux:x86-windows
+   buck-yeh-bux:x86-windows-static
+   ~~~
+3. Include the header files by prefixing header name with `bux/`, for example:
+   ~~~c++
+   #include <bux/Logger.h>
    ~~~
 
 # Header Intros

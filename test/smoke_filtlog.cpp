@@ -23,12 +23,19 @@ bool g_stop{};
 
 int main()
 {
-    bux::user::g_paraLog.addChild(std::cout, LL_WARNING);
-    bux::user::g_paraLog.addChildT<bux::C_PathFmtLogSnap>(2UL<<20, std::array{
+    auto
+    node = bux::user::g_paraLog.partitionBy([](auto s){
+        return s.find("EurekA") != s.npos;
+    });
+    node[0].addChild(std::cout, LL_WARNING);
+    node = bux::user::g_paraLog.partitionBy([](auto s){
+        return s.find("foobar") != s.npos;
+    });
+    node[0].addChildT<bux::C_PathFmtLogSnap>(2UL<<20, std::array{
                                     "logs/st%Y-%m-%d/%y%m%d.log",
                                     "logs/st%Y-%m-%d/%y%m%d-%H.log",
                                     "logs/st%Y-%m-%d/%y%m%d-%H-%M.log"});
-    bux::user::g_paraLog.addChildT<std::ofstream,bux::C_OstreamHolder,LL_ERROR>("errors.txt");
+    node[0].addChildT<std::ofstream,bux::C_OstreamHolder,LL_ERROR>("errors.txt");
 
 #ifndef _WIN32
     initscr();

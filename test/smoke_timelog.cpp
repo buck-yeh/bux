@@ -36,7 +36,11 @@ int main(int argc, const char *argv[])
     else
     {
 #ifdef SET_SIZE_LIMIT_
-        bux::user::g_snap.configPath(16384, std::initializer_list{"timelog/%y%m%d_%H%M00.log", "timelog/%y%m%d_%H%M%S.log"});
+        bux::user::g_snap.configPath(65536, std::array{
+            "timelog/%y%m%d-%H.log",
+            "timelog/%y%m%d-%H-%M.log",
+            "timelog/%y%m%d-%H-%M-%S.log"
+        });
 #endif
         using C_MyClock = std::chrono::system_clock;
         const auto deadline = C_MyClock::now() + std::chrono::seconds(strtoul(argv[1],nullptr,0));

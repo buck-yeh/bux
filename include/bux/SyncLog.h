@@ -94,22 +94,22 @@ private:
     E_LogLevel              m_maxLevel;
 };
 
-template<class C_SinkImpl>
+template<class C_LogImpl>
 struct C_AutoSinkHolderT
 {
     //using type = ...;
 };
 
-template<class C_SinkImpl, class C_SinkRefHolder = typename C_AutoSinkHolderT<C_SinkImpl>::type>
-class C_ReenterableLoggerInside: private C_SinkImpl, public C_ReenterableLogger<C_SinkRefHolder>
+template<class C_LogImpl, class C_SinkRefHolder = typename C_AutoSinkHolderT<C_LogImpl>::type>
+class C_ReenterableLoggerInside: private C_LogImpl, public C_ReenterableLogger<C_SinkRefHolder>
 {
 public:
 
     // Ctor
     template<class...T_Args>
     explicit C_ReenterableLoggerInside(E_LogLevel ll, T_Args&&...args):
-        C_SinkImpl(std::forward<T_Args>(args)...),
-        C_ReenterableLogger<C_SinkRefHolder>(*static_cast<C_SinkImpl*>(this), ll)
+        C_LogImpl(std::forward<T_Args>(args)...),
+        C_ReenterableLogger<C_SinkRefHolder>(*static_cast<C_LogImpl*>(this), ll)
         {}
 };
 

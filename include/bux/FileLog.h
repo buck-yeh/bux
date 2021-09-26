@@ -54,7 +54,7 @@ public:
         // Demo fallback file formats from daily to per-minute everytime 16MB file size is reached.
         //
 
-        C_PathFmtLogSnap   snap(16UL<<20, std::initializer_list{
+        C_PathFmtLogSnap   snap(16UL<<20, std::array{
                                             "logs/%y%m%d-0000.log",
                                             "logs/%y%m%d-%H00.log",
                                             "logs/%y%m%d-%H%M.log"});
