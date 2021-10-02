@@ -10,18 +10,18 @@
            functions declared under namespace \c bux in the same header can be linked properly without errors.
 */
 
-/// \example bux/test/hrtn.cpp
-/// \example bux/test/smoke_coutlog.cpp
-/// \example bux/test/smoke_cerrlog.cpp
-/// \example bux/test/smoke_filelog.cpp
-/// \example bux/test/smoke_filtlog.cpp
-/// \example bux/test/smoke_timelog.cpp
-/// \example bux/test/smoke_paralog.cpp
-/// \example bux/test/test_atomix.cpp
-/// \example bux/test/test_expand_env.cpp
-/// \example bux/test/test_logger.cpp
-/// \example bux/test/test_paralog.cpp
-/// \example bux/test/test_PO.cpp
+/// \example test/hrtn.cpp
+/// \example test/smoke_coutlog.cpp
+/// \example test/smoke_cerrlog.cpp
+/// \example test/smoke_filelog.cpp
+/// \example test/smoke_filtlog.cpp
+/// \example test/smoke_timelog.cpp
+/// \example test/smoke_paralog.cpp
+/// \example test/test_atomix.cpp
+/// \example test/test_expand_env.cpp
+/// \example test/test_logger.cpp
+/// \example test/test_paralog.cpp
+/// \example test/test_PO.cpp
 /// \example parsergen/ParserGen/main.cpp
 /// \example parsergen/ParserGen/GrammarStrip.cpp
 /// \example parsergen/ScannerGen/main.cpp
