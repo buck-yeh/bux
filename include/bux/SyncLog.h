@@ -56,12 +56,13 @@ public:
     explicit C_ReenterableLogger(T &ref, E_LogLevel max_ll = LL_VERBOSE): m_refHolder(ref), m_maxLevel(max_ll)
     {
     }
-    E_LogLevel setLogLevel(E_LogLevel level)
+    auto setLogLevel(E_LogLevel level)
     {
         auto ret = m_maxLevel;
         m_maxLevel = level;
         return ret;
     }
+    auto lockedCount() const { return m_lockCount; }
 
     // Implement I_ReenterableLog
     std::ostream *useLog() override

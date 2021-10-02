@@ -88,6 +88,8 @@ I_SyncLog &logger();    // provided by user of LOG(), FUNLOG(), SCOPELOG()
     static C_ReenterableOstream ro_{out, ##__VA_ARGS__}; \
     static C_SyncLogger l_{ro_}; \
     DEF_LOGGER_TAIL_(l_)
+
+// #include <iotream> before using either of these but never both
 #define DEF_LOGGER_COUT(...) DEF_LOGGER_OSTREAM(std::cout, ##__VA_ARGS__)
 #define DEF_LOGGER_CERR(...) DEF_LOGGER_OSTREAM(std::cerr, ##__VA_ARGS__)
 

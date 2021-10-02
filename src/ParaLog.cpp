@@ -8,29 +8,23 @@ namespace bux {
 auto C_ParaLog::C_NodeArrayProxy::operator[](size_t i) const -> C_NodeProxy
 {
     std::lock_guard _{*m_lock};
-    if (i < m_nodePart->m_filteredNodes.size())
-    {
-        auto &dst = m_nodePart->m_filteredNodes.at(i);
-        if (!dst.second)
-            dst.second = std::make_unique<C_Node>();
-
-        return {*m_lock, *dst.second};
-    }
-    return matchedNone_();
+    return create_proxy(i < m_nodePart->m_filteredNodes.size()?
+        m_nodePart->m_filteredNodes.at(i).second:
+        m_nodePart->m_elseNode);
 }
 
-auto C_ParaLog::C_NodeArrayProxy::matchedNone_() const -> C_NodeProxy
+auto C_ParaLog::C_NodeArrayProxy::create_proxy(C_NodePtr &holder) const -> C_NodeProxy
 {
-    if (!m_nodePart->m_elseNode)
-        m_nodePart->m_elseNode = std::make_unique<C_Node>();
+    if (!holder)
+        holder = std::make_unique<C_Node>();
 
-    return {*m_lock, *m_nodePart->m_elseNode};
+    return {*m_lock, *holder};
 }
 
 auto C_ParaLog::C_NodeArrayProxy::matchedNone() const -> C_NodeProxy
 {
     std::lock_guard _{*m_lock};
-    return matchedNone_();
+    return create_proxy(m_nodePart->m_elseNode);
 }
 
 void C_ParaLog::C_LockedNode::create_from(const C_Node &node, const std::function<std::ostream*(I_ReenterableLog&)> &to_log)

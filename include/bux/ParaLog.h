@@ -97,6 +97,7 @@ public:
     C_NodeArrayProxy(std::recursive_mutex &lock, C_NodePartition &nodePart): m_lock(&lock), m_nodePart(&nodePart) {}
     [[nodiscard]]C_NodeProxy operator[](size_t i) const;
     [[nodiscard]]C_NodeProxy matchedNone() const;
+    size_t sizeOfFilters() const { return m_nodePart->m_filteredNodes.size(); }
 
 private:
 
@@ -105,7 +106,7 @@ private:
     C_NodePartition         *m_nodePart;
 
     // Nonvirtuals
-    C_NodeProxy matchedNone_() const;
+    C_NodeProxy create_proxy(C_NodePtr &holder) const;
 };
 
 class C_ParaLog::C_NodeProxy
@@ -168,6 +169,9 @@ private:
     C_Node                  *m_node;
 };
 
+//
+//      Implement Class Member Templates
+//
 template<class...T_Args>
 bool C_ParaLog::addChild(T_Args&&...args)
 {
