@@ -14,10 +14,13 @@
 /// \example bux/test/smoke_coutlog.cpp
 /// \example bux/test/smoke_cerrlog.cpp
 /// \example bux/test/smoke_filelog.cpp
+/// \example bux/test/smoke_filtlog.cpp
 /// \example bux/test/smoke_timelog.cpp
 /// \example bux/test/smoke_paralog.cpp
 /// \example bux/test/test_atomix.cpp
 /// \example bux/test/test_expand_env.cpp
+/// \example bux/test/test_logger.cpp
+/// \example bux/test/test_paralog.cpp
 /// \example bux/test/test_PO.cpp
 /// \example parsergen/ParserGen/main.cpp
 /// \example parsergen/ParserGen/GrammarStrip.cpp
