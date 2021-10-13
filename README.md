@@ -112,10 +112,10 @@
 * [UnicodeCvt.h](include/bux/UnicodeCvt.h) - Encode text stream to unicodes (`utf8`/`utf16`/`utf32`)
 
 ## Logger
-* [FileLog.h](include/bux/FileLog.h) - Snap object of file log which can be configured to automatically change the output path, *iow* to output to different files, according to the current timestamp. The object is a plugin to [ParaLog.h](include/bux/ParaLog.h) and [SyncLog.h](include/bux/SyncLog.h)
+* [FileLog.h](include/bux/FileLog.h) - [`bux::C_PathFmtLogSnap`](https://buck-yeh.github.io/bux/html/classbux_1_1C__PathFmtLogSnap.html) can be configured to automatically change the output path, *IOW* to output to different files, according to the current timestamp. The object is a plugin to `bux::C_ReenterableOstreamSnap` and `bux::C_ParaLog`
 * [Logger.h](include/bux/Logger.h) - Log macros for various needs with *singleton* `bux::logger()` in mind.
 * [LogLevel.h](include/bux/LogLevel.h) - LL_FATAL, LL_ERROR, LL_WARNING, LL_INFO, LL_VERBOSE
-* [ParaLog.h](include/bux/ParaLog.h) - Logger facade to reroute log lines to child loggers 
+* [ParaLog.h](include/bux/ParaLog.h) - [`bux::C_ParaLog`](https://buck-yeh.github.io/bux/html/classbux_1_1C__ParaLog.html) is a logger facade to reroute log lines to multiple child loggers 
 * [SyncLog.h](include/bux/SyncLog.h) - Basic classes to give variety of *thread-safe* loggers.
 
 ## Parser/scanner related
@@ -142,4 +142,4 @@
 * [ParaUtil.h](include/bux/ParaUtil.h) - Iterator type for sheer numbers, expected to be used when calling parallel algorithms, *e.g.* `std::for_each(std::execution::par, ...)` without data allocation.
 * [SafeArith.h](include/bux/SafeArith.h) - Supports to safe arithmetics. *(Not used recently)*
 * [XAutoPtr.h](include/bux/XAutoPtr.h) - Safe [`std::auto_ptr`](https://en.cppreference.com/w/cpp/memory/auto_ptr) dated back to pre-C++11 years. *It ain't broke ...*
-* [XException.h](include/bux/XException.h) - Macros to throw `std::runtime_error`, `std::logic_error`, as well as [other exceptions](https://en.cppreference.com/w/cpp/header/stdexcept), with location & message.
+* [XException.h](include/bux/XException.h) - Macros to throw `std::runtime_error`, `std::logic_error`, as well as [other exceptions](https://en.cppreference.com/w/cpp/header/stdexcept), with location & formatted message.
