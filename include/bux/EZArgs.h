@@ -73,7 +73,7 @@ public:
                        std::invocable<std::string_view> auto parse) {
         return add_flag({}, short_name, description, {}, parse);
     }
-    C_EZArgs &add_subcommand(std::string_view name, std::invocable<> auto onParsed = {}, std::string_view description = {});
+    C_EZArgs &add_subcommand(const std::string &name, std::invocable<> auto onParsed = {}, const std::string &description = {});
     void details(std::string_view s) { m_details = s; }
     [[nodiscard]]C_ErrorOrIndex parse(std::integral auto argc, const char *argv[]) const;
 
@@ -148,7 +148,7 @@ C_EZArgs &C_EZArgs::add_flag(std::string_view name, char short_name, std::string
     return *this;
 }
 
-C_EZArgs &C_EZArgs::add_subcommand(std::string_view name, std::invocable<> auto onParsed, std::string_view description)
+C_EZArgs &C_EZArgs::add_subcommand(const std::string &name, std::invocable<> auto onParsed, const std::string &description)
 {
     switch (m_up2u.index())
     {
@@ -160,7 +160,7 @@ C_EZArgs &C_EZArgs::add_subcommand(std::string_view name, std::invocable<> auto 
     case 1:
         RUNTIME_ERROR("Already set as positional arguments");
     }
-    auto &ret = std::get<2>(m_up2u).try_emplace(std::string(name), C_EZArgs(description)).first->second;
+    auto &ret = std::get<2>(m_up2u).try_emplace(name, C_EZArgs(description)).first->second;
     ret.m_helpShielded  = m_helpShielded;
     ret.m_hShielded     = m_hShielded;
     ret.m_owner         = this;
