@@ -2,7 +2,6 @@
 
 #include "XException.h" // RUNTIME_ERROR()
 #include <algorithm>    // std::sort()
-#include <concepts>     // std::invocable<>
 #include <deque>        // std::deque<>
 #include <functional>   // std::function<>
 #include <map>          // std::map<>
@@ -44,36 +43,36 @@ public:
     explicit C_EZArgs(const std::string &description = {}): m_desc(description) {}
     C_EZArgs &add_flag(std::string_view name, char short_name,
                        std::string_view description,
-                       std::invocable<> auto trigger,
-                       std::invocable<std::string_view> auto parse = {});
+                       std::function<void()> trigger,
+                       std::function<void(std::string_view)> parse = {});
+    C_EZArgs &add_flag(std::string_view name, char short_name,
+                       std::string_view description,
+                       std::function<void(std::string_view)> parse){
+        return add_flag(name, short_name, description, {}, parse);
+    }
     C_EZArgs &add_flag(std::string_view name,
                        std::string_view description,
-                       std::invocable<> auto trigger,
-                       std::invocable<std::string_view> auto parse = {}) {
+                       std::function<void()> trigger,
+                       std::function<void(std::string_view)> parse = {}) {
         return add_flag(name, char(), description, trigger, parse);
     }
     C_EZArgs &add_flag(std::string_view name,
                        std::string_view description,
-                       std::invocable<std::string_view> auto parse){
+                       std::function<void(std::string_view)> parse){
         return add_flag(name, char(), description, {}, parse);
-    }
-    C_EZArgs &add_flag(std::string_view name, char short_name,
-                       std::string_view description,
-                       std::invocable<std::string_view> auto parse){
-        return add_flag(name, short_name, description, {}, parse);
     }
     C_EZArgs &add_flag(char short_name,
                        std::string_view description,
-                       std::invocable<> auto trigger,
-                       std::invocable<std::string_view> auto parse = {}) {
+                       std::function<void()> trigger,
+                       std::function<void(std::string_view)> parse = {}) {
         return add_flag({}, short_name, description, trigger, parse);
     }
     C_EZArgs &add_flag(char short_name,
                        std::string_view description,
-                       std::invocable<std::string_view> auto parse) {
+                       std::function<void(std::string_view)> parse) {
         return add_flag({}, short_name, description, {}, parse);
     }
-    C_EZArgs &add_subcommand(const std::string &name, std::invocable<> auto onParsed = {}, const std::string &description = {});
+    C_EZArgs &add_subcommand(const std::string &name, std::function<void()> onParsed = {}, const std::string &description = {});
     void details(std::string_view s) { m_details = s; }
     [[nodiscard]]C_ErrorOrIndex parse(std::integral auto argc, const char *const argv[]) const;
 
@@ -91,7 +90,7 @@ private:
         std::string             m_name, m_descOneLiner;
         char                    m_shortName{};
         std::function<void()>   m_trigger;
-        std::function<void(std::string_view )> m_parse;
+        std::function<void(std::string_view)> m_parse;
     };
 
     struct C_ArgLayout
@@ -121,56 +120,6 @@ private:
 //
 //      Implement Member Templates
 //
-C_EZArgs &C_EZArgs::add_flag(std::string_view name, char short_name, std::string_view description,
-    std::invocable<> auto trigger, std::invocable<std::string_view> auto parse)
-{
-    if (!trigger && !parse)
-        RUNTIME_ERROR("Either trigger or parse handler must be provided");
-
-    auto &dst = m_flags.emplace_back();
-    if (!name.empty() && name[0] == '-')
-        if (name[1] == '-')
-            dst.m_name = name.substr(2);
-        else
-        {
-            m_flags.pop_back();
-            RUNTIME_ERROR("Invalid flag name: {}", name);
-        }
-    else
-        dst.m_name = name;
-
-    dst.m_descOneLiner  = description;
-    dst.m_shortName     = short_name;
-    dst.m_trigger       = trigger;
-    dst.m_parse         = parse;
-    if (dst.m_name == "help")
-        m_helpShielded = true;
-    if (dst.m_shortName == 'h')
-        m_hShielded = true;
-
-    return *this;
-}
-
-C_EZArgs &C_EZArgs::add_subcommand(const std::string &name, std::invocable<> auto onParsed, const std::string &description)
-{
-    switch (m_up2u.index())
-    {
-    case 0:
-        m_up2u.emplace<std::map<std::string,C_EZArgs>>();
-        break;
-    case 2:
-        break;
-    case 1:
-        RUNTIME_ERROR("Already set as positional arguments");
-    }
-    auto &ret = std::get<2>(m_up2u).try_emplace(name, C_EZArgs(description)).first->second;
-    ret.m_helpShielded  = m_helpShielded;
-    ret.m_hShielded     = m_hShielded;
-    ret.m_owner         = this;
-    ret.m_onParsed      = onParsed;
-    return ret;
-}
-
 C_EZArgs &C_EZArgs::position_args(const std::ranges::forward_range auto &arg_names, const std::ranges::forward_range auto &count_optionals, bool unlimited)
 {
     if (!std::empty(arg_names) || unlimited)

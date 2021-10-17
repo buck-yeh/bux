@@ -11,6 +11,56 @@ std::string C_ErrorOrIndex::message() const
     return m_optIndex? "argv["+std::to_string(*m_optIndex)+"]: "+m_message: m_message;
 }
 
+C_EZArgs &C_EZArgs::add_flag(std::string_view name, char short_name, std::string_view description,
+    std::function<void()> trigger, std::function<void(std::string_view)> parse)
+{
+    if (!trigger && !parse)
+        RUNTIME_ERROR("Either trigger or parse handler must be provided");
+
+    auto &dst = m_flags.emplace_back();
+    if (!name.empty() && name[0] == '-')
+        if (name[1] == '-')
+            dst.m_name = name.substr(2);
+        else
+        {
+            m_flags.pop_back();
+            RUNTIME_ERROR("Invalid flag name: {}", name);
+        }
+    else
+        dst.m_name = name;
+
+    dst.m_descOneLiner  = description;
+    dst.m_shortName     = short_name;
+    dst.m_trigger       = trigger;
+    dst.m_parse         = parse;
+    if (dst.m_name == "help")
+        m_helpShielded = true;
+    if (dst.m_shortName == 'h')
+        m_hShielded = true;
+
+    return *this;
+}
+
+C_EZArgs &C_EZArgs::add_subcommand(const std::string &name, std::function<void()> onParsed, const std::string &description)
+{
+    switch (m_up2u.index())
+    {
+    case 0:
+        m_up2u.emplace<std::map<std::string,C_EZArgs>>();
+        break;
+    case 2:
+        break;
+    case 1:
+        RUNTIME_ERROR("Already set as positional arguments");
+    }
+    auto &ret = std::get<2>(m_up2u).try_emplace(name, C_EZArgs(description)).first->second;
+    ret.m_helpShielded  = m_helpShielded;
+    ret.m_hShielded     = m_hShielded;
+    ret.m_owner         = this;
+    ret.m_onParsed      = onParsed;
+    return ret;
+}
+
 C_ErrorOrIndex C_EZArgs::help_full(const char *const argv[]) const
 {
     // Synthesize USAGE
