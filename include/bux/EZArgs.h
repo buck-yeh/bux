@@ -7,7 +7,7 @@
 #include <functional>   // std::function<>
 #include <map>          // std::map<>
 #include <optional>     // std::optional<>
-#include <ranges>       // std::ranges::forward_range<>
+#include <ranges>       // std::ranges::forward_range<>, std::ranges::views::empty<>
 #include <string_view>  // std::string_view
 #include <variant>      // std::variant<>, std::monostate
 #include <vector>       // std::vector<>
@@ -24,9 +24,9 @@ struct C_ErrorOrIndex
     std::optional<size_t>   m_optIndex;
 
     // Nonvirtuals
-    C_ErrorOrIndex(const std::string &error, size_t flagErrInd): m_message(error), m_optIndex(flagErrInd) {}
+    C_ErrorOrIndex(const std::string &error, auto flagErrInd): m_message(error), m_optIndex(flagErrInd) {}
     C_ErrorOrIndex(const std::string &help): m_message(help) {}
-    C_ErrorOrIndex(size_t flagStartInd): m_optIndex(flagStartInd) {}
+    C_ErrorOrIndex(auto flagStartInd): m_optIndex(flagStartInd) {}
     operator bool() const { return m_message.empty(); }
     std::string message() const;
 };
@@ -75,9 +75,12 @@ public:
     }
     C_EZArgs &add_subcommand(const std::string &name, std::invocable<> auto onParsed = {}, const std::string &description = {});
     void details(std::string_view s) { m_details = s; }
-    [[nodiscard]]C_ErrorOrIndex parse(std::integral auto argc, const char *argv[]) const;
+    [[nodiscard]]C_ErrorOrIndex parse(std::integral auto argc, const char *const argv[]) const;
 
-    C_EZArgs &position_args(const std::ranges::forward_range auto &arg_names, const std::ranges::forward_range auto &count_optionals = {}, bool unlimited = false);
+    C_EZArgs &position_args(const std::ranges::forward_range auto &arg_names,
+        const std::ranges::forward_range auto &count_optionals, bool unlimited = false);
+    C_EZArgs &position_args(const std::ranges::forward_range auto &arg_names, bool unlimited = false)
+        { return position_args(arg_names, std::ranges::views::empty<size_t>, unlimited); }
     auto parsed_position_argc() const { return m_totoalPositionArgs; }
 
 private:
@@ -111,8 +114,8 @@ private:
 
     // Nonvirtuals
     std::string help_flags() const;
-    C_ErrorOrIndex help_full(const char *argv[]) const;
-    std::string help_tip(const std::string &error, const char *argv[]) const;
+    C_ErrorOrIndex help_full(const char *const argv[]) const;
+    std::string help_tip(const std::string &error, const char *const argv[]) const;
 };
 
 //
@@ -199,7 +202,7 @@ C_EZArgs &C_EZArgs::position_args(const std::ranges::forward_range auto &arg_nam
     return *this;
 }
 
-C_ErrorOrIndex C_EZArgs::parse(std::integral auto argc, const char *argv[]) const
+C_ErrorOrIndex C_EZArgs::parse(std::integral auto argc, const char *const argv[]) const
 {
     decltype(argc) ind = 1;
     switch (m_up2u.index())
@@ -214,10 +217,10 @@ C_ErrorOrIndex C_EZArgs::parse(std::integral auto argc, const char *argv[]) cons
         else
         {
             auto &lo = std::get<1>(m_up2u);
-            size_t lower_bound = 0;
+            decltype(argc) lower_bound = 0;
             for (auto i: lo.m_posCounts)
             {
-                if (lower_bound < ind && ind <= i)
+                if (lower_bound < ind && ind <= static_cast<decltype(argc)>(i))
                 {
                     std::string message;
                     if (!lower_bound)
@@ -236,9 +239,9 @@ C_ErrorOrIndex C_EZArgs::parse(std::integral auto argc, const char *argv[]) cons
 
                     return {help_tip(message,argv), ind};
                 }
-                lower_bound = i + 1;
+                lower_bound = static_cast<decltype(argc)>(i + 1);
             }
-            if (!lo.m_unlimited && ind > lo.m_posArgs.size() + 1)
+            if (!lo.m_unlimited && ind > static_cast<decltype(argc)>(lo.m_posArgs.size() + 1))
             {
                 std::string message = "Too many positional arguments:";
                 for (auto &i: lo.m_posArgs)
@@ -261,7 +264,7 @@ C_ErrorOrIndex C_EZArgs::parse(std::integral auto argc, const char *argv[]) cons
             if (ret)
             {
                 m_totoalPositionArgs = i->second.m_totoalPositionArgs + ind;
-                return ret.m_index + ind;
+                return ret.m_optIndex.value() + ind;
             }
             return ret;
         }

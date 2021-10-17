@@ -11,7 +11,7 @@ std::string C_ErrorOrIndex::message() const
     return m_optIndex? "argv["+std::to_string(*m_optIndex)+"]: "+m_message: m_message;
 }
 
-C_ErrorOrIndex C_EZArgs::help_full(const char *argv[]) const
+C_ErrorOrIndex C_EZArgs::help_full(const char *const argv[]) const
 {
     // Synthesize USAGE
     std::string help;
@@ -186,7 +186,7 @@ std::string C_EZArgs::help_flags() const
     return help;
 }
 
-std::string C_EZArgs::help_tip(const std::string &error, const char *argv[]) const
+std::string C_EZArgs::help_tip(const std::string &error, const char *const argv[]) const
 {
     const char *helpFlag{};
     if (!m_hShielded)
