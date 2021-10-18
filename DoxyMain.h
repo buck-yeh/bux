@@ -19,6 +19,7 @@
 /// \example test/smoke_paralog.cpp
 /// \example test/test_atomix.cpp
 /// \example test/test_expand_env.cpp
+/// \example test/test_ezargs.cpp
 /// \example test/test_logger.cpp
 /// \example test/test_paralog.cpp
 /// \example test/test_PO.cpp
