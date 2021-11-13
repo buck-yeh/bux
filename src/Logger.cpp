@@ -64,7 +64,7 @@ C_EntryLog::~C_EntryLog()
         *C_UseLogger(LL_VERBOSE) <<fmt::format("@{}{}", *m_Id,
             []{
                 if (auto n = std::uncaught_exceptions())
-                    return fmt::format("@}} due to {} uncaught exceptions\n", n);
+                    return fmt::format("@}} due to {} uncaught exception{}\n", n, (n>1?"s":""));
 
                 return std::string{"@}\n"};
             }());

@@ -1,5 +1,6 @@
 #include "EZArgs.h"
 #include <cstring>      // strchr()
+#include <filesystem>   // std::filesystem::path
 
 namespace bux {
 
@@ -8,11 +9,24 @@ namespace bux {
 //
 std::string C_ErrorOrIndex::message() const
 {
-    return m_optIndex? "argv["+std::to_string(*m_optIndex)+"]: "+m_message: m_message;
+    return m_optIndex? fmt::format("argv[{}]: {}",*m_optIndex,m_message): m_message;
 }
 
 C_EZArgs &C_EZArgs::add_flag(std::string_view name, char short_name, std::string_view description,
     std::function<void()> trigger, std::function<void(std::string_view)> parse)
+/*! \param [in] name Long flag name, with or without -- prefix
+    \param [in] short_name Short flag name as a single letter
+    \param [in] description Decribe the flag
+    \param [in] trigger Called when the flag is fiven without value
+    \param [in] parse Called when the flag is fiven with a value
+    \exception std::runtime_error if both \c trigger and \c parse is null or \c name is prefixed with a single '-' letter
+    \return <tt>*this</tt>
+
+    Together with other 5 overload methods, <tt>add_flag()</tt> can be called conveniently
+    1. without either \c name or \c short_name, but not both;
+    2. without either \c trigger or \c parse, but not both;
+    3. always with the only mandatory \c description
+*/
 {
     if (!trigger && !parse)
         RUNTIME_ERROR("Either trigger or parse handler must be provided");
@@ -42,18 +56,24 @@ C_EZArgs &C_EZArgs::add_flag(std::string_view name, char short_name, std::string
 }
 
 C_EZArgs &C_EZArgs::add_subcommand(const std::string &name, std::function<void()> onParsed, const std::string &description)
+/*! \param [in] name The verb
+    \param [in] onParsed Called when the flag is fiven without value
+    \param [in] description Decribe the subcommand
+    \exception std::runtime_error if <tt>position_args()</tt> has been called.
+    \return The newly constructed subcommand as a \c C_EZArgs instance
+*/
 {
     switch (m_up2u.index())
     {
-    case 0:
-        m_up2u.emplace<std::map<std::string,C_EZArgs>>();
+    case UP2U_NULL:
+        m_up2u.emplace<UP2U_SUBCMD>(); // become UP2U_SUBCMD
         break;
-    case 2:
+    case UP2U_SUBCMD:
         break;
-    case 1:
+    case UP2U_LAYOUT:
         RUNTIME_ERROR("Already set as positional arguments");
     }
-    auto &ret = std::get<2>(m_up2u).try_emplace(name, C_EZArgs(description)).first->second;
+    auto &ret = std::get<UP2U_SUBCMD>(m_up2u).try_emplace(name, description).first->second;
     ret.m_helpShielded  = m_helpShielded;
     ret.m_hShielded     = m_hShielded;
     ret.m_owner         = this;
@@ -61,27 +81,44 @@ C_EZArgs &C_EZArgs::add_subcommand(const std::string &name, std::function<void()
     return ret;
 }
 
+std::string C_EZArgs::retro_path(const char *const argv[]) const
+{
+    std::vector<const char*> polish_args;
+    for (auto cur = this; cur; cur = cur->m_owner)
+        polish_args.emplace_back(*(argv--));
+
+    std::string ret;
+    for (auto i = polish_args.crbegin(); i != polish_args.crend(); ++i)
+    {
+        if (ret.empty())
+            ret.assign(
+#ifdef _WIN32
+                ".\\"
+#else
+                "./"
+#endif
+               ) += std::filesystem::path{*i}.filename();
+        else
+        {
+            ret += ' ';
+            ret += *i;
+        }
+    }
+    return ret;
+}
+
 C_ErrorOrIndex C_EZArgs::help_full(const char *const argv[]) const
 {
     // Synthesize USAGE
-    std::string help;
-    for (auto cur = this; cur; cur = cur->m_owner)
-    {
-        const auto arg0 = *(argv--);
-        if (help.empty())
-            help = arg0;
-        else
-            help = std::string(arg0) + ' ' + help;
-    }
-    help = "USAGE: " + help;
+    std::string help = "USAGE: " + retro_path(argv);
     std::string validActions;
     switch (m_up2u.index())
     {
-    case 0:
+    case UP2U_NULL:
         break;
-    case 1:
+    case UP2U_LAYOUT:
         {
-            auto &lo = std::get<1>(m_up2u);
+            auto &lo = std::get<UP2U_LAYOUT>(m_up2u);
             const auto minPosArgs = lo.m_posCounts.empty()? lo.m_posArgs.size(): lo.m_posCounts.front();
             for (size_t i = 0; i < minPosArgs; ++i)
                 ((help += " <") += lo.m_posArgs[i]) += '>';
@@ -110,26 +147,26 @@ C_ErrorOrIndex C_EZArgs::help_full(const char *const argv[]) const
                 (help += ' ') += optionals;
         }
         break;
-    case 2:
+    case UP2U_SUBCMD:
         validActions += "VALID ACTIONS:\n";
         {
-            auto &map = std::get<2>(m_up2u);
+            auto &subcmds = std::get<UP2U_SUBCMD>(m_up2u);
             std::string actions;
             size_t positionalCount{};
-            for (auto &i: map)
+            for (auto &i: subcmds)
             {
                 actions += actions.empty()? '(': '|';
                 actions += i.first;
                 ((validActions += "  ") += i.first) += '\n';
                 if (!i.second.m_desc.empty())
                     ((validActions += '\t') += i.second.m_desc) += '\n';
-                if (i.second.m_up2u.index())
+                if (i.second.m_up2u.index() != UP2U_NULL)
                     ++positionalCount;
             }
             (help += ' ') += actions;
             if (!positionalCount)
                 help += ')';
-            else if (positionalCount < map.size())
+            else if (positionalCount < subcmds.size())
                 help += ") [...]";
             else
                 help += ") ...";
@@ -162,10 +199,11 @@ C_ErrorOrIndex C_EZArgs::help_full(const char *const argv[]) const
                 "DESCRIPTION:\n"
                 "  ";
         help += m_desc;
-        if (m_desc.back() != '\n')
-            help += '\n';
     }
+    if (help.back() != '\n')
+        help += '\n';
 
+    // '\n'-ended guaranteed
     if (!validActions.empty())
         help += validActions;
     else
@@ -199,6 +237,7 @@ C_ErrorOrIndex C_EZArgs::help_full(const char *const argv[]) const
                     "INHERITED FLAGS:\n" + flags;
     }
 
+    // '\n'-ended guaranteed
     if (!m_details.empty())
     {
         help += "\n"
@@ -208,6 +247,8 @@ C_ErrorOrIndex C_EZArgs::help_full(const char *const argv[]) const
         if (m_details.back() != '\n')
             help += '\n';
     }
+
+    // '\n'-ended guaranteed
     return help;
 }
 
@@ -245,13 +286,8 @@ std::string C_EZArgs::help_tip(const std::string &error, const char *const argv[
         helpFlag = "--help";
 
     if (helpFlag)
-    {
-        std::string tip;
-        for (auto cur = this; cur; cur = cur->m_owner)
-            tip = std::string(*(argv--)) + ' ' + tip;
+        return fmt::format("{}\nType \"{} {}\" to read the help", error, retro_path(argv), helpFlag);
 
-        return error + "\nType \"" + tip + helpFlag + "\" to read the help";
-    }
     return error;
 }
 

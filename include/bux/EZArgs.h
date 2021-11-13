@@ -32,16 +32,22 @@ struct C_ErrorOrIndex
 };
 
 class C_EZArgs
-/*  Argument parser with flag rules:
-    1) Flags (-x, --xxx) always come after actions and positional arguments.
-    2) Flag with value may be given as either "--flag=value" or "--flag value"
-    3) Adding a flag with trigger & parse at the same time means the flag can be given either with or without value.
+/*! -# \c C_EZArgs the argument parser can define either subcommands or positional arguments, but not both.
+    -# Every subcommand is again an argument parser, and hence follows rule 1.
+    -# Rules about flags:
+       -# Flags (-x, --xxx) always come \b after all subcommands and positional arguments. <em>(This one may be loosen in the future)</em>
+       -# Flag with value may be given as either <tt>--flag=value</tt> or <tt>--flag value</tt>
+       -# Adding a flag with both \c trigger and \c parse callbacks means the flag has an optional value.
 */
 {
 public:
 
-    // Nonvirtuals
+    // Ctors
     explicit C_EZArgs(const std::string &description = {}): m_desc(description) {}
+    C_EZArgs(const C_EZArgs&) = delete;
+    C_EZArgs &operator=(const C_EZArgs&) = delete;
+
+    // Nonvirtuals - for syntax & help layout
     C_EZArgs &add_flag(std::string_view name, char short_name,
                        std::string_view description,
                        std::function<void()> trigger,
@@ -73,14 +79,17 @@ public:
                        std::function<void(std::string_view)> parse) {
         return add_flag({}, short_name, description, {}, parse);
     }
+    //
     C_EZArgs &add_subcommand(const std::string &name, std::function<void()> onParsed = {}, const std::string &description = {});
     void details(std::string_view s) { m_details = s; }
-    [[nodiscard]]C_ErrorOrIndex parse(std::integral auto argc, const char *const argv[]) const;
-
+    //
     C_EZArgs &position_args(const std::ranges::forward_range auto &arg_names,
         const std::ranges::forward_range auto &count_optionals, bool unlimited = false);
     C_EZArgs &position_args(const std::ranges::forward_range auto &arg_names, bool unlimited = false)
         { return position_args(arg_names, std::ranges::views::empty<size_t>, unlimited); }
+
+    // Nonvirtuals - for parsing
+    [[nodiscard]]C_ErrorOrIndex parse(std::integral auto argc, const char *const argv[]) const;
     auto parsed_position_argc() const { return m_totoalPositionArgs; }
 
 private:
@@ -101,27 +110,55 @@ private:
         bool                        m_unlimited;
     };
 
+    using C_UP2U = std::variant<std::monostate,C_ArgLayout,std::map<std::string,C_EZArgs>>;
+    enum
+    {
+        UP2U_NULL,
+        UP2U_LAYOUT,
+        UP2U_SUBCMD
+    };
+
     // Data
     const std::string       m_desc;
     std::string             m_details;
     std::deque<C_FlagDef>   m_flags;
-    std::variant<std::monostate,C_ArgLayout,std::map<std::string,C_EZArgs>> m_up2u;
+    C_UP2U                  m_up2u;
     C_EZArgs                *m_owner{};
     std::function<void()>   m_onParsed;
     size_t                  mutable m_totoalPositionArgs{};
     bool                    m_helpShielded{false};
     bool                    m_hShielded{false};
 
+    // Compile-time assertions
+    static_assert(std::variant_size_v<C_UP2U> == 3);
+    static_assert(std::is_same_v<std::monostate,                    std::variant_alternative_t<UP2U_NULL,   C_UP2U>>);
+    static_assert(std::is_same_v<C_ArgLayout,                       std::variant_alternative_t<UP2U_LAYOUT, C_UP2U>>);
+    static_assert(std::is_same_v<std::map<std::string,C_EZArgs>,    std::variant_alternative_t<UP2U_SUBCMD, C_UP2U>>);
+
     // Nonvirtuals
     std::string help_flags() const;
     C_ErrorOrIndex help_full(const char *const argv[]) const;
     std::string help_tip(const std::string &error, const char *const argv[]) const;
+    std::string retro_path(const char *const argv[]) const;
 };
 
 //
 //      Implement Member Templates
 //
-C_EZArgs &C_EZArgs::position_args(const std::ranges::forward_range auto &arg_names, const std::ranges::forward_range auto &count_optionals, bool unlimited)
+C_EZArgs &C_EZArgs::position_args           (
+    const std::ranges::forward_range auto   &arg_names,
+    const std::ranges::forward_range auto   &count_optionals,
+    bool                                    unlimited       )
+/*! \param [in] arg_names Argument display names and the implied maximal count of positional arguments when \c unlimited is \b false.
+    \param [in] count_optionals Valid argument counts, automatically extended with all intergers greater than <tt>max(count_optionals)</tt>
+    when \c unlimited is \b true.
+    \param [in] unlimited If count of positional arguments grater than <tt>max(count_optionals)</tt> is valid.
+    \exception std::runtime_error if <tt>add_subcommand()</tt> has been called.
+    \return <tt>*this</tt>
+
+    Together with another overload, only \c arg_names is mandatory. When only \c arg_names is provided, exactly <tt>std::size(arg_names)</tt>
+    postional arguments are expected.
+*/
 {
     if (!std::empty(arg_names) || unlimited)
         // Non-trivial case
@@ -153,6 +190,12 @@ C_EZArgs &C_EZArgs::position_args(const std::ranges::forward_range auto &arg_nam
 }
 
 C_ErrorOrIndex C_EZArgs::parse(std::integral auto argc, const char *const argv[]) const
+/*! \param [in] argc Typically the same \c argc from <tt>main(int argc, char *argv[])</tt>
+    \param [in] argv Typically the same \c argv from <tt>main(int argc, char *argv[])</tt>
+    \return On success, the returned value can be implicitly cast to \b true; otherwise, call <tt>message()</tt> method
+            to get help or error message.
+    \post Call parsed_position_argc() to get number of positional arguments including <tt>argv[0]</tt> and subcommand(s)
+*/
 {
     decltype(argc) ind = 1;
     switch (m_up2u.index())
