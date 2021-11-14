@@ -7,9 +7,8 @@ Server = http://free.nchc.org.tw/arch/$repo/os/$arch\n' | tee /etc/pacman.d/mirr
     if [[ -n "$PACDAY" ]]; then \
         sed -Ei "s|^Include\s*=.+$|SigLevel = PackageRequired\nServer=https://archive.archlinux.org/repos/$PACDAY/\$repo/os/\$arch|g" /etc/pacman.conf ; \
     fi && \
-    sed -Ei 's|^#TotalDownload\s*$|TotalDownload|g' /etc/pacman.conf && \
     sed -Ei 's|^#VerbosePkgLists\s*$|VerbosePkgLists|g' /etc/pacman.conf && \
-    pacman -Sy --needed --noconfirm cmake make gcc git binutils fmt fakeroot gawk catch2 glibc ncurses && \
+    pacman -Sy --needed --noconfirm cmake make gcc git binutils fmt fakeroot gawk catch2 glibc ncurses sudo && \
     rm -rf /root/.cache
 RUN useradd -m guest
 
