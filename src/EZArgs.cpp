@@ -12,25 +12,14 @@ std::string C_ErrorOrIndex::message() const
     return m_optIndex? fmt::format("argv[{}]: {}",*m_optIndex,m_message): m_message;
 }
 
-C_EZArgs &C_EZArgs::add_flag(std::string_view name, char short_name, std::string_view description,
-    std::function<void()> trigger, std::function<void(std::string_view)> parse)
+C_EZArgs::C_FlagDef &C_EZArgs::create_flag_def(std::string_view name, char short_name, std::string_view description)
 /*! \param [in] name Long flag name, with or without -- prefix
     \param [in] short_name Short flag name as a single letter
     \param [in] description Decribe the flag
-    \param [in] trigger Called when the flag is fiven without value
-    \param [in] parse Called when the flag is fiven with a value
-    \exception std::runtime_error if both \c trigger and \c parse is null or \c name is prefixed with a single '-' letter
-    \return <tt>*this</tt>
-
-    Together with other 5 overload methods, <tt>add_flag()</tt> can be called conveniently
-    1. without either \c name or \c short_name, but not both;
-    2. without either \c trigger or \c parse, but not both;
-    3. always with the only mandatory \c description
+    \exception std::runtime_error if \c name is prefixed with a single '-' letter
+    \return The created flag struct
 */
 {
-    if (!trigger && !parse)
-        RUNTIME_ERROR("Either trigger or parse handler must be provided");
-
     auto &dst = m_flags.emplace_back();
     if (!name.empty() && name[0] == '-')
         if (name[1] == '-')
@@ -45,40 +34,12 @@ C_EZArgs &C_EZArgs::add_flag(std::string_view name, char short_name, std::string
 
     dst.m_descOneLiner  = description;
     dst.m_shortName     = short_name;
-    dst.m_trigger       = trigger;
-    dst.m_parse         = parse;
     if (dst.m_name == "help")
         m_helpShielded = true;
     if (dst.m_shortName == 'h')
         m_hShielded = true;
 
-    return *this;
-}
-
-C_EZArgs &C_EZArgs::add_subcommand(const std::string &name, std::function<void()> onParsed, const std::string &description)
-/*! \param [in] name The verb
-    \param [in] onParsed Called when the flag is fiven without value
-    \param [in] description Decribe the subcommand
-    \exception std::runtime_error if <tt>position_args()</tt> has been called.
-    \return The newly constructed subcommand as a \c C_EZArgs instance
-*/
-{
-    switch (m_up2u.index())
-    {
-    case UP2U_NULL:
-        m_up2u.emplace<UP2U_SUBCMD>(); // become UP2U_SUBCMD
-        break;
-    case UP2U_SUBCMD:
-        break;
-    case UP2U_LAYOUT:
-        RUNTIME_ERROR("Already set as positional arguments");
-    }
-    auto &ret = std::get<UP2U_SUBCMD>(m_up2u).try_emplace(name, description).first->second;
-    ret.m_helpShielded  = m_helpShielded;
-    ret.m_hShielded     = m_hShielded;
-    ret.m_owner         = this;
-    ret.m_onParsed      = onParsed;
-    return ret;
+    return dst;
 }
 
 std::string C_EZArgs::retro_path(const char *const argv[]) const
