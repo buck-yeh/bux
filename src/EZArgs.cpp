@@ -58,7 +58,7 @@ std::string C_EZArgs::retro_path(const char *const argv[]) const
 #else
                 "./"
 #endif
-               ) += std::filesystem::path{*i}.filename();
+               ) += std::filesystem::path{*i}.filename().string();
         else
         {
             ret += ' ';
