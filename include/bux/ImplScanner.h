@@ -142,8 +142,7 @@ void C_ScannerImpl<T_Input,T_State,T_Char,C_Traits>::add(unsigned col, T_Char c)
                             // First fit - action right now
                         {
                             const C_ActionRet ret = (*m_pAction)(m_ReadCh.data(), m_ReadCh.size());
-                            addToken(ret.m_id, m_ReadPos.front(), ret.m_pAttr);
-                            return;
+                            return addToken(ret.m_id, m_ReadPos.front(), ret.m_pAttr);
                         }
                     m_LastSuccess = int(m_ReadCh.size());
                 }

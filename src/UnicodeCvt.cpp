@@ -349,7 +349,7 @@ void C_UnicodeIn::init()
             {
                 m_Src.pop(3);
                 setCodePage(CHSETS_UTF8);
-                m_ReadMethod =&C_UnicodeIn::readCodePage;
+                m_ReadMethod = &C_UnicodeIn::readCodePage;
                 return;
             }
 
@@ -365,7 +365,7 @@ void C_UnicodeIn::init()
                 if (testUtf16(m_Src.buffer(), size))
 #endif
                 {
-                    m_ReadMethod =&C_UnicodeIn::readUTF16;
+                    m_ReadMethod = &C_UnicodeIn::readUTF16;
                     return;
                 }
                 const auto revBuf = std::make_unique<char[]>(size);
@@ -377,7 +377,7 @@ void C_UnicodeIn::init()
                 if (testUtf16(revBuf.get(), size))
 #endif
                 {
-                    m_ReadMethod =&C_UnicodeIn::readReverseUTF16;
+                    m_ReadMethod = &C_UnicodeIn::readReverseUTF16;
                     return;
                 }
             }
@@ -409,8 +409,7 @@ void C_UnicodeIn::readASCII()
         // Still an ASCII
         {
             m_GetQ.push(c);
-            m_Src.pop(1);
-            return;
+            return m_Src.pop(1);
         }
     }
 

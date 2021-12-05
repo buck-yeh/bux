@@ -177,8 +177,7 @@ Again:
                 }
             }
         }
-        onError(info, out);
-        return;
+        return onError(info, out);
     }
     m_curTops.swap(nextTops);
 }
