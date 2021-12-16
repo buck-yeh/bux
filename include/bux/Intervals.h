@@ -275,8 +275,10 @@ template<IntervalPt T>
 void C_Intervals<T>::complement()
 {
     if (m_Intervals.empty())
-        return m_Intervals.emplace_back(std::numeric_limits<T>::min(), std::numeric_limits<T>::max());
-
+    {
+        m_Intervals.emplace_back(std::numeric_limits<T>::min(), std::numeric_limits<T>::max());
+        return;
+    }
     decltype(m_Intervals) dst;
     value_type t;
     t.first = std::numeric_limits<T>::min();
