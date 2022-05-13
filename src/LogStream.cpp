@@ -68,7 +68,7 @@ std::ostream &logTrace(std::ostream &out)
 }
 
 std::string _HRTN(const char *originalName)
-/*! \param [in] originalNamestream Compiler mangled or expanded type name, depending on which compiler you are using.
+/*! \param [in] originalName Compiler mangled or expanded type name, depending on which compiler you are using.
     \return Human readable type name
 */
 {
