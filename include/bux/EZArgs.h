@@ -55,65 +55,65 @@ public:
     // Nonvirtuals - for syntax & help layout
     C_EZArgs &add_flag(std::string_view name, char short_name,
                        std::string_view description,
-                       std::invocable<> auto trigger,
-                       std::invocable<std::string_view> auto parse){
+                       std::invocable<> auto &&trigger,
+                       std::invocable<std::string_view> auto &&parse){
         auto &def = create_flag_def(name, short_name, description);
-        def.m_trigger  = trigger;
-        def.m_parse    = parse;
+        def.m_trigger  = std::move(trigger);
+        def.m_parse    = std::move(parse);
         return *this;
     }
     C_EZArgs &add_flag(std::string_view name, char short_name,
                        std::string_view description,
-                       std::invocable<> auto trigger){
-        create_flag_def(name, short_name, description).m_trigger = trigger;
+                       std::invocable<> auto &&trigger){
+        create_flag_def(name, short_name, description).m_trigger = std::move(trigger);
         return *this;
     }
     C_EZArgs &add_flag(std::string_view name, char short_name,
                        std::string_view description,
-                       std::invocable<std::string_view> auto parse){
-        create_flag_def(name, short_name, description).m_parse = parse;
+                       std::invocable<std::string_view> auto &&parse){
+        create_flag_def(name, short_name, description).m_parse = std::move(parse);
         return *this;
     }
     C_EZArgs &add_flag(std::string_view name,
                        std::string_view description,
                        std::invocable<> auto trigger,
-                       std::invocable<std::string_view> auto parse) {
+                       std::invocable<std::string_view> auto &&parse) {
         auto &def = create_flag_def(name, char(), description);
-        def.m_trigger  = trigger;
-        def.m_parse    = parse;
+        def.m_trigger  = std::move(trigger);
+        def.m_parse    = std::move(parse);
         return *this;
     }
     C_EZArgs &add_flag(std::string_view name,
                        std::string_view description,
-                       std::invocable<> auto trigger) {
-        create_flag_def(name, char(), description).m_trigger = trigger;
+                       std::invocable<> auto &&trigger) {
+        create_flag_def(name, char(), description).m_trigger = std::move(trigger);
         return *this;
     }
     C_EZArgs &add_flag(std::string_view name,
                        std::string_view description,
-                       std::invocable<std::string_view> auto parse){
-        create_flag_def(name, char(), description).m_parse = parse;
+                       std::invocable<std::string_view> auto &&parse){
+        create_flag_def(name, char(), description).m_parse = std::move(parse);
         return *this;
     }
     C_EZArgs &add_flag(char short_name,
                        std::string_view description,
-                       std::invocable<> auto trigger,
-                       std::invocable<std::string_view> auto parse) {
+                       std::invocable<> auto &&trigger,
+                       std::invocable<std::string_view> auto &&parse) {
         auto &def = create_flag_def({}, short_name, description);
-        def.m_trigger  = trigger;
-        def.m_parse    = parse;
+        def.m_trigger  = std::move(trigger);
+        def.m_parse    = std::move(parse);
         return *this;
     }
     C_EZArgs &add_flag(char short_name,
                        std::string_view description,
-                       std::invocable<> auto trigger) {
-        create_flag_def({}, short_name, description).m_trigger = trigger;
+                       std::invocable<> auto &&trigger) {
+        create_flag_def({}, short_name, description).m_trigger = std::move(trigger);
         return *this;
     }
     C_EZArgs &add_flag(char short_name,
                        std::string_view description,
-                       std::invocable<std::string_view> auto parse) {
-        create_flag_def({}, short_name, description).m_parse = parse;
+                       std::invocable<std::string_view> auto &&parse) {
+        create_flag_def({}, short_name, description).m_parse = std::move(parse);
         return *this;
     }
     //
