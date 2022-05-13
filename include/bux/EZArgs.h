@@ -39,10 +39,10 @@ class C_EZArgs
        -# Flags (-x, --xxx) always come \b after all subcommands and positional arguments. <em>(This one may be loosen in the future)</em>
        -# Flag with value may be given as either <tt>--flag=value</tt> or <tt>--flag value</tt>
        -# Adding a flag with both \c trigger and \c parse callbacks means the flag has an optional value.
-    -# The 9 <tt>add_flag()</tt> overloaded methods are meant to be called handily:
-       -# without either \c name or \c short_name, but not both;
-       -# without either \c trigger or \c parse, but not both;
-       -# always with the mandatory \c description
+    -# The 9 <tt>add_flag()</tt> overloaded methods facilitate defining new flags without any \a optional arguments:
+       -# It is ok to call without either \c name or \c short_name, but not both;
+       -# It is ok to call without either \c trigger or \c parse, but not both;
+       -# Always call with \c description
 */
 {
 public:
