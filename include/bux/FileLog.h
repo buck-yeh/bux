@@ -66,9 +66,9 @@ public:
     void configPath(const std::string &pathFmt);
     void configPath(uintmax_t fsize_in_bytes, const auto &fallbackPaths) requires
         requires {
-            std::cbegin(fallbackPaths);
-            { *std::cbegin(fallbackPaths) }-> std::convertible_to<std::string>;
-            std::cend(fallbackPaths);
+            std::begin(fallbackPaths);
+            { *std::begin(fallbackPaths) }-> std::convertible_to<std::string>;
+            std::end(fallbackPaths);
         }
     {
         m_PathFmts.clear();
