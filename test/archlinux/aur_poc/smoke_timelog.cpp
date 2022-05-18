@@ -36,7 +36,7 @@ int main(int argc, const char *argv[])
     else
     {
 #ifdef SET_SIZE_LIMIT_
-        bux::user::g_snap.configPath(65536, std::array{
+        bux::user::g_snap.configPath(65536, std::vector{
             "timelog/%y%m%d-%H.log",
             "timelog/%y%m%d-%H-%M.log",
             "timelog/%y%m%d-%H-%M-%S.log"
