@@ -13,12 +13,12 @@ namespace {
 */
 enum
 {
-    CATCH_SE_CALLED         =1,
-    USE_OLD_USER_SE_FIRST   =2
+    CATCH_SE_CALLED         = 1,
+    USE_OLD_USER_SE_FIRST   = 2
 };
 
-DWORD TLSInd_FlagsSE =TLS_OUT_OF_INDEXES;
-DWORD TLSInd_UserSE  =TLS_OUT_OF_INDEXES;
+DWORD TLSInd_FlagsSE = TLS_OUT_OF_INDEXES;
+DWORD TLSInd_UserSE  = TLS_OUT_OF_INDEXES;
 
 #if defined(__BORLANDC__)
 void _USERENTRY TLSInd_Free()
@@ -30,8 +30,8 @@ void TLSInd_Free()
 {
     TlsFree(TLSInd_FlagsSE);
     TlsFree(TLSInd_UserSE);
-    TLSInd_FlagsSE =TLS_OUT_OF_INDEXES;
-    TLSInd_UserSE  =TLS_OUT_OF_INDEXES;
+    TLSInd_FlagsSE = TLS_OUT_OF_INDEXES;
+    TLSInd_UserSE  = TLS_OUT_OF_INDEXES;
 }
 
 LONG WINAPI usrSEH(_EXCEPTION_POINTERS *pInfo)
@@ -39,7 +39,7 @@ LONG WINAPI usrSEH(_EXCEPTION_POINTERS *pInfo)
     LONG ret = EXCEPTION_CONTINUE_SEARCH;
     if (size_t(TlsGetValue(TLSInd_FlagsSE)) &USE_OLD_USER_SE_FIRST)
     {
-        if (LPTOP_LEVEL_EXCEPTION_FILTER oldHook =LPTOP_LEVEL_EXCEPTION_FILTER(TlsGetValue(TLSInd_UserSE)))
+        if (auto oldHook = LPTOP_LEVEL_EXCEPTION_FILTER(TlsGetValue(TLSInd_UserSE)))
             ret =oldHook(pInfo);
     }
 
@@ -80,8 +80,8 @@ void catchSE(bool useOldHookFirst)
         C_SpinLock       _(lock);
         if (TLS_OUT_OF_INDEXES == TLSInd_FlagsSE)
         {
-            TLSInd_UserSE   =TlsAlloc();
-            TLSInd_FlagsSE  =TlsAlloc();
+            TLSInd_UserSE   = TlsAlloc();
+            TLSInd_FlagsSE  = TlsAlloc();
             atexit(TLSInd_Free);
         }
     }
@@ -91,7 +91,7 @@ void catchSE(bool useOldHookFirst)
         TlsSetValue(TLSInd_UserSE, LPVOID(SetUnhandledExceptionFilter(usrSEH)));
         size_t flags = CATCH_SE_CALLED;
         if (useOldHookFirst)
-            flags |=USE_OLD_USER_SE_FIRST;
+            flags |= USE_OLD_USER_SE_FIRST;
 
         TlsSetValue(TLSInd_FlagsSE, LPVOID(flags));
     }

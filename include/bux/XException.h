@@ -1,8 +1,8 @@
 #pragma once
 
 #include "XPlatform.h"  // CUR_FUNC_
-#include <stdexcept>    // std::runtime_error, std::logic_error
 #include <fmt/format.h> // fmt::format()
+#include <stdexcept>    // std::runtime_error, std::logic_error
 
 namespace bux {
 
