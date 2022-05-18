@@ -45,8 +45,8 @@ LONG WINAPI usrSEH(_EXCEPTION_POINTERS *pInfo)
 
     if (EXCEPTION_CONTINUE_SEARCH == ret)
     {
-        if (const EXCEPTION_RECORD *er =pInfo->ExceptionRecord)
-            RUNTIME_ERROR("code 0x{:x}, flags 0x{:x}, extra 0x{:x}, ip 0x{:x}, arg#{:x}",
+        if (const auto er =pInfo->ExceptionRecord)
+            RUNTIME_ERROR("code 0x{:x}, flags 0x{:x}, extra {}, ip {}, arg#{:x}",
                 er->ExceptionCode,
                 er->ExceptionFlags,
                 static_cast<void*>(er->ExceptionRecord),
