@@ -3,7 +3,6 @@
     http://blog.wingman-sw.com/tdd-guided-by-zombies
 */
 #include "bux/AtomiX.h"
-#include "bux/ParaUtil.h"   // bux::C_NumIter<>
 #include <execution>        // std::execution::par_unseq
 
 #define CATCH_CONFIG_MAIN   // This tells Catch to provide a main() - only do this in one cpp file
@@ -23,17 +22,6 @@ TEST_CASE("Cache for one thread", "[O]")
         const int t = i % 10;
         cache(t, [t](std::string &s){ s = std::to_string(t); });
     }
-    REQUIRE(cache.size() == 10);
-}
-
-TEST_CASE("Cache for many threads", "[M]")
-{
-    bux::C_SpinCacheT<int,std::string> cache;
-    using C_Iter = bux::C_NumIter<int>;
-    std::for_each(std::execution::par, C_Iter(0), C_Iter(1000000), [&](auto i){
-        const int t = i % 10;
-        cache(t, [t](std::string &s){ s = std::to_string(t); });
-    });
     REQUIRE(cache.size() == 10);
 }
 
