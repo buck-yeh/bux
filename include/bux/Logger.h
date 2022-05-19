@@ -110,9 +110,9 @@ I_SyncLog &logger();    // provided by user of LOG(), FUNLOG(), SCOPELOG()
     DEF_LOGGER_TAIL_(l_)
 
 // #include <bux/FileLog.h> before using this
-#define DEF_CONFIGURABLE_LOGGER_FILES \
+#define DEF_FALLBACKABLE_LOGGER_FILES(first,...) \
     namespace bux { namespace user {  \
-    C_PathFmtLogSnap g_snap; \
+    C_PathFmtLogSnap g_snap{first, ##__VA_ARGS__}; \
     C_ReenterableOstreamSnap g_ros{g_snap}; \
     I_SyncLog &logger() { \
     static C_SyncLogger l_{g_ros}; \

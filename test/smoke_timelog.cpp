@@ -1,4 +1,4 @@
-#include <bux/Logger.h>     // DEF_LOGGER_FILES(), DEF_CONFIGURABLE_LOGGER_FILES
+#include <bux/Logger.h>     // DEF_LOGGER_FILES(), DEF_FALLBACKABLE_LOGGER_FILES()
 #include <bux/FileLog.h>    // bux::C_PathFmtLogSnap
 #include <chrono>           // std::chrono::system_clock
 #include <random>           // std::mt19937
@@ -9,7 +9,11 @@
 #ifndef SET_SIZE_LIMIT_
 DEF_LOGGER_FILES("timelog/%y%m%d_%H%M.log")
 #else
-DEF_CONFIGURABLE_LOGGER_FILES
+DEF_FALLBACKABLE_LOGGER_FILES(65536, std::vector{
+            "timelog/%y%m%d-%H.log",
+            "timelog/%y%m%d-%H-%M.log",
+            "timelog/%y%m%d-%H-%M-%S.log"
+        })
 #endif
 
 thread_local std::mt19937 g_rng{std::random_device{"/dev/urandom"}()};
@@ -35,13 +39,6 @@ int main(int argc, const char *argv[])
     }
     else
     {
-#ifdef SET_SIZE_LIMIT_
-        bux::user::g_snap.configPath(65536, std::vector{
-            "timelog/%y%m%d-%H.log",
-            "timelog/%y%m%d-%H-%M.log",
-            "timelog/%y%m%d-%H-%M-%S.log"
-        });
-#endif
         using C_MyClock = std::chrono::system_clock;
         const auto deadline = C_MyClock::now() + std::chrono::seconds(strtoul(argv[1],nullptr,0));
         while (C_MyClock::now() < deadline)
