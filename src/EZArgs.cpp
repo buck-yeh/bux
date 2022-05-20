@@ -254,4 +254,43 @@ std::string C_EZArgs::help_tip(const std::string &error, const char *const argv[
     return error;
 }
 
+const C_EZArgs::C_FlagDef* C_EZArgs::find_shortname_def(char sname) const
+{
+    for (auto cur = this; cur; cur = cur->m_owner)
+        for (auto& def : cur->m_flags)
+        {
+            if (def.m_shortName == sname)
+                // Matched
+                return &def;
+        }
+    return nullptr;
+}
+
+const C_EZArgs::C_FlagDef* C_EZArgs::find_longname_def(std::string_view name) const
+{
+    for (auto cur = this; cur; cur = cur->m_owner)
+        for (auto& def : cur->m_flags)
+        {
+            if (def.m_name == name)
+                // Matched
+                return &def;
+        }
+    return nullptr;
+}
+
+bool C_EZArgs::is_valid_flag(const char* arg) const
+{
+    if (*arg != '-')
+        return false;
+
+    if (arg[1] == '-')
+        // Match full flag name
+    {
+        const auto flag = arg + 2;
+        const auto eqsign = strchr(flag, '=');
+        const auto flag_name = eqsign ? std::string_view(flag, size_t(eqsign - flag)) : std::string_view(flag);
+        return nullptr != find_longname_def(flag_name);
+    }
+    return nullptr != find_shortname_def(arg[1]);
+}
 } //namespace bux

@@ -174,6 +174,9 @@ private:
 
     // Nonvirtuals
     C_FlagDef &create_flag_def(std::string_view name, char short_name, std::string_view description);
+    const C_FlagDef *find_shortname_def(char sname) const;
+    const C_FlagDef* find_longname_def(std::string_view name) const;
+    bool is_valid_flag(const char* arg) const;
     std::string help_flags() const;
     C_ErrorOrIndex help_full(const char *const argv[]) const;
     std::string help_tip(const std::string &error, const char *const argv[]) const;
@@ -342,42 +345,39 @@ C_ErrorOrIndex C_EZArgs::parse(std::integral auto argc, const char *const argv[]
             const auto flag = arg + 2;
             const auto eqsign = strchr(flag, '=');
             const auto flag_name = eqsign? std::string_view(flag, size_t(eqsign-flag)): std::string_view(flag);
-            for (auto cur = this; cur; cur = cur->m_owner)
-                for (auto &def: cur->m_flags)
-                    if (def.m_name == flag_name)
-                        // Matched
+            if (auto def = find_longname_def(flag_name))
+            {
+                if (eqsign)
+                    // (=)-connected flag value
+                {
+                    if (def->m_parse)
                     {
-                        if (eqsign)
-                            // (=)-connected flag value
-                        {
-                            if (def.m_parse)
-                            {
-                                def.m_parse(eqsign+1);
-                                goto NextInd;
-                            }
-                            return {help_tip(std::string("Value parser absent: ")+arg, argv), ind};
-                        }
-                        else if (ind+1 < argc && argv[ind+1][0] != '-')
-                            // Flag with value
-                        {
-                            if (def.m_parse)
-                            {
-                                def.m_parse(argv[++ind]);
-                                goto NextInd;
-                            }
-                            return {help_tip(std::string("Value parser absent: ")+arg, argv), ind};
-                        }
-                        else
-                            // Flag without value
-                        {
-                            if (def.m_trigger)
-                            {
-                                def.m_trigger();
-                                goto NextInd;
-                            }
-                            return {help_tip(std::string(def.m_parse?"Missing flag value: ":"Triggerless flag: ")+arg, argv), ind};
-                        }
+                        def->m_parse(eqsign+1);
+                        goto NextInd;
                     }
+                    return {help_tip(std::string("Value parser absent: ")+arg, argv), ind};
+                }
+                else if (ind+1 < argc && !is_valid_flag(argv[ind+1]))
+                    // Flag with value
+                {
+                    if (def->m_parse)
+                    {
+                        def->m_parse(argv[++ind]);
+                        goto NextInd;
+                    }
+                    return {help_tip(std::string("Value parser absent: ")+arg, argv), ind};
+                }
+                else
+                    // Flag without value
+                {
+                    if (def->m_trigger)
+                    {
+                        def->m_trigger();
+                        goto NextInd;
+                    }
+                    return {help_tip(std::string(def->m_parse?"Missing flag value: ":"Triggerless flag: ")+arg, argv), ind};
+                }
+            }
             if ("help" == flag_name)
                 return help_full(argv);
             else
@@ -387,31 +387,29 @@ C_ErrorOrIndex C_EZArgs::parse(std::integral auto argc, const char *const argv[]
             // Match continous short flag names
             while (char sname = *++arg)
             {
-                for (auto cur = this; cur; cur = cur->m_owner)
-                    for (auto &def: cur->m_flags)
-                        if (def.m_shortName == sname)
+                if (auto def = find_shortname_def(sname))
+                {
+                    if (!arg[1] && ind+1 < argc && !is_valid_flag(argv[ind+1]))
+                        // Flag with value
+                    {
+                        if (def->m_parse)
                         {
-                            if (!arg[1] && ind+1 < argc && argv[ind+1][0] != '-')
-                                // Flag with value
-                            {
-                                if (def.m_parse)
-                                {
-                                    def.m_parse(argv[++ind]);
-                                    goto NextInd;
-                                }
-                                return {help_tip(std::string("Value parser absent: -")+sname, argv), ind};
-                            }
-                            else
-                                // Flag without value
-                            {
-                                if (def.m_trigger)
-                                {
-                                    def.m_trigger();
-                                    goto NextInd;
-                                }
-                                return {help_tip(std::string(def.m_parse?"Missing flag value: -":"Triggerless flag: -")+sname, argv), ind};
-                            }
+                            def->m_parse(argv[++ind]);
+                            goto NextInd;
                         }
+                        return {help_tip(std::string("Value parser absent: -")+sname, argv), ind};
+                    }
+                    else
+                        // Flag without value
+                    {
+                        if (def->m_trigger)
+                        {
+                            def->m_trigger();
+                            goto NextInd;
+                        }
+                        return {help_tip(std::string(def->m_parse?"Missing flag value: -":"Triggerless flag: -")+sname, argv), ind};
+                    }
+                }
                 if ('h' == sname)
                     return help_full(argv);
                 else
