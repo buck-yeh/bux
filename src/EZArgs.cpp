@@ -153,6 +153,8 @@ C_ErrorOrIndex C_EZArgs::help_full(const char *const argv[]) const
     else if (!m_helpShielded)
         help += " [--help]";
 
+    help += '\n';
+
     // Append DESCRIPTION if any
     if (!m_desc.empty())
     {
