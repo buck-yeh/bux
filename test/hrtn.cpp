@@ -1,4 +1,4 @@
-#include <bux/LogStream.h>  // bux::_HRTN()
+#include <bux/StrUtil.h>    // bux::_HRTN()
 #include <iostream>         // std::cout
 
 int main(int argc, char *argv[])

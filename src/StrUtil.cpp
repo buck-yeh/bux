@@ -2,7 +2,8 @@
     #include <windows.h>    // to evade "No Target Architecture" error
 #endif
 #include "StrUtil.h"
-#include "XException.h"     // RUNTIME_ERROR()
+//------------------------------------------------------------------------
+#include <cstring>          // strstr(), strlen()
 #ifdef _WIN32
     #include <processenv.h> // ExpandEnvironmentStringsA()
 #elif defined(__unix__) || defined(__unix) || defined(__gnu_linux__)
@@ -10,6 +11,10 @@
 #else
     #error "Platform other than Windows and Unix-like not supported yet"
 #endif
+#ifdef __unix__
+    #include <cxxabi.h>         // abi::__cxa_demangle()
+#endif
+
 
 namespace bux {
 
@@ -59,7 +64,73 @@ std::string expand_env(const char *s)
     if (done)
         return ret;
 #endif
-    RUNTIME_ERROR("Fail to expand \"{}\"", s);
+    throw std::runtime_error(std::string("Fail to expand \"")+s+'"');
+}
+
+std::string _HRTN(const char *originalName)
+/*! \param [in] originalName Compiler mangled or expanded type name, depending on which compiler you are using.
+    \return Human readable type name
+*/
+{
+    std::string ret;
+#ifdef __unix__
+    int status;
+    char *const name = abi::__cxa_demangle(originalName, NULL, NULL, &status);
+    if (!status)
+    {
+        ret = name;
+        free(name);
+    }
+    else
+    {
+        ret.assign(originalName).append(" with demangling error ") += std::to_string(status);
+    }
+#else
+    struct C_KeyMap // POD
+    {
+        const char      *m_Key;
+        const char      *m_Value;
+    };
+    static const C_KeyMap MAP[] ={
+        {typeid(std::string).name(), "std::string"}
+    };
+
+    for (auto i: MAP)
+    {
+        std::string t;
+        const char *cur = originalName;
+        const char *const key = i.m_Key;
+        for (const char *pos; *cur && (pos = strstr(cur,key)) != 0;)
+        {
+            if (cur < pos)
+                t.append(cur, pos);
+
+            t.append(i.m_Value);
+            cur = pos + strlen(key);
+            while (*cur == ' ') ++cur;
+        }
+
+        if (!t.empty())
+        {
+            if (*cur)
+                t.append(cur);
+
+            ret = t;
+            originalName = ret.c_str();
+        }
+    }
+    if (ret.empty())
+        ret = originalName;
+#endif
+    return ret;
+}
+
+std::string OXCPT(const std::exception &e)
+/*! \param [in] e Instance of std::exception descent
+    \return Printable form with reason
+*/
+{
+    return HRTN(e) + ": " + e.what();
 }
 
 } // namespace bux

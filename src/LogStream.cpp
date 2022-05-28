@@ -1,12 +1,8 @@
 #include "LogStream.h"
-#include <cstring>          // strstr(), strlen()
+//---------------------------------------------------------------
 #include <ostream>          // std::ostream
 #include <chrono>           // std::chrono::system_clock
 #include <cinttypes>        // imaxdiv()
-
-#ifdef __unix__
-#include <cxxabi.h>         // abi::__cxa_demangle()
-#endif
 
 #ifdef __GNUC__
 #ifndef _GNU_SOURCE
@@ -65,72 +61,6 @@ std::ostream &logTrace(std::ostream &out)
 */
 {
     return timestamp(out) <<" tid" <<TID_ <<' ';
-}
-
-std::string _HRTN(const char *originalName)
-/*! \param [in] originalName Compiler mangled or expanded type name, depending on which compiler you are using.
-    \return Human readable type name
-*/
-{
-    std::string ret;
-#ifdef __unix__
-    int status;
-    char *const name = abi::__cxa_demangle(originalName, NULL, NULL, &status);
-    if (!status)
-    {
-        ret = name;
-        free(name);
-    }
-    else
-    {
-        ret.assign(originalName).append(" with demangling error ") += std::to_string(status);
-    }
-#else
-    struct C_KeyMap // POD
-    {
-        const char      *m_Key;
-        const char      *m_Value;
-    };
-    static const C_KeyMap MAP[] ={
-        {typeid(std::string).name(), "std::string"}
-    };
-
-    for (auto i: MAP)
-    {
-        std::string t;
-        const char *cur = originalName;
-        const char *const key = i.m_Key;
-        for (const char *pos; *cur && (pos = strstr(cur,key)) != 0;)
-        {
-            if (cur < pos)
-                t.append(cur, pos);
-
-            t.append(i.m_Value);
-            cur = pos + strlen(key);
-            while (*cur == ' ') ++cur;
-        }
-
-        if (!t.empty())
-        {
-            if (*cur)
-                t.append(cur);
-
-            ret = t;
-            originalName = ret.c_str();
-        }
-    }
-    if (ret.empty())
-        ret = originalName;
-#endif
-    return ret;
-}
-
-std::string OXCPT(const std::exception &e)
-/*! \param [in] e Instance of std::exception descent
-    \return Printable form with reason
-*/
-{
-    return HRTN(e) + ": " + e.what();
 }
 
 } // namespace bux

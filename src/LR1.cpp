@@ -1,5 +1,5 @@
 #include "LR1.h"
-#include "LogStream.h"  // HRTN()
+#include "StrUtil.h"    // HRTN()
 #include <fmt/core.h>   // fmt::format()
 #include <limits>       // std::numeric_limits<>
 

@@ -1,5 +1,5 @@
 #include "GLR.h"
-#include "LogStream.h"  // HRTN()
+#include "StrUtil.h"    // HRTN()
 #include <fmt/core.h>   // fmt::format()
 
 namespace bux {
