@@ -176,7 +176,7 @@ private:
     C_FlagDef &create_flag_def(std::string_view name, char short_name, std::string_view description);
     const C_FlagDef *find_shortname_def(char sname) const;
     const C_FlagDef* find_longname_def(std::string_view name) const;
-    bool is_valid_flag(const char* arg) const;
+    bool is_valid_flag(const char *const *argv_rest, int argc_rest) const;
     std::string help_flags() const;
     C_ErrorOrIndex help_full(const char *const argv[]) const;
     std::string help_tip(const std::string &error, const char *const argv[]) const;
@@ -357,7 +357,7 @@ C_ErrorOrIndex C_EZArgs::parse(std::integral auto argc, const char *const argv[]
                     }
                     return {help_tip(std::string("Value parser absent: ")+arg, argv), ind};
                 }
-                else if (ind+1 < argc && !is_valid_flag(argv[ind+1]))
+                else if (ind+1 < argc && !is_valid_flag(&argv[ind+1], int(argc-(ind+1))))
                     // Flag with value
                 {
                     if (def->m_parse)
@@ -389,7 +389,7 @@ C_ErrorOrIndex C_EZArgs::parse(std::integral auto argc, const char *const argv[]
             {
                 if (auto def = find_shortname_def(sname))
                 {
-                    if (!arg[1] && ind+1 < argc && !is_valid_flag(argv[ind+1]))
+                    if (!arg[1] && ind+1 < argc && !is_valid_flag(&argv[ind+1], int(argc-(ind+1))))
                         // Flag with value
                     {
                         if (def->m_parse)

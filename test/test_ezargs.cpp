@@ -9,6 +9,7 @@
 #define CATCH_CONFIG_MAIN   // This tells Catch to provide a main() - only do this in one cpp file
 #include <catch2/catch.hpp>
 
+#include <charconv>         // std::from_chars()
 #include <filesystem>       // std::filesystem::*
 #include <ranges>           // std::ranges::views::empty<>
 
@@ -97,4 +98,32 @@ TEST_CASE("Scenario: argv[0] with -E -h", "[S]")
 #endif
         );
     REQUIRE(ret.message() == help);
+}
+
+TEST_CASE("Scenario: Parse negative number as flag value", "[S]")
+{
+    double          x{};
+    bux::C_EZArgs   ezargs;
+    ezargs.add_flag('x', "foobar", [&](auto v){ // parse
+        std::from_chars(v.data(), v.data()+v.size(), x);
+    });
+    const std::string arg0 = std::filesystem::current_path() / "test1.exe";
+    const char *argv[]{arg0.c_str(), "-x", "-.5"};
+    REQUIRE(ezargs.parse(3, argv));
+    CHECK(x == -.5);
+    //-------------------------------------------------------------------------
+    ezargs.add_flag('.', "contrived", []{}); // trigger
+    x = 0;
+    REQUIRE(ezargs.parse(3, argv));
+    CHECK(x == -.5);
+    //-------------------------------------------------------------------------
+    ezargs.add_flag('5', "contrived", []{}); // trigger
+    CHECK(!ezargs.parse(3, argv));
+    //-------------------------------------------------------------------------
+    std::string s6;
+    ezargs.add_flag('6', "contrived", [&](auto v){ s6 = v; }); // parse
+    argv[2] = "-.6";
+    x = 0;
+    REQUIRE(ezargs.parse(3, argv));
+    CHECK(x == -.6);
 }

@@ -278,8 +278,9 @@ const C_EZArgs::C_FlagDef* C_EZArgs::find_longname_def(std::string_view name) co
     return nullptr;
 }
 
-bool C_EZArgs::is_valid_flag(const char* arg) const
+bool C_EZArgs::is_valid_flag(const char *const *argv_rest, int argc_rest) const
 {
+    const auto arg = *argv_rest;
     if (*arg != '-')
         return false;
 
@@ -291,6 +292,29 @@ bool C_EZArgs::is_valid_flag(const char* arg) const
         const auto flag_name = eqsign ? std::string_view(flag, size_t(eqsign - flag)) : std::string_view(flag);
         return nullptr != find_longname_def(flag_name);
     }
-    return nullptr != find_shortname_def(arg[1]);
+
+    // Match every short flag
+    for (auto p = arg; *++p;)
+        if (auto const def = find_shortname_def(*p))
+        {
+            if (p[1])
+            {
+                if (!def->m_trigger)
+                    return false;
+            }
+            else
+            {
+                if (def->m_trigger)
+                    return true;
+
+                // (def->m_parse != nullptr) implied
+                if (argc_rest < 2 || is_valid_flag(argv_rest+1, argc_rest-1))
+                    return false;
+            }
+        }
+        else
+            return false;
+
+    return true;
 }
 } //namespace bux
