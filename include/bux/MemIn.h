@@ -16,13 +16,13 @@ struct C_IMemBufAsMember
     {
         C_IMemBuf(const _CharT *buffer, size_t size)
         {
-            this->setg(const_cast<_CharT*>(buffer), const_cast<_CharT*>(buffer),
-                const_cast<_CharT*>(buffer)+size);
+            const auto beg = const_cast<_CharT*>(buffer);
+            this->setg(beg, beg, beg+size);
         }
         C_IMemBuf(std::basic_string_view<_CharT,_Traits> buffer)
         {
-            const auto beg = const_cast<_CharT*>(buffer.begin());
-            this->setg(beg, beg, const_cast<_CharT*>(buffer.end()));
+            const auto beg = const_cast<_CharT*>(buffer.data());
+            this->setg(beg, beg, beg+buffer.size());
         }
     } m_Buffer;
 
