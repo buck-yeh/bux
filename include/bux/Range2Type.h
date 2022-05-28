@@ -1,8 +1,7 @@
 #pragma once
 
+#include "StrUtil.h"    // HRTN()
 #include <limits>       // std::numeric_limits<>
-#include <string>       // std::string
-#include "LogStream.h"  // HRTN()
 #include <cstdint>      // std::uint8_t, std::uint16_t, std::uint32_t
 
 namespace bux {
