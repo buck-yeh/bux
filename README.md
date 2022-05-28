@@ -49,7 +49,7 @@
 
 ## from github in any of [Linux distros](https://distrowatch.com/)
 
-1. Make sure you have installed `cmake` `make` `gcc` `git` `fmt`
+1. Make sure you have installed `cmake` `make` `gcc` `git` `fmt`, or the likes.
 
 2. ~~~bash
    git clone -b main --single-branch https://github.com/buck-yeh/bux.git .
