@@ -3,6 +3,7 @@
 #include <ostream>          // std::ostream
 #include <chrono>           // std::chrono::system_clock
 #include <cinttypes>        // imaxdiv()
+#include <fmt/chrono.h>     // fmt::localtime()
 
 #ifdef __GNUC__
 #ifndef _GNU_SOURCE
@@ -34,20 +35,12 @@ std::ostream &timestamp(std::ostream &out)
     typedef std::chrono::system_clock myclock;
 
     static char YMDHMS[30];
-    static myclock::time_point old_time;
-
-    const auto cur_time = myclock::now();
+    static std::chrono::time_point<myclock,std::chrono::milliseconds> old_time;
+    const auto cur_time = time_point_cast<std::chrono::milliseconds>(myclock::now());
     if (cur_time != old_time)
     {
-        auto d = imaxdiv(std::chrono::duration_cast<std::chrono::milliseconds>(cur_time.time_since_epoch()).count(), 1000);
-        const time_t t = time_t(d.quot);
-        char *const p = YMDHMS + strftime(YMDHMS, sizeof YMDHMS, "%Y/%m/%d %H:%M:%S.", localtime(&t));
-        for (int i = 3; i--;)
-        {
-            p[i] = char('0' + d.rem % 10);
-            d.rem /= 10;
-        }
-        p[3] = 0;
+        auto d = imaxdiv(cur_time.time_since_epoch().count(), 1000);
+        strcpy(YMDHMS, fmt::format("{:%Y/%m/%d %H:%M:%S}.{:03}", fmt::localtime(d.quot), d.rem).c_str());
         old_time = cur_time;
     }
     return out <<YMDHMS;
