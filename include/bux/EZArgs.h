@@ -43,6 +43,7 @@ class C_EZArgs
        -# It is ok to call without either \c name or \c short_name, but not both;
        -# It is ok to call without either \c trigger or \c parse, but not both;
        -# Always call with \c description
+    -# Behaviour of adding duplicate subcommands or flags of the same name is undefined.
 */
 {
 public:
@@ -205,21 +206,13 @@ C_EZArgs &C_EZArgs::add_subcommand(const std::string &name, std::invocable<> aut
     case UP2U_LAYOUT:
         RUNTIME_ERROR("Already set as positional arguments");
     }
-    C_EZArgs *ret{};
-    for (auto &i: std::get<UP2U_SUBCMD>(m_up2u))
-        if (i.first == name)
-        {
-            ret = &i.second;
-            break;
-        }
-    if (!ret)
-        ret = &std::get<UP2U_SUBCMD>(m_up2u).emplace_back(name, description).second;
+    auto &ret = std::get<UP2U_SUBCMD>(m_up2u).emplace_back(name, description).second;
 
-    ret->m_helpShielded = m_helpShielded;
-    ret->m_hShielded    = m_hShielded;
-    ret->m_owner        = this;
-    ret->m_onParsed     = onParsed;
-    return *ret;
+    ret.m_helpShielded  = m_helpShielded;
+    ret.m_hShielded     = m_hShielded;
+    ret.m_owner         = this;
+    ret.m_onParsed      = onParsed;
+    return ret;
 }
 
 C_EZArgs &C_EZArgs::position_args           (
