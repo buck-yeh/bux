@@ -33,8 +33,8 @@ TEST_CASE("Null help", "[Z]")
     static constinit const char *const ARGV[]{"foo", "-h"};
     auto ret = bux::C_EZArgs{}.parse(std::size(ARGV), ARGV);
     REQUIRE(!ret);
-    REQUIRE(ret.message() ==
-    "USAGE: ./foo [-h]\n"
+    CHECK(ret.message() ==
+    "USAGE: foo [-h]\n"
     "\n"
     "VALID FLAGS:\n"
     "  -h, --help\n"
@@ -86,18 +86,11 @@ TEST_CASE("Scenario: argv[0] with -E -h", "[S]")
     const char *const argv[]{arg0.c_str(), "-h"};
     auto ret = ezargs.parse(2, argv);
     REQUIRE(!ret);
-    const auto help = fmt::format(
-        "USAGE: .{}test1.exe (foo|bar) ... [-E] [-h]\n"
+    CHECK(ret.message() ==
+        "USAGE: test1.exe (foo|bar) ... [-E] [-h]\n"
         "VALID ACTIONS:\n"
         "  foo\n"
-        "  bar\n",
-#ifdef _WIN32
-            '\\'
-#else
-            '/'
-#endif
-        );
-    REQUIRE(ret.message() == help);
+        "  bar\n");
 }
 
 TEST_CASE("Scenario: Parse negative number as flag value", "[S]")

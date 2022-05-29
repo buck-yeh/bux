@@ -49,20 +49,14 @@ std::string C_EZArgs::retro_path(const char *const argv[]) const
         polish_args.emplace_back(*(argv--));
 
     std::string ret;
-    for (auto i = polish_args.crbegin(); i != polish_args.crend(); ++i)
+    for (auto i: polish_args)
     {
         if (ret.empty())
-            ret.assign(
-#ifdef _WIN32
-                ".\\"
-#else
-                "./"
-#endif
-               ) += std::filesystem::path{*i}.filename().string();
+            ret = std::filesystem::path{i}.filename().string();
         else
         {
             ret += ' ';
-            ret += *i;
+            ret += i;
         }
     }
     return ret;
