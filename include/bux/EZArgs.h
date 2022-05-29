@@ -5,7 +5,7 @@
 #include <concepts>     // std::integral<>, std::invocable<>
 #include <deque>        // std::deque<>
 #include <functional>   // std::function<>
-#include <map>          // std::map<>
+#include <list>         // std::list<>
 #include <optional>     // std::optional<>
 #include <ranges>       // std::ranges::forward_range<>, std::ranges::views::empty<>
 #include <string_view>  // std::string_view
@@ -146,8 +146,9 @@ private:
         std::vector<size_t>         m_posCounts;
         bool                        m_unlimited;
     };
+    using C_ArgLayoutMap = std::list<std::pair<std::string,C_EZArgs>>;
 
-    using C_UP2U = std::variant<std::monostate,C_ArgLayout,std::map<std::string,C_EZArgs>>;
+    using C_UP2U = std::variant<std::monostate,C_ArgLayout,C_ArgLayoutMap>;
     enum
     {
         UP2U_NULL,
@@ -168,9 +169,9 @@ private:
 
     // Compile-time assertions
     static_assert(std::variant_size_v<C_UP2U> == 3);
-    static_assert(std::is_same_v<std::monostate,                    std::variant_alternative_t<UP2U_NULL,   C_UP2U>>);
-    static_assert(std::is_same_v<C_ArgLayout,                       std::variant_alternative_t<UP2U_LAYOUT, C_UP2U>>);
-    static_assert(std::is_same_v<std::map<std::string,C_EZArgs>,    std::variant_alternative_t<UP2U_SUBCMD, C_UP2U>>);
+    static_assert(std::is_same_v<std::monostate,    std::variant_alternative_t<UP2U_NULL,   C_UP2U>>);
+    static_assert(std::is_same_v<C_ArgLayout,       std::variant_alternative_t<UP2U_LAYOUT, C_UP2U>>);
+    static_assert(std::is_same_v<C_ArgLayoutMap,    std::variant_alternative_t<UP2U_SUBCMD, C_UP2U>>);
 
     // Nonvirtuals
     C_FlagDef &create_flag_def(std::string_view name, char short_name, std::string_view description);
@@ -204,12 +205,21 @@ C_EZArgs &C_EZArgs::add_subcommand(const std::string &name, std::invocable<> aut
     case UP2U_LAYOUT:
         RUNTIME_ERROR("Already set as positional arguments");
     }
-    auto &ret = std::get<UP2U_SUBCMD>(m_up2u).try_emplace(name, description).first->second;
-    ret.m_helpShielded  = m_helpShielded;
-    ret.m_hShielded     = m_hShielded;
-    ret.m_owner         = this;
-    ret.m_onParsed      = onParsed;
-    return ret;
+    C_EZArgs *ret{};
+    for (auto &i: std::get<UP2U_SUBCMD>(m_up2u))
+        if (i.first == name)
+        {
+            ret = &i.second;
+            break;
+        }
+    if (!ret)
+        ret = &std::get<UP2U_SUBCMD>(m_up2u).emplace_back(name, description).second;
+
+    ret->m_helpShielded = m_helpShielded;
+    ret->m_hShielded    = m_hShielded;
+    ret->m_owner        = this;
+    ret->m_onParsed     = onParsed;
+    return *ret;
 }
 
 C_EZArgs &C_EZArgs::position_args           (
@@ -315,18 +325,19 @@ C_ErrorOrIndex C_EZArgs::parse(std::integral auto argc, const char *const argv[]
             return help_full(argv);
         else
         {
-            auto &map = std::get<2>(m_up2u);
-            auto i = map.find(argv[ind]);
-            if (i == map.end())
-                return {help_tip(std::string("Unknown subcommand: ")+argv[ind], argv), ind};
+            for (auto &i: std::get<2>(m_up2u))
+                if (i.first == argv[ind])
+                {
+                    auto ret = i.second.parse(argc-ind, argv+ind);
+                    if (ret)
+                    {
+                        m_totoalPositionArgs = i.second.m_totoalPositionArgs + ind;
+                        return ret.m_optIndex.value() + ind;
+                    }
+                    return ret;
+                }
 
-            auto ret = i->second.parse(argc-ind, argv+ind);
-            if (ret)
-            {
-                m_totoalPositionArgs = i->second.m_totoalPositionArgs + ind;
-                return ret.m_optIndex.value() + ind;
-            }
-            return ret;
+            return {help_tip(std::string("Unknown subcommand: ")+argv[ind], argv), ind};
         }
     }
     const auto flagStartInd = ind;

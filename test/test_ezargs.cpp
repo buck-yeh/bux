@@ -87,10 +87,10 @@ TEST_CASE("Scenario: argv[0] with -E -h", "[S]")
     auto ret = ezargs.parse(2, argv);
     REQUIRE(!ret);
     const auto help = fmt::format(
-        "USAGE: .{}test1.exe (bar|foo) ... [-E] [-h]\n"
+        "USAGE: .{}test1.exe (foo|bar) ... [-E] [-h]\n"
         "VALID ACTIONS:\n"
-        "  bar\n"
-        "  foo\n",
+        "  foo\n"
+        "  bar\n",
 #ifdef _WIN32
             '\\'
 #else
