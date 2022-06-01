@@ -132,8 +132,7 @@ void C_ScannerImpl<T_Input,T_State,T_Char,C_Traits>::add(unsigned col, T_Char c)
                 // Transition found
             {
                 m_CurState = nextState;
-                m_pAction = m_stateRecs[nextState].m_action;
-                if (m_pAction)
+                if (auto pAction = m_stateRecs[nextState].m_action)
                     // Is final
                 {
                     for (size_t i = 0; i < m_1stFitN; ++i)
@@ -141,10 +140,11 @@ void C_ScannerImpl<T_Input,T_State,T_Char,C_Traits>::add(unsigned col, T_Char c)
                             (!m_isFinal[i] || (*m_isFinal[i])(m_ReadCh.data(), m_ReadCh.size())))
                             // First fit - action right now
                         {
-                            const C_ActionRet ret = (*m_pAction)(m_ReadCh.data(), m_ReadCh.size());
+                            const C_ActionRet ret = (*pAction)(m_ReadCh.data(), m_ReadCh.size());
                             return addToken(ret.m_id, m_ReadPos.front(), ret.m_pAttr);
                         }
                     m_LastSuccess = int(m_ReadCh.size());
+                    m_pAction = pAction;
                 }
                 return;
             }
