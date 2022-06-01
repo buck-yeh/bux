@@ -147,9 +147,9 @@ template<T_LexID _ID, class T_LexCh, size_t TRIMLEFT = 0, size_t TRIMRIGHT = 0>
 }
 
 template<class T_Char>
-void scanFile(std::string_view filename, std::istream &in, I_Scanner<T_Char> &scanner, T_LexID endToken = TID_EOF)
+void scanFile(std::string_view filename, std::istream &in, I_Scanner<T_Char> &scanner, T_LexID endToken = TID_EOF, T_Encoding encoding = 0)
 {
-    C_UnicodeIn     src(in);
+    C_UnicodeIn     src(in, encoding);
     unsigned        line = 1, col = 1;
     T_Char          c;
 
