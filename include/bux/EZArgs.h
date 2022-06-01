@@ -33,7 +33,7 @@ struct C_ErrorOrIndex
 };
 
 class C_EZArgs
-/*! -# \c C_EZArgs the argument parser can define either subcommands or positional arguments, but not both.
+/*! -# \c C_EZArgs is an argument parser which lays out either subcommands or positional arguments, but not both.
     -# Every subcommand is again an argument parser, and hence follows rule 1.
     -# Rules about flags:
        -# Flags (-x, --xxx) always come \b after all subcommands and positional arguments. <em>(This one may be loosen in the future)</em>
