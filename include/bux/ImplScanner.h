@@ -173,7 +173,7 @@ void C_ScannerImpl<T_Input,T_State,T_Char,C_Traits>::add(unsigned col, T_Char c)
                 default:
                     buf += to_utf8(id);
                 }
-            RUNTIME_ERROR("Run out of scanner at {}({},{}) |{}|", pos.m_Source, pos.m_Line, pos.m_Col, buf);
+            RUNTIME_ERROR("Run out of scanner at {}({},{},{}) |{}|", pos.m_Source, pos.m_Line, pos.m_Col, m_CurState, buf);
         }
         else
             // Conclude on the latest visited final state
