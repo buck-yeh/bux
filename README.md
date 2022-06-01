@@ -125,18 +125,18 @@
 ## Containers
 
 - [Intervals.h](include/bux/Intervals.h) - `std::C_Intervals<T>` defines its own arithmetics but is currently ever used by [`scannergen`](https://github.com/buck-yeh/parsergen/tree/main/ScannerGen)
-- [PartialOrdering.h](include/bux/PartialOrdering.h) - Define [partial ordering](https://en.wikipedia.org/wiki/Partially_ordered_set) as container in order to generate a compatible [linear ordering](https://en.wikipedia.org/wiki/Total_order). 
-- [XQue.h](include/bux/XQue.h) - An efficient generic queue. 
-- [Xtack.h](include/bux/Xtack.h) - Generic stack types. 
+- [PartialOrdering.h](include/bux/PartialOrdering.h) - Define [partial ordering](https://en.wikipedia.org/wiki/Partially_ordered_set) as container in order to generate a compatible [linear ordering](https://en.wikipedia.org/wiki/Total_order).
+- [XQue.h](include/bux/XQue.h) - An efficient generic queue.
+- [Xtack.h](include/bux/Xtack.h) - Generic stack types.
 
 ## Input/Output
 
 - [EZArgs.h](include/bux/EZArgs.h) - Inspired by Python [argparse.ArgumentParser](https://docs.python.org/3/library/argparse.html#argumentparser-objects) with interfaces making sense to Modern C++
-- [LogStream.h](include/bux/LogStream.h) - Marginal utilities for `std::ostream`, used by loggers & exception messages.
+- [LogStream.h](include/bux/LogStream.h) - Marginal utilities for `std::ostream`, used by loggers.
 - [MemIn.h](include/bux/MemIn.h) - Drop-in replacement of C++98-deprecated [`std::istrstream`](https://en.cppreference.com/w/cpp/io/istrstream).
 - [MemOut.h](include/bux/MemOut.h) - Drop-in replacement of C++98-deprecated [`std::ostrstream`](https://en.cppreference.com/w/cpp/io/ostrstream). *(Not used recently)*
 - [Serialize.h](include/bux/Serialize.h) - Simple functions to define serialization/deserialization in a symmetric way.
-- [StrUtil.h](include/bux/StrUtil.h) - String utilities mostly related to input (parsing).
+- [StrUtil.h](include/bux/StrUtil.h) - String utilities.
 - [UnicodeCvt.h](include/bux/UnicodeCvt.h) - Encode text stream to unicodes (`utf8`/`utf16`/`utf32`)
 
 ## Logger
