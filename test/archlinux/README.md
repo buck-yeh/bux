@@ -1,4 +1,4 @@
-# How to test a upstream commit and publish it to AUR
+# How to test a upstream commit and publish it to [AUR](https://aur.archlinux.org/)
 
 1. Copy everything from this folder to a new folder and `cd` to it in a terminal.
 2. In file `PKGBUILD`, edit `$pkgver` to the branch or tag name you choose to test against and save it
