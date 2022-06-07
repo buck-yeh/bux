@@ -1,6 +1,6 @@
 # How to PR
 
-1. In the [forked vcpcg main page](https://github.com/buck-yeh/vcpkg), click 🔁 **Fetch upstream** and then click **Fecth and merge** to ensure the repo up-to-date.
+1. In the [forked vcpcg main page](https://github.com/buck-yeh/vcpkg), click **Fetch upstream** and then click **Fecth and merge** to ensure the repo up-to-date.
 2. `git clone https://github.com/buck-yeh/vcpkg.git` or `git pull` if it is already cloned.
 3. Update files in `ports/buck-yeh-bux/`:
    * Update `REF` in `portfile.cmake` with the commit full hash of [release](https://github.com/buck-yeh/bux/releases/tag/1.6.5) and zero `SHA512` intentionally:
@@ -57,7 +57,7 @@
    },
    ~~~
 
-7. Commit the changes so far but do not push, and issue git command get `git-tree` value that the next action item needs:
+7. Commit the changes so far but do not push, and issue the following command to get `git-tree` value which is needed by the next action item:
 
    ~~~bash
    git rev-parse HEAD:ports/buck-yeh-bux
@@ -78,12 +78,12 @@
    }
    ~~~
 
-   📌 `1fd8af12a04b806faa041b8631ac34dc8c535b41` is the exact output of **7.**
+   _p.s._ `1fd8af12a04b806faa041b8631ac34dc8c535b41` is the exact output of **7.**
 
-9. Stage, commit, push them all and issue a PR -- In the [forked vcpcg main page](https://github.com/buck-yeh/vcpkg), click **Contribute**, click **Open pull request**
+9. Stage, amend, push them all and issue a PR -- In the [forked vcpcg main page](https://github.com/buck-yeh/vcpkg), click **Contribute**, click **Open pull request**
     * Name the title `[buck-yeh-bux] Upgrade to <new-release-tag-name>`
-    * Replace %%%%% with the actual release note text.
-    * Release the rest of template with the following canned answers:
+    * Replace `**Describe the pull request**` with the actual release note text.
+    * Replace the rest of template with the following canned answers:
 
         ~~~gfm
         - #### What does your PR fix?
