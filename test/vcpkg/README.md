@@ -81,30 +81,30 @@
    _p.s._ `1fd8af12a04b806faa041b8631ac34dc8c535b41` is the exact output of **7.**
 
 9. Stage, amend, push them all and issue a PR -- In the [forked vcpcg main page](https://github.com/buck-yeh/vcpkg), click **Contribute**, click **Open pull request**
-    * Name the title `[buck-yeh-bux] Upgrade to <new-release-tag-name>`
+    * Name the title `[buck-yeh-bux] Update to <new-release-tag-name>`
     * Replace `**Describe the pull request**` with the actual release note text.
     * Replace the rest of template with the following canned answers:
 
         ~~~gfm
         - #### What does your PR fix?
-        Nothing
+          Nothing
 
         - #### Which triplets are supported/not supported? Have you updated the [CI baseline](https://github.com/microsoft/vcpkg/blob/master/scripts/ci.baseline.txt)?
-        Supported
-        - x64-windows
-        - x64-windows-static
-        - x64-windows-static-md
-        - x86-windows
-        - x86-windows-static
-        - x86-windows-static-md
-        
-        No
+          Supported
+          - x64-windows
+          - x64-windows-static
+          - x64-windows-static-md
+          - x86-windows
+          - x86-windows-static
+          - x86-windows-static-md
+         
+          No
 
         - #### Does your PR follow the [maintainer guide](https://github.com/microsoft/vcpkg/blob/master/docs/maintainers/maintainer-guide.md)?
-        Yes
+          Yes
 
         - #### If you have added/updated a port: Have you run `./vcpkg x-add-version --all` and committed the result?
-        Yes
+          Yes
 
         **If you are still working on the PR, open it as a Draft: https://github.blog/2019-02-14-introducing-draft-pull-requests/**
         ~~~
