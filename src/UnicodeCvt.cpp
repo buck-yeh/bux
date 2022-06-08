@@ -455,7 +455,7 @@ bool C_UnicodeIn::readUTF16(C_Source &src, bool reverseWord)
 {
     bool ret = false;
     src.read(2);
-    const size_t read =src.size();
+    const size_t read = src.size();
     if (read >= 2)
     {
         const T_Utf16 uc = src.getUtf16(0,reverseWord);
@@ -556,7 +556,7 @@ T_Utf16 C_UnicodeIn::C_Source::getUtf16(size_t pos, bool reverseWord) const
     if (off +2 > m_ReadBuf.size())
         RUNTIME_ERROR("End of char {} passes end of buffer", off+2);
 
-    const char *p = m_ReadBuf.data() + off;
+    const auto p = m_ReadBuf.data() + off;
     if (reverseWord)
     {
         union
