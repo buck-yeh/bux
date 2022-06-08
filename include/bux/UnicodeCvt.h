@@ -137,7 +137,7 @@ public:
     template<typename T> void operator +=(const T *ps)
     { append(ps, 0); }
 
-    template<typename T> C_MBCStr(const std::basic_string<T> &s, T_Encoding codepage = 0): m_codepage(codepage)
+    template<typename T> C_MBCStr(std::basic_string_view<T> s, T_Encoding codepage = 0): m_codepage(codepage)
     { append(s.data(), s.size()); }
     template<typename T> void operator +=(const std::basic_string<T> &s)
     { append(s.data(), s.size()); }
@@ -181,7 +181,7 @@ std::string         to_utf8(std::istream &s, T_Encoding codepage = 0);
 template<typename T>
 auto                to_utf8(const T *ps, size_t size = 0, T_Encoding codepage = 0)  { return C_MBCStr{ps, size, codepage}.strU8(); }
 template<typename T>
-auto                to_utf8(const std::basic_string_view<T> &s, T_Encoding codepage = 0) { return C_MBCStr{s, codepage}.strU8(); }
+auto                to_utf8(std::basic_string_view<T> s, T_Encoding codepage = 0) { return C_MBCStr{s, codepage}.strU8(); }
 
 std::wstring BOM(const std::wstring_view &ws);
 
