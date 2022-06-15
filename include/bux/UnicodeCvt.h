@@ -63,6 +63,7 @@ public:
     int get(T_Utf16 *dst);
     int get(T_Utf8 *dst);
     int lastError() const noexcept { return m_GetQ.empty()? m_ErrCode: 1; }
+    T_Encoding encoding() const noexcept { return m_CodePage; }
 
 private:
 
