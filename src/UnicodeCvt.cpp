@@ -437,12 +437,14 @@ void C_UnicodeIn::readASCII()
 #endif
     static const T_Encoding MBCS_CODEPAGES[] ={
 #ifdef _WIN32
-        CP_ACP, CP_UTF8, 932, 936, 949, 950, CP_UTF7
+        CP_ACP, CP_UTF8,
+        932, 936, 949, 950, 951, // from https://en.wikipedia.org/wiki/Windows_code_page#East_Asian_multi-byte_code_pages
+        CP_UTF7
 #elif defined(__unix__)
         CHSETS_UTF8, CHSETS_SJIS, CHSETS_GB, CHSETS_KSC, CHSETS_BIG5, CHSETS_UTF7, CHSETS_UTF16LE, CHSETS_UTF16BE
 #endif
-        };
-    for (size_t i = 0; i < sizeof(MBCS_CODEPAGES)/sizeof(*MBCS_CODEPAGES); ++i)
+    };
+    for (size_t i = 0; i < std::size(MBCS_CODEPAGES); ++i)
         if (testCodePage(MBCS_CODEPAGES[i]))
         {
             m_ReadMethod = &C_UnicodeIn::readCodePage;
