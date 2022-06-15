@@ -29,6 +29,7 @@ struct C_IMemBufAsMember
     // Ctor
     C_IMemBufAsMember(const _CharT *buffer, size_t size): m_Buffer(buffer, size) {}
     C_IMemBufAsMember(std::basic_string_view<_CharT,_Traits> buffer): m_Buffer(buffer) {}
+    C_IMemBufAsMember(std::basic_string<_CharT,_Traits> &&) = delete;
 };
 
 template <class _CharT, class _Traits = std::char_traits<_CharT>>
@@ -47,6 +48,10 @@ public:
         C_IMemBufAsMember<_CharT,_Traits>(buffer),
         std::basic_istream<_CharT,_Traits>(&this->m_Buffer)
         {}
+    C_IMemStreamT(const _CharT *str):
+        C_IMemStreamT(std::basic_string_view<_CharT,_Traits>{str})
+        {}
+    C_IMemStreamT(std::basic_string<_CharT,_Traits> &&) = delete;
 };
 using C_IMemStream = C_IMemStreamT<char>;
 
