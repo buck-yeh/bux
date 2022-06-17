@@ -12,10 +12,10 @@ namespace bux {
 //
 template<std::integral T>
 std::string fittestType(T lb, T ub)
-/* \param lb Lower bound of value range
-   \param ub Upper bound of value range
-   \pre <tt> lb <= ub </tt>
-   \return Name of the fittest type
+/*! \param lb Lower bound of value range
+    \param ub Upper bound of value range
+    \pre <tt> lb <= ub </tt>
+    \return Name of the fittest type
 */
 {
     if constexpr (std::numeric_limits<T>::is_signed)

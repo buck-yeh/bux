@@ -169,6 +169,21 @@ std::string to_utf8(std::string_view s, T_Encoding codepage)
 }
 
 std::string to_utf8(std::istream &in, T_Encoding codepage)
+/*! \param in Reference of input stream passed to ctor of C_UnicodeIn
+    \param codepage Encoding type of input stream passed to ctor of C_UnicodeIn. Value 0 means C_UnicodeIn should guess the finest.
+
+    \b HEADSUP: When \em codepage is 0 and \em in reference to a stream instance of type `std::ifstream`,
+    the instance should be opened in binary mode with `std::ios::binary` for the case that the encoding is actually UTf-16(LE or BE) and
+    input stream contains '\x1a' bytes (ascii EOF), e.g. as part of '\uff1a'. Or the input stream might hit EOF earlier than it should.
+
+    \code{.cpp}
+    std::string load_file_as_u8string(const std::string &path)
+    {
+        std::ifstream in{path, std::ios::binary};
+        return bux::to_utf8(in);
+    }
+    \endcode
+ */
 {
     C_UnicodeIn cvt{in, codepage};
     T_Utf8 u8[MAX_UTF8];
@@ -211,6 +226,22 @@ C_UnicodeIn::C_UnicodeIn(std::istream &in, T_Encoding codepage):
         return {};
     }),
     m_CodePage(codepage)
+/*! \param in Reference of input stream
+    \param codepage Encoding type of input stream. Value 0 to guess the finest.
+
+    \b HEADSUP: When \em codepage is 0 and \em in reference to a stream instance of type `std::ifstream`,
+    the instance should be opened in binary mode with `std::ios::binary` for the case that the encoding is actually UTf-16(LE or BE) and
+    input stream contains '\x1a' bytes (ascii EOF), e.g. as part of '\uff1a'. Or the input stream might hit EOF earlier than it should.
+
+    \code{.cpp}
+    void foo(const std::string &path)
+    {
+        std::ifstream fin{path, std::ios::binary};
+        bux::C_UnicodeIn uin(fin);
+        //... Rest of your code
+    }
+    \endcode
+ */
 {
     init();
 }
@@ -671,7 +702,7 @@ void C_MBCStr::append(const char *src, size_t srcBytes)
 
 void C_MBCStr::appendNonRaw(const char *src, size_t srcBytes) const
 {
-    C_UnicodeIn     uin({src, srcBytes}, m_codepage);
+    C_UnicodeIn     uin(std::string_view{src, srcBytes}, m_codepage);
     T_Utf32         t;
     while (uin.get(t))
     {
