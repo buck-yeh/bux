@@ -5,11 +5,12 @@
 #include <istream>          // std::istream
 
 #ifdef _WIN32
-#include <cstdlib>          // swab()
-#include <windows.h>        // Win32 API
+#pragma comment(lib, "Advapi32.lib")    // IsTextUnicode()
+#include <cstdlib>                      // swab()
+#include <windows.h>                    // Win32 API
 #elif defined(__unix__)
-#include <unistd.h>         // swab()
-#include <errno.h>          // errno
+#include <unistd.h>                     // swab()
+#include <errno.h>                      // errno
 #endif
 
 namespace {
