@@ -55,6 +55,8 @@ public:
     // Ctor/Dtor
     C_UnicodeIn(FH_ReadChar &&readc, T_Encoding codepage =0);
     C_UnicodeIn(std::string_view sv, T_Encoding codepage =0);
+    C_UnicodeIn(std::string &&s, T_Encoding codepage =0) = delete;
+    C_UnicodeIn(const char *s, T_Encoding codepage =0): C_UnicodeIn(std::string_view(s), codepage) {}
     C_UnicodeIn(std::istream &in, T_Encoding codepage =0);
     ~C_UnicodeIn() noexcept;
 
