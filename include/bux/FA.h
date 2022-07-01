@@ -121,7 +121,8 @@ private:
 
 template<class T_Inputs, class T_Action, class C_Traits = C_FA_Traits<T_Inputs>>
 class C_DFA
-/*! \param T_Action Type of action on final state.
+/*! \param T_Inputs Set of inputs
+    \param T_Action Type of action on final state.
     \param C_Traits Collection of compile-time decisions
 
     DFA stands for <em><B>D</B>eterministic <B>F</B>inite <B>A</B>utomoton</em>
