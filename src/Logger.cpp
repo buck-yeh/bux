@@ -84,8 +84,14 @@ int C_EntryLog::getId()
 
 C_UseLogger::C_UseLogger(E_LogLevel level): C_UseTraceLog(logger(), level)
 {
+    constexpr static const char FEWIV[] = "FEWIV";
+    static_assert(FEWIV[LL_FATAL]   == 'F');
+    static_assert(FEWIV[LL_ERROR]   == 'E');
+    static_assert(FEWIV[LL_WARNING] == 'W');
+    static_assert(FEWIV[LL_INFO]    == 'I');
+    static_assert(FEWIV[LL_VERBOSE] == 'V');
     if (auto pout = stream())
-        *pout <<fmt::format("{}:{}", "FEWIV"[level], std::string(g_EntryLevel,'|'));
+        *pout <<fmt::format("{}:{}", FEWIV[level], std::string(g_EntryLevel,'|'));
 }
 
 } // namespace bux
