@@ -102,9 +102,9 @@ I_SyncLog &logger();    // provided by user of LOG(), FUNLOG(), SCOPELOG()
     DEF_LOGGER_TAIL_(l_)
 
 // #include <bux/FileLog.h> before using this
-#define DEF_LOGGER_FILES(pathglob, ...) \
+#define DEF_LOGGER_FILES(pathfmt, ...) \
     DEF_LOGGER_HEAD_ \
-    static C_PathFmtLogSnap snap_{pathglob}; \
+    static C_PathFmtLogSnap snap_{pathfmt}; \
     static C_ReenterableOstreamSnap ros_{snap_, ##__VA_ARGS__}; \
     static C_SyncLogger l_{ros_}; \
     DEF_LOGGER_TAIL_(l_)
