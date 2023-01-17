@@ -17,9 +17,9 @@ public:
     virtual std::ostream *lockLog() = 0;
             ///< Return non-null pointer if possible
     virtual std::ostream *lockLog([[maybe_unused]]E_LogLevel ll) = 0;
-            ///< Return non-null pointer if logging is permitted for the log level
+            ///< Return non-null pointer if logging is permitted for the given log level \em ll
     virtual void unlockLog(bool flush = true) = 0;
-            ///< If the previous call to lockLog() returned null, the behavious is undefined.
+            ///< If the previous call to lockLog() returned null, the behavior is undefined.
 
 protected:
 
@@ -34,9 +34,9 @@ struct I_ReenterableLog /// Thread-unsafe implementaion is preferred for perform
     virtual std::ostream *useLog() = 0;
             ///< Return non-null pointer if possible
     virtual std::ostream *useLog(E_LogLevel ll) = 0;
-            ///< Return non-null pointer if logging is permitted for the log level
+            ///< Return non-null pointer if logging is permitted to log level \em ll
     virtual void unuseLog(bool flush) = 0;
-            ///< If the previous call to lockLog() returned null, the behavious is undefined.
+            ///< If the previous call to lockLog() returned null, the behavior is undefined.
 };
 
 template<class C_SinkRefHolder> requires requires (C_SinkRefHolder holder)
