@@ -131,9 +131,12 @@ private:
 };
 
 template<T_LexID IGNORED>
-struct C_ScreenerNo: C_Screener<bool(*)(T_LexID)>
+class C_ScreenerNo: public C_Screener<bool(*)(T_LexID)>
 {
-    constexpr explicit C_ScreenerNo(I_Parser &parser): C_Screener<bool(*)(T_LexID)>(parser, *[](T_LexID token){ return token == IGNORED; }) {}
+public:
+    constexpr explicit C_ScreenerNo(I_Parser &parser): C_Screener<bool(*)(T_LexID)>(parser, predicate) {}
+private:
+    static bool predicate(T_LexID token) { return token == IGNORED; }
 };
 
 template<class T_Data> requires (!std::is_base_of_v<I_LexAttr,T_Data>)
