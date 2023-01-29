@@ -14,7 +14,7 @@
    ~~~
 
    If you find a new file name like `bux-main-1-x86_64.pkg.tar.zst`, it's a success !<br>
-   💡 The `main` part is replaced by any tag name you assigned to `$pkgver`.
+   馃挕 The `main` part is replaced by any tag name you assigned to `$pkgver`.
 
 4. Make sure your docker server is up, and execute
 
