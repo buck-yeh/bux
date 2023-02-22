@@ -1,6 +1,6 @@
 # How to PR
 
-1. In the [forked vcpcg main page](https://github.com/buck-yeh/vcpkg), click **Fetch upstream** and then click **Fecth and merge** to ensure the repo up-to-date.
+1. In the [forked vcpcg main page](https://github.com/buck-yeh/vcpkg), click **Sync fork** and then click **Update Branch**  to ensure the repo up-to-date.
 2. `git clone https://github.com/buck-yeh/vcpkg.git` or `git pull` if it is already cloned.
 3. Update files in `ports/buck-yeh-bux/`:
    * Update `REF` in `portfile.cmake` with the commit full hash of [release](https://github.com/buck-yeh/bux/releases/tag/1.6.5) and zero `SHA512` intentionally:
