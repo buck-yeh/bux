@@ -49,14 +49,14 @@ std::string C_EZArgs::retro_path(const char *const argv[]) const
         polish_args.emplace_back(*(argv--));
 
     std::string ret;
-    for (auto i: polish_args)
+    for (auto i = polish_args.rbegin(); i != polish_args.rend(); ++i)
     {
         if (ret.empty())
-            ret = std::filesystem::path{i}.filename().string();
+            ret = std::filesystem::path{*i}.filename().string();
         else
         {
             ret += ' ';
-            ret += i;
+            ret += *i;
         }
     }
     return ret;
