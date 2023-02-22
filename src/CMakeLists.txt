@@ -8,8 +8,6 @@ add_library(bux STATIC
         XConsole.cpp XException.cpp
         )
 target_include_directories(bux PRIVATE ../include/bux)
-if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+if(MSVC)
 target_link_libraries(bux PRIVATE fmt::fmt)
 endif()
-
-
