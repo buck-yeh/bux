@@ -128,6 +128,8 @@ void addAsHex(std::string &dst, uint32_t ch32)
 //
 //      Implement Classes
 //
+I_LexAttr::~I_LexAttr() {}
+
 C_SourcePos::C_SourcePos(std::string_view sourcePath, unsigned line, unsigned col) noexcept:
     m_Source(sourcePath), m_Line(line), m_Col(col)
 {

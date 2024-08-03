@@ -90,7 +90,7 @@ struct I_LexAttr
 /*! Convenient base of all token types, terminals or non-terminals, for a specific parser framework.
 */
 {
-    virtual ~I_LexAttr() = default;
+    virtual ~I_LexAttr() = 0;
 };
 
 struct I_Parser
