@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SyncLog.h"        // bux::I_SyncLog
+#include "SyncLog.h"        // bux::I_SyncLog, bux::C_UseLog, bux::C_UseTraceLog
 #include "XPlatform.h"      // CUR_FUNC_
 #include <fmt/format.h>     // fmt::format(), fmt::runtime()
 #include <optional>         // std::optional<>
