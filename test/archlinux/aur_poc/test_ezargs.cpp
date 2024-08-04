@@ -93,6 +93,22 @@ TEST_CASE("Scenario: argv[0] with -E -h", "[S]")
         "  bar\n");
 }
 
+TEST_CASE("Scenario: Subcommand help", "[S]") // for commit 42ee62ad4e8c3139b9785eee007dcd71030f0b3b
+{
+    bux::C_EZArgs   ezargs;
+    ezargs.add_subcommand("foo", []{})
+          .position_args(std::array{"eeny"});
+    ezargs.add_subcommand("bar", []{})
+          .position_args(std::array{"meeny"});
+    const std::string arg0 = std::filesystem::current_path() / "test1.exe";
+    const char *const argv[]{arg0.c_str(), "foo", "-h"};
+    auto ret = ezargs.parse(3, argv);
+    REQUIRE(!ret);
+    std::istringstream in{ret.message()};
+    std::string line;
+    REQUIRE(std::getline(in, line));
+    CHECK(line == "USAGE: test1.exe foo <eeny> [-h]");
+}
 TEST_CASE("Scenario: Parse negative number as flag value", "[S]")
 {
     double          x{};
