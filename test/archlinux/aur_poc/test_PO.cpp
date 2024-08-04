@@ -7,7 +7,7 @@
 #include <string>           // std::string
 
 #define CATCH_CONFIG_MAIN   // This tells Catch to provide a main() - only do this in one cpp file
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 
 thread_local std::mt19937 g_rng{std::random_device{"/dev/urandom"}()};
 
