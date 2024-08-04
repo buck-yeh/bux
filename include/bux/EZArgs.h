@@ -3,6 +3,7 @@
 #include "XException.h" // RUNTIME_ERROR()
 #include <algorithm>    // std::sort()
 #include <concepts>     // std::integral<>, std::invocable<>
+#include <cstring>      // std::strcmp()
 #include <deque>        // std::deque<>
 #include <functional>   // std::function<>
 #include <list>         // std::list<>

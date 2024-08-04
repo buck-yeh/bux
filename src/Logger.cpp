@@ -51,7 +51,7 @@ C_EntryLog::C_EntryLog(std::string_view scopeName)
     if (C_UseLogger u{LL_VERBOSE})
     {
         m_Id = getId();
-        *u <<fmt::format("@{}@{} {{\n", *m_Id, scopeName);
+        *u <<std::format("@{}@{} {{\n", *m_Id, scopeName);
     }
     deeper();
 }
@@ -61,10 +61,10 @@ C_EntryLog::~C_EntryLog()
     --g_EntryLevel;
     if (m_Id)
     {
-        *C_UseLogger(LL_VERBOSE) <<fmt::format("@{}{}", *m_Id,
+        *C_UseLogger(LL_VERBOSE) <<std::format("@{}{}", *m_Id,
             []{
                 if (auto n = std::uncaught_exceptions())
-                    return fmt::format("@}} due to {} uncaught exception{}\n", n, (n>1?"s":""));
+                    return std::format("@}} due to {} uncaught exception{}\n", n, (n>1?"s":""));
 
                 return std::string{"@}\n"};
             }());
@@ -91,7 +91,7 @@ C_UseLogger::C_UseLogger(E_LogLevel level): C_UseTraceLog(logger(), level)
     static_assert(FEWIV[LL_INFO]    == 'I');
     static_assert(FEWIV[LL_VERBOSE] == 'V');
     if (auto pout = stream())
-        *pout <<fmt::format("{}:{}", FEWIV[level], std::string(g_EntryLevel,'|'));
+        *pout <<std::format("{}:{}", FEWIV[level], std::string(g_EntryLevel,'|'));
 }
 
 } // namespace bux

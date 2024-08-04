@@ -18,8 +18,6 @@ else()
     message("Unknown compiler")
 endif()
 
-find_package(fmt CONFIG REQUIRED)
-
 add_subdirectory (src)
 
 if(${BUILD_TEST})

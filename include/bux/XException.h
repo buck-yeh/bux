@@ -1,7 +1,7 @@
 #pragma once
 
 #include "XPlatform.h"  // CUR_FUNC_
-#include <fmt/format.h> // fmt::format()
+#include <format>       // std::format()
 #include <stdexcept>    // std::runtime_error, std::logic_error
 
 namespace bux {
@@ -20,11 +20,11 @@ void catchSE(bool useOldHookFirst =true);
 } // namespace bux
 
 #define THROW_AS(exp_class,fmtStr,...) \
-    throw exp_class(fmt::format(__FILE__ "(" __DATE__ ")#{} {}: " fmtStr, __LINE__, CUR_FUNC_, ##__VA_ARGS__))
+    throw exp_class(std::format(__FILE__ "(" __DATE__ ")#{} {}: " fmtStr, __LINE__, CUR_FUNC_, ##__VA_ARGS__))
 #define RAW_THROW_AS(exp_class,fmtStr,...) \
-    throw exp_class(fmt::format(fmtStr, ##__VA_ARGS__))
+    throw exp_class(std::format(fmtStr, ##__VA_ARGS__))
 #define THROW_CLASS(exp_class) \
-    throw exp_class(fmt::format(__FILE__ "(" __DATE__ ")#{} {}: ", __LINE__, CUR_FUNC_))
+    throw exp_class(std::format(__FILE__ "(" __DATE__ ")#{} {}: ", __LINE__, CUR_FUNC_))
 
 #define LOGIC_ERROR(fmtStr,...) THROW_AS(std::logic_error, fmtStr, ##__VA_ARGS__)
     ///< \brief Wrap __FILE__(__DATE__)\#__LINE__ __FUNCTION__: msg into std::logic_error

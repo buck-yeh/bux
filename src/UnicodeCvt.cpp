@@ -1,8 +1,9 @@
 #include "UnicodeCvt.h"
 #include "XException.h"     // RUNTIME_ERROR()
-#include <fmt/format.h>     // fmt::format()
 #include <cstring>          // memcmp()
+#include <format>           // std::format()
 #include <istream>          // std::istream
+#include <memory>           // std::make_unique<>()
 
 #ifdef _WIN32
 #pragma comment(lib, "Advapi32.lib")    // IsTextUnicode()
@@ -772,7 +773,7 @@ const std::string &C_MBCStr::escJSON() const
         else if (isprint(c))
             dst += c;
         else
-            dst += fmt::format("\\u{:04}", int{static_cast<unsigned char>(c)});
+            dst += std::format("\\u{:04}", int{static_cast<unsigned char>(c)});
     });
 }
 

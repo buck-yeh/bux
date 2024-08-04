@@ -3,7 +3,8 @@
 #include <ostream>          // std::ostream
 #include <chrono>           // std::chrono::system_clock
 #include <cinttypes>        // imaxdiv()
-#include <fmt/chrono.h>     // fmt::localtime()
+#include <cstring>          // std::strcpy()
+#include <ctime>            // std::localtime(), std::strftime()
 
 #ifdef __GNUC__
 #ifndef _GNU_SOURCE
@@ -40,7 +41,8 @@ std::ostream &timestamp(std::ostream &out)
     if (cur_time != old_time)
     {
         auto d = imaxdiv(cur_time.time_since_epoch().count(), 1000);
-        strcpy(YMDHMS, fmt::format("{:%Y/%m/%d %H:%M:%S}.{:03}", fmt::localtime(d.quot), d.rem).c_str());
+        time_t t = d.quot;
+        std::sprintf(YMDHMS + std::strftime(YMDHMS, sizeof YMDHMS, "%Y/%m/%d %H:%M:%S", std::localtime(&t)), ".%03ld", d.rem);
         old_time = cur_time;
     }
     return out <<YMDHMS;

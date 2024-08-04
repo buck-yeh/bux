@@ -31,11 +31,7 @@ int main(int argc, const char *argv[])
     if (argc <= 1)
     {
         for (auto i: LOG_SRC)
-#if defined(FMT_VERSION) && FMT_VERSION >= 80000
-            LOG(i.ll, fmt::runtime(i.msg));
-#else
-            LOG(i.ll, i.msg);
-#endif
+            LOG(i.ll, "{}", i.msg);
     }
     else
     {
@@ -44,11 +40,7 @@ int main(int argc, const char *argv[])
         while (C_MyClock::now() < deadline)
         {
             const auto &i = LOG_SRC[std::uniform_int_distribution<size_t>{0,std::size(LOG_SRC)-1}(g_rng)];
-#if defined(FMT_VERSION) && FMT_VERSION >= 80000
-            LOG(i.ll, fmt::runtime(i.msg));
-#else
-            LOG(i.ll, i.msg);
-#endif
+            LOG(i.ll, "{}", i.msg);
             std::this_thread::sleep_for(
 #ifdef SET_SIZE_LIMIT_
                 std::chrono::milliseconds(100)

@@ -9,7 +9,7 @@ namespace bux {
 //
 std::string C_ErrorOrIndex::message() const
 {
-    return m_optIndex? fmt::format("argv[{}]: {}",*m_optIndex,m_message): m_message;
+    return m_optIndex? std::format("argv[{}]: {}",*m_optIndex,m_message): m_message;
 }
 
 C_EZArgs::C_FlagDef &C_EZArgs::create_flag_def(std::string_view name, char short_name, std::string_view description)
@@ -243,7 +243,7 @@ std::string C_EZArgs::help_tip(const std::string &error, const char *const argv[
         helpFlag = "--help";
 
     if (helpFlag)
-        return fmt::format("{}\nType \"{} {}\" to read the help", error, retro_path(argv), helpFlag);
+        return std::format("{}\nType \"{} {}\" to read the help", error, retro_path(argv), helpFlag);
 
     return error;
 }

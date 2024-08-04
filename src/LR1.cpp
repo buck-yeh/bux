@@ -1,6 +1,6 @@
 #include "LR1.h"
 #include "StrUtil.h"    // HRTN()
-#include <fmt/core.h>   // fmt::format()
+#include <format>       // std::format()
 #include <limits>       // std::numeric_limits<>
 
 namespace bux {
@@ -33,11 +33,11 @@ std::string I_ParserPolicy::printToken(T_LexID token) const
         return "<@> aka bux::ROOT_NID";
     default:
         if (token >= TOKENGEN_LB)
-            return fmt::format("bux::TOKENGEN_LB+{}", token - TOKENGEN_LB);
+            return std::format("bux::TOKENGEN_LB+{}", token - TOKENGEN_LB);
 
-        std::string out = fmt::format("0x{:x}", token);
+        std::string out = std::format("0x{:x}", token);
         if (isascii(int(token)))
-            out += fmt::format(" or \'{}\'", asciiLiteral(token));
+            out += std::format(" or \'{}\'", asciiLiteral(token));
 
         return out;
     }
@@ -117,7 +117,7 @@ Again:
         else
             // Unrecoverable
         {
-            auto out = fmt::format("Syntax error on state={} token={}", m_ErrState, m_Policy.printToken(m_ErrToken));
+            auto out = std::format("Syntax error on state={} token={}", m_ErrState, m_Policy.printToken(m_ErrToken));
             if (auto *attr =info.m_attr.get())
                 out.append(" of attr type ").append(HRTN(*attr));
             else
@@ -127,14 +127,14 @@ Again:
                 out += "\nEmpty stack";
             else
             {
-                out += fmt::format("\nStack[{}] Dump:", m_CurStack.size()-1);
+                out += std::format("\nStack[{}] Dump:", m_CurStack.size()-1);
                 bool first = true;
                 for (const auto &i: m_CurStack)
                 {
                     if (first)
                         first = false;
                     else
-                        out += fmt::format("\n({},{})\t{}\ts={}\tt={}",
+                        out += std::format("\n({},{})\t{}\ts={}\tt={}",
                                 i.m_pos.m_Line, i.m_pos.m_Col, i.m_attr?HRTN(*i):"", i.m_StateID, m_Policy.printToken(i.m_TokenID));
                 }
             }

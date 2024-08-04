@@ -2,7 +2,7 @@
 
 #include "SyncLog.h"        // bux::I_SyncLog, bux::C_UseLog, bux::C_UseTraceLog
 #include "XPlatform.h"      // CUR_FUNC_
-#include <fmt/format.h>     // fmt::format(), fmt::runtime()
+#include <format>           // std::format(), std::vformat(), std::make_format_args()
 #include <optional>         // std::optional<>
 #include <string_view>      // std::string_view
 
@@ -51,12 +51,8 @@ C_EntryLog::C_EntryLog(std::string_view scopeName, T_Fmt &&fmtStr, T_Args&&...ar
     if (C_UseLogger u{LL_VERBOSE})
     {
         m_Id = getId();
-        const auto fmtfmt = fmt::format("@{}@{}({}) {{{{\n", *m_Id, scopeName, fmtStr);
-#if defined(FMT_VERSION) && FMT_VERSION >= 80000
-        *u << fmt::format(fmt::runtime(fmtfmt), std::forward<T_Args>(args)...);
-#else
-        *u << fmt::format(fmtfmt, std::forward<T_Args>(args)...);
-#endif
+        const auto fmtfmt = std::format("@{}@{}({}) {{{{\n", *m_Id, scopeName, fmtStr);
+        *u << std::vformat(fmtfmt, std::make_format_args(std::forward<T_Args>(args)...));
     }
     deeper();
 }
@@ -79,8 +75,8 @@ I_SyncLog &logger();    // provided by user of LOG(), FUNLOG(), SCOPELOG()
 //
 //      End-User Macros
 //
-#define LOG(ll,fmtStr, ...) do if (bux::C_UseLogger u{ll}) *u <<fmt::format(fmtStr, ##__VA_ARGS__) <<'\n'; while(false)
-#define LOG_RAW(fmtStr, ...) do if (bux::C_UseLog u{bux::logger()}) *u <<fmt::format(fmtStr, ##__VA_ARGS__) <<'\n'; while(false)
+#define LOG(ll,fmtStr, ...) do if (bux::C_UseLogger u{ll}) *u <<std::format(fmtStr, ##__VA_ARGS__) <<'\n'; while(false)
+#define LOG_RAW(fmtStr, ...) do if (bux::C_UseLog u{bux::logger()}) *u <<std::format(fmtStr, ##__VA_ARGS__) <<'\n'; while(false)
 #define SCOPELOG(scope) SCOPELOG_(__LINE__,scope)
 #define SCOPELOGX(scope,fmtStr, ...) SCOPELOGX_(__LINE__,scope,fmtStr, ##__VA_ARGS__)
 

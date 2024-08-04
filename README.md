@@ -1,7 +1,5 @@
 - Supplemental static library of whatever are seen required in sense of general purpose but not directly supported from [Modern C++](https://www.modernescpp.com/index.php/what-is-modern-c). Or whatever is deemed reusable from my side projects. 
 
-- The library uses [fmt library](https://github.com/fmtlib/fmt) heavily as long as [C++20 \<format\>](https://en.cppreference.com/w/cpp/utility/format) is not there yet.
-
 - 💡 There is also Doxygen-generated API reference [here](https://buck-yeh.github.io/bux/html/index.html) but Doxygen has been known for being insensitive to Modern C++ for so many years. Keywords like any of attributes, ... etc can be misinterpreted or simply dropped. Viewer's discretion is advised.
 
 # Table of Contents
@@ -35,7 +33,7 @@
    ~~~cmake
    add_executable(foo foo.cpp)
    target_compile_options(foo PRIVATE -std=c++2a)
-   target_link_libraries(foo bux fmt)
+   target_link_libraries(foo bux)
    ~~~
 
 4. Include the header files by prefixing header name with `bux/`, for example:
@@ -49,7 +47,7 @@
 
 ## from github in any of [Linux distros](https://distrowatch.com/)
 
-1. Make sure you have installed `cmake` `make` `gcc` `git` `fmt`, or the likes.
+1. Make sure you have installed `cmake` `make` `gcc` `git`, or the likes.
 
 2. ~~~bash
    git clone -b main --single-branch https://github.com/buck-yeh/bux.git .
@@ -66,7 +64,7 @@
    target_compile_options(foo PRIVATE -std=c++2a)
    target_include_directories(foo PRIVATE "$env{BUX_DIR}/include") 
    target_link_directories(foo PRIVATE "$env{BUX_DIR}/src") 
-   target_link_libraries(foo bux fmt)
+   target_link_libraries(foo bux)
    ~~~
 
 4. Include the header files by prefixing header name with `bux/`, for example:
