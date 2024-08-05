@@ -42,7 +42,7 @@ std::ostream &timestamp(std::ostream &out)
     {
         auto d = imaxdiv(cur_time.time_since_epoch().count(), 1000);
         time_t t = d.quot;
-        std::sprintf(YMDHMS + std::strftime(YMDHMS, sizeof YMDHMS, "%Y/%m/%d %H:%M:%S", std::localtime(&t)), ".%03ld", d.rem);
+        std::sprintf(YMDHMS + std::strftime(YMDHMS, sizeof YMDHMS, "%Y/%m/%d %H:%M:%S", std::localtime(&t)), ".%03" PRIdMAX, d.rem);
         old_time = cur_time;
     }
     return out <<YMDHMS;
