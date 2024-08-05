@@ -9,6 +9,7 @@
 #include <list>         // std::list<>
 #include <optional>     // std::optional<>
 #include <ranges>       // std::ranges::forward_range<>, std::ranges::views::empty<>
+#include <string>       // std::to_string()
 #include <string_view>  // std::string_view
 #include <variant>      // std::variant<>, std::monostate
 #include <vector>       // std::vector<>
