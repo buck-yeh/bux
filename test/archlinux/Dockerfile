@@ -1,15 +1,19 @@
 FROM archlinux/archlinux
 USER root
 #ENV PACDAY='2019/05/07'
-RUN echo $'\
-Server = http://archlinux.ccns.ncku.edu.tw/archlinux/$repo/os/$arch\n\
-Server = http://free.nchc.org.tw/arch/$repo/os/$arch\n' | tee /etc/pacman.d/mirrorlist && \
-    if [[ -n "$PACDAY" ]]; then \
+RUN cat <<EOF | tee /etc/pacman.d/mirrorlist
+Server = http://mirror.archlinux.tw/ArchLinux/\$repo/os/\$arch
+Server = https://mirror.archlinux.tw/ArchLinux/\$repo/os/$arch
+Server = http://archlinux.ccns.ncku.edu.tw/archlinux/\$repo/os/\$arch
+Server = http://mirror.rackspace.com/archlinux/\$repo/os/\$arch
+Server = https://mirror.rackspace.com/archlinux/\$repo/os/\$arch
+EOF
+RUN if [[ -n "$PACDAY" ]]; then \
         sed -Ei "s|^Include\s*=.+$|SigLevel = PackageRequired\nServer=https://archive.archlinux.org/repos/$PACDAY/\$repo/os/\$arch|g" /etc/pacman.conf ; \
-    fi && \
-    sed -Ei 's|^#VerbosePkgLists\s*$|VerbosePkgLists|g' /etc/pacman.conf && \
-    pacman -Sy --needed --noconfirm cmake make gcc git binutils fakeroot debugedit gawk catch2 glibc ncurses sudo && \
-    rm -rf /root/.cache
+    fi
+RUN sed -Ei 's|^#VerbosePkgLists\s*$|VerbosePkgLists|g' /etc/pacman.conf
+RUN pacman -Sy --needed --noconfirm cmake make gcc git binutils fakeroot debugedit gawk catch2 glibc ncurses sudo
+RUN rm -rf /root/.cache
 RUN useradd -m guest
 
 USER guest
