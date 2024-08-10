@@ -14,38 +14,42 @@
    ~~~
 
    If you find a new file name like `bux-main-1-x86_64.pkg.tar.zst`, it's a success !<br>
-   💡 The `main` part is replaced by any tag name you assigned to `$pkgver`.
+   💡 `main` can be replaced by any existing release/tag name.
 
 4. Make sure your docker server is up, and execute
 
    ~~~bash
-   ./docker_build
+   sudo ./docker_build
    ~~~
 
    If the last part of terminal output looks like the below, it's a success! Otherwise, it fails!
 
-   ~~~bash
+   ~~~
    .... (skipped)
-   12/14 Test #12: test_ezargs_All .........................   Passed    0.00 sec
-       Start 13: test_logger_All
-   13/14 Test #13: test_logger_All .........................   Passed    0.00 sec
-       Start 14: test_paralog_All
-   14/14 Test #14: test_paralog_All ........................   Passed    0.00 sec
+   #18 30.43 12/14 Test #12: test_ezargs_All .........................   Passed    0.00 sec
+   #18 30.43       Start 13: test_logger_All
+   #18 30.43 13/14 Test #13: test_logger_All .........................   Passed    0.00 sec
+   #18 30.43       Start 14: test_paralog_All
+   #18 30.43 14/14 Test #14: test_paralog_All ........................   Passed    0.00 sec
+   #18 30.43 
+   #18 30.43 100% tests passed, 0 tests failed out of 14
+   #18 30.43 
+   #18 30.43 Total Test time (real) =   0.03 sec
+   #18 DONE 30.5s
 
-   100% tests passed, 0 tests failed out of 14
-
-   Total Test time (real) =   0.04 sec
-   Removing intermediate container bf10d798f856
-   ---> 49a45b388b54
-   Successfully built 49a45b388b54
+   #19 exporting to image
+   #19 exporting layers
+   #19 exporting layers 3.1s done
+   #19 writing image sha256:ba0a168b30a90879e727bd806f5c8e3160d321bf446141e9fbf9dd7c46157947 done
+   #19 DONE 3.1s
    ~~~
 
 5. Now you can create a new release [upstream](https://github.com/buck-yeh/bux/releases)
 6. Copy `PKGBUILD` to the [AUR downstream working folder](https://wiki.archlinux.org/title/AUR_submission_guidelines), for example mine is in `~/AUR/bux.git`.
-7. With the release/tag name, say `1.6.4`, edit `$pkgver` in `PKGBUILD`
+7. With the release/tag name, say `1.7.0`, edit `$pkgver` in `PKGBUILD`
 
    ~~~PKGBUILD
-   pkgver=1.6.4
+   pkgver=1.7.0
    ~~~
 
 8. Then execute
@@ -54,4 +58,4 @@
    makepkg --printsrcinfo > .SRCINFO
    ~~~
 
-9. Just give it a `git push` and we are done !
+9. `git commit`, `git push`, and we are done !
