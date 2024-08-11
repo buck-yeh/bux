@@ -45,7 +45,7 @@
    ~~~
 
    *p.s.* Header files are in `/usr/include/bux` and compiler is expected to search `/usr/include` by default.
-5. If directly using `gcc` or `clang` is intended, the required compiler flags are `-std=c++2a -lbux`
+5. If directly using `gcc` or `clang` is intended, the required compiler flags are `-std=c++23 -lbux`
 
 ## from github in any of [Linux distros](https://distrowatch.com/)
 
@@ -75,7 +75,7 @@
    #include <bux/Logger.h>
    ~~~
 
-5. If directly using command `gcc` or `clang` is intended, the required compiler flags are `-std=c++2a -I$BUX_DIR/include -L$BUX_DIR/src -lbux`
+5. If directly using command `gcc` or `clang` is intended, the required compiler flags are `-std=c++23 -I$BUX_DIR/include -L$BUX_DIR/src -lbux`
 6. Subdirectory `test/` is excluded by default. To build with it, reconfigure `cmake` with:
 
    ~~~bash
@@ -105,7 +105,7 @@
 
 2. Available triplets are:
 
-   ~~~PowerShell
+   ~~~
    buck-yeh-bux:x64-windows
    buck-yeh-bux:x64-windows-static
    buck-yeh-bux:x64-windows-static-md
