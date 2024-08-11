@@ -1,6 +1,8 @@
+- `bux` is not Buck's. It could be box!
+
 - Supplemental static library of whatever are seen required in sense of general purpose but not directly supported from [Modern C++](https://www.modernescpp.com/index.php/what-is-modern-c). Or whatever is deemed reusable from my side projects. 
 
-- 💡 There is also Doxygen-generated API reference [here](https://buck-yeh.github.io/bux/html/index.html) but Doxygen has been known for being insensitive to Modern C++ for so many years. Keywords like any of attributes, ... etc can be misinterpreted or simply dropped. Viewer's discretion is advised.
+- Doxygen-generated API reference is [here](https://buck-yeh.github.io/bux/html/index.html). 💡 Doxygen has been known for being insensitive to Modern C++ for so many years. Keywords like any of attributes, ... etc can be misinterpreted or simply dropped. Viewer's discretion is advised.
 
 # Table of Contents
    * [Installation &amp; Usage](#installation--usage)
@@ -47,7 +49,7 @@
 
 ## from github in any of [Linux distros](https://distrowatch.com/)
 
-1. Make sure you have installed `cmake` `make` `gcc` `git`, or the likes.
+1. Make sure you have installed `cmake`(3.18 or newer) `make` `gcc`(13 or newer) `git`, or the likes.
 
 2. ~~~bash
    git clone -b main --single-branch https://github.com/buck-yeh/bux.git .
@@ -93,12 +95,11 @@
 
 1. ~~~PowerShell
    PS F:\vcpkg> .\vcpkg.exe search bux
-   buck-yeh-bux             1.6.3#1          A supplemental C++ library with functionalities not directly supported fro...
-   buck-yeh-bux-mariadb-client 1.0.1#1       Loose-coupled throw-on-error C++20 wrapper classes and utilities over mysq...
+   buck-yeh-bux             1.6.8#2          A supplemental C++ library with functionalities not directly supported fro...
+   buck-yeh-bux-mariadb-client 1.0.3#1       Loose-coupled throw-on-error C++20 wrapper classes and utilities over mysq...
+   buck-yeh-bux-sqlite      1.0.1            Modern C++ wrapper classes and utilities of the original sqlite3 API
    The result may be outdated. Run `git pull` to get the latest results.
-
-   If your port is not listed, please open an issue at and/or consider making a pull request:
-    https://github.com/Microsoft/vcpkg/issues
+   If your port is not listed, please open an issue at and/or consider making a pull request.  -  https://github.com/Microsoft/vcpkg/issues
    PS F:\vcpkg>
    ~~~
 
