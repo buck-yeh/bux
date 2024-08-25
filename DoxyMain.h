@@ -11,12 +11,14 @@
 */
 
 /// \example test/hrtn.cpp
-/// \example test/smoke_coutlog.cpp
 /// \example test/smoke_cerrlog.cpp
+/// \example test/smoke_coutlog.cpp
+/// \example test/smoke_ezargs.cpp
 /// \example test/smoke_filelog.cpp
 /// \example test/smoke_filtlog.cpp
-/// \example test/smoke_timelog.cpp
 /// \example test/smoke_paralog.cpp
+/// \example test/smoke_timelog.cpp
+/// \example test/smoke_timestamp.cpp
 /// \example test/test_atomix.cpp
 /// \example test/test_expand_env.cpp
 /// \example test/test_ezargs.cpp
