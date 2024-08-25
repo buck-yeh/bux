@@ -1,5 +1,6 @@
 #include "Logger.h"
 #include "AtomiX.h"     // bux::C_SpinLock
+#include "LogStream.h"  // bux::logTrace()
 #include <exception>    // std::uncaught_exceptions()
 
 namespace {
@@ -82,7 +83,9 @@ int C_EntryLog::getId()
     return id++;
 }
 
-C_UseLogger::C_UseLogger(E_LogLevel level): C_UseTraceLog(logger(), level)
+C_UseLogger::C_UseLogger(E_LogLevel level): C_UseLog(logger())
+/*! \param [in] level Log level
+*/
 {
     constexpr static const char FEWIV[] = "FEWIV";
     static_assert(FEWIV[LL_FATAL]   == 'F');
@@ -91,7 +94,7 @@ C_UseLogger::C_UseLogger(E_LogLevel level): C_UseTraceLog(logger(), level)
     static_assert(FEWIV[LL_INFO]    == 'I');
     static_assert(FEWIV[LL_VERBOSE] == 'V');
     if (auto pout = stream())
-        *pout <<std::format("{}:{}", FEWIV[level], std::string(g_EntryLevel,'|'));
+        logTrace(*pout, m_obj.tz) <<std::format("{}:{}", FEWIV[level], std::string(g_EntryLevel,'|'));
 }
 
 } // namespace bux

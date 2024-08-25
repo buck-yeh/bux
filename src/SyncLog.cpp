@@ -1,5 +1,4 @@
 #include "SyncLog.h"
-#include "LogStream.h"  // bux::logTrace()
 #include <ostream>      // std::ostream
 
 namespace bux {
@@ -44,15 +43,6 @@ void C_SyncLogger::unlockLog(bool flush)
 {
     m_impl.unuseLog(flush);
     m_lock.unlock();
-}
-
-C_UseTraceLog::C_UseTraceLog(I_SyncLog &obj, E_LogLevel level): C_UseLog(obj, level)
-/*! \param obj Wrpper object representing the real logger.
-    \param [in] level Log level
-*/
-{
-    if (auto pout = stream())
-        logTrace(*pout);
 }
 
 } // namespace bux

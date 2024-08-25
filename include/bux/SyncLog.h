@@ -1,6 +1,7 @@
 #pragma once
 
 #include "LogLevel.h"   // E_LogLevel
+#include <chrono>       // std::chrono::time_zone
 #include <concepts>     // std::convertible_to<>, std::derived_from<>
 #include <mutex>        // std::recursive_mutex
 #include <ostream>      // std::ostream
@@ -16,13 +17,16 @@ public:
 
     virtual std::ostream *lockLog() = 0;
             ///< Return non-null pointer if possible
-    virtual std::ostream *lockLog([[maybe_unused]]E_LogLevel ll) = 0;
+    virtual std::ostream *lockLog(E_LogLevel ll) = 0;
             ///< Return non-null pointer if logging is permitted for the given log level \em ll
     virtual void unlockLog(bool flush = true) = 0;
             ///< If the previous call to lockLog() returned null, the behavior is undefined.
 
+    const std::chrono::time_zone *const tz;
+
 protected:
 
+    I_SyncLog(const std::chrono::time_zone *tz_): tz(tz_) {}
     ~I_SyncLog() = default;
         ///< Pointer deletion is not expected
 };
@@ -123,7 +127,9 @@ class C_SyncLogger: public I_SyncLog
 public:
 
     // Nonvirtuals
-    explicit C_SyncLogger(I_ReenterableLog &impl): m_impl(impl) {}
+    explicit C_SyncLogger(I_ReenterableLog &impl, const std::chrono::time_zone *tz_ = nullptr): I_SyncLog(tz_), m_impl(impl) {}
+    explicit C_SyncLogger(I_ReenterableLog &impl, bool use_local_time):
+        C_SyncLogger(impl, use_local_time? std::chrono::get_tzdb().current_zone(): nullptr) {}
 
     // Implement I_SyncLog
     std::ostream *lockLog() override;
@@ -210,18 +216,11 @@ public:
     auto &operator*() const         { return *m_locked; }
     auto stream() const             { return m_locked; }
 
-private:
+protected:
 
     // Data
     I_SyncLog       &m_obj;
     std::ostream    *const m_locked;
-};
-
-struct C_UseTraceLog: C_UseLog
-/*! Specialized C_UseLog to always log with timestamp and thread ID.
-*/
-{
-    C_UseTraceLog(I_SyncLog &obj, E_LogLevel level);
 };
 
 } // namespace bux

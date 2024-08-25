@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SyncLog.h"        // bux::I_SyncLog, bux::C_UseLog, bux::C_UseTraceLog
+#include "SyncLog.h"        // bux::I_SyncLog, bux::C_UseLog
 #include "XPlatform.h"      // CUR_FUNC_
 #include <format>           // std::format(), std::vformat(), std::make_format_args()
 #include <optional>         // std::optional<>
@@ -32,7 +32,7 @@ private:
     static int getId();
 };
 
-struct C_UseLogger: C_UseTraceLog
+struct C_UseLogger: C_UseLog
 {
     C_UseLogger(E_LogLevel level);
 };
@@ -80,9 +80,23 @@ I_SyncLog &logger();    // provided by user of LOG(), FUNLOG(), SCOPELOG()
 #define SCOPELOG(scope) SCOPELOG_(__LINE__,scope)
 #define SCOPELOGX(scope,fmtStr, ...) SCOPELOGX_(__LINE__,scope,fmtStr, ##__VA_ARGS__)
 
+#ifndef LOGGER_USE_LOCAL_TIME_
+#define LOGGER_USE_LOCAL_TIME_ true
+/* Valid Definitions (defined before inclusion of this header):
+   - Local Time
+    #define LOGGER_USE_LOCAL_TIME_ true
+    #define LOGGER_USE_LOCAL_TIME_ std::chrono::get_tzdb().current_zone()
+    #define LOGGER_USE_LOCAL_TIME_ std::chrono::get_tzdb().locate_zone("Asia/Taipei")
+
+   - System Clock
+    #define LOGGER_USE_LOCAL_TIME_ false
+    #define LOGGER_USE_LOCAL_TIME_ nullptr
+*/
+#endif
+
 #define DEF_LOGGER_OSTREAM(out, ...) DEF_LOGGER_HEAD_ \
     static C_ReenterableOstream ro_{out, ##__VA_ARGS__}; \
-    static C_SyncLogger l_{ro_}; \
+    static C_SyncLogger l_{ro_, LOGGER_USE_LOCAL_TIME_}; \
     DEF_LOGGER_TAIL_(l_)
 
 // #include <iotream> before using either of these but never both
@@ -94,7 +108,7 @@ I_SyncLog &logger();    // provided by user of LOG(), FUNLOG(), SCOPELOG()
     DEF_LOGGER_HEAD_ \
     static std::ofstream out{path}; \
     static C_ReenterableOstream ro_{out, ##__VA_ARGS__}; \
-    static C_SyncLogger l_{ro_}; \
+    static C_SyncLogger l_{ro_, LOGGER_USE_LOCAL_TIME_}; \
     DEF_LOGGER_TAIL_(l_)
 
 // #include <bux/FileLog.h> before using this
@@ -102,7 +116,7 @@ I_SyncLog &logger();    // provided by user of LOG(), FUNLOG(), SCOPELOG()
     DEF_LOGGER_HEAD_ \
     static C_PathFmtLogSnap snap_{pathfmt}; \
     static C_ReenterableOstreamSnap ros_{snap_, ##__VA_ARGS__}; \
-    static C_SyncLogger l_{ros_}; \
+    static C_SyncLogger l_{ros_, LOGGER_USE_LOCAL_TIME_}; \
     DEF_LOGGER_TAIL_(l_)
 
 // #include <bux/FileLog.h> before using this
@@ -111,13 +125,13 @@ I_SyncLog &logger();    // provided by user of LOG(), FUNLOG(), SCOPELOG()
     C_PathFmtLogSnap g_snap{first, ##__VA_ARGS__}; \
     C_ReenterableOstreamSnap g_ros{g_snap}; \
     I_SyncLog &logger() { \
-    static C_SyncLogger l_{g_ros}; \
+    static C_SyncLogger l_{g_ros, LOGGER_USE_LOCAL_TIME_}; \
     DEF_LOGGER_TAIL_(l_)
 
 // #include <bux/ParaLog.h> before using this
 #define DEF_PARA_LOGGER \
     namespace bux { namespace user {  \
-    C_ParaLog g_paraLog; \
+    C_ParaLog g_paraLog(LOGGER_USE_LOCAL_TIME_); \
     I_SyncLog &logger() { \
     DEF_LOGGER_TAIL_(g_paraLog)
 
