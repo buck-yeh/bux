@@ -5,7 +5,7 @@
 #include <stdlib.h>         // strtoul()
 #include <thread>           // std::this_thread::sleep_for()
 
-#define SET_SIZE_LIMIT_
+//#define SET_SIZE_LIMIT_
 #ifndef SET_SIZE_LIMIT_
 DEF_LOGGER_FILES("timelog/%y%m%d_%H%M.log")
 #else
@@ -28,6 +28,9 @@ static const struct { bux::E_LogLevel ll; const char *msg; } LOG_SRC[] = {
 
 int main(int argc, const char *argv[])
 {
+    if (bux::C_UseLog u{bux::logger()})
+        *u <<std::boolalpha <<"LOGGER_USE_LOCAL_TIME_: " <<LOGGER_USE_LOCAL_TIME_ <<"\n";
+
     if (argc <= 1)
     {
         for (auto i: LOG_SRC)

@@ -28,6 +28,9 @@ int main()
                                     "logs/st%Y-%m-%d/%y%m%d-%H-%M.log"});
     bux::user::g_paraLog.addChildT<std::ofstream,bux::C_OstreamHolder,LL_ERROR>("errors.txt");
 
+    if (bux::C_UseLog u{bux::logger()})
+        *u <<std::boolalpha <<"LOGGER_USE_LOCAL_TIME_: " <<LOGGER_USE_LOCAL_TIME_ <<"\n";
+
 #ifndef _WIN32
     initscr();
     cbreak();

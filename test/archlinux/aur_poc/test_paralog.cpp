@@ -9,7 +9,7 @@
 #define CATCH_CONFIG_MAIN   // This tells Catch to provide a main() - only do this in one cpp file
 #include <catch2/catch_test_macros.hpp>
 
-namespace bux { namespace user {
+namespace bux { namespace user {    // Mildly modified from definition of DEF_PARA_LOGGER
 std::unique_ptr<C_ParaLog> g_log;
 I_SyncLog &logger() {
 DEF_LOGGER_TAIL_(*g_log)
