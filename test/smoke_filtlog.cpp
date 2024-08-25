@@ -60,6 +60,9 @@ int main()
     subnodes[1].addChildT<bux::C_PathFmtLogSnap>("logs/no_eeny_meeny_miny_moe/%y-%m-%d_bar.log");
     subnodes[2].addChildT<bux::C_PathFmtLogSnap>("logs/no_eeny_meeny_miny_moe/%y-%m-%d_no_foo_bar.log");
 
+    if (bux::C_UseLog u{bux::logger()})
+        *u <<std::boolalpha <<"LOGGER_USE_LOCAL_TIME_: " <<LOGGER_USE_LOCAL_TIME_ <<"\n";
+
     for (int i = 0; i < 200;)
         for (auto j: {"[foo]", "[bar]", ""})
             for (auto k: {"[eeny]", "[meeny]", "[miny]", "[moe]", ""})
