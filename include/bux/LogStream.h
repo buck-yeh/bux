@@ -1,5 +1,6 @@
 #pragma once
 
+#include <chrono>       // std::chrono::time_zone
 #include <iosfwd>       // fwrd decl std::ostream
 
 namespace bux {
@@ -7,11 +8,9 @@ namespace bux {
 //
 //      Externals
 //
-std::ostream &timestamp(std::ostream &); // manipulator
-std::ostream &logTrace(std::ostream &);  // manipulator
+std::ostream &timestamp(std::ostream &out, const std::chrono::time_zone *tz = nullptr);
+std::ostream &logTrace(std::ostream &out, const std::chrono::time_zone *tz = nullptr);
 
 } // namespace bux
 
-using bux::timestamp;
-
-#define LOGTITLE(log) (bux::timestamp(log) <<__FILE__ <<'#' <<__LINE__ <<": ")
+#define LOGTITLE(log,tz) (bux::timestamp(log,tz) <<" " __FILE__ "#" <<__LINE__ <<": ")
