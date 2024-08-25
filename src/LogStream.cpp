@@ -3,7 +3,11 @@
 #include <ostream>          // std::ostream
 #include <cinttypes>        // imaxdiv()
 #include <cstring>          // std::strcpy()
+
+#define STD_FORMAT_CHRONO_
+#ifndef STD_FORMAT_CHRONO_
 #include <ctime>            // std::localtime(), std::strftime()
+#endif
 
 #ifdef __GNUC__
 #ifndef _GNU_SOURCE
@@ -22,8 +26,6 @@
 
 #define TID_    std::this_thread::get_id()
 #endif
-
-#define STD_FORMAT_CHRONO_
 
 namespace bux {
 
