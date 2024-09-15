@@ -74,8 +74,14 @@ int inner_return()
 std::string ignore_prelog(const std::string &s)
 {
     static constexpr const char PRELOG[] = "********** LOGS BEGUN **********";
-    static constexpr const size_t PRELOG_LEN = (sizeof PRELOG) - 1; // minus the null end
-    return s.compare(0, PRELOG_LEN, PRELOG)? s: s.substr(PRELOG_LEN+1);
+    auto found = s.find(PRELOG);
+    if (found != std::string::npos)
+    {
+        found = s.find('\n', found + strlen(PRELOG));
+        if (found != std::string::npos)
+            return s.substr(found + 1);
+    }
+    return s;
 }
 
 } // namespace

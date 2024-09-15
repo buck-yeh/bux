@@ -1,3 +1,4 @@
+//#define LOGGER_USE_LOCAL_TIME_ false
 #include <bux/FileLog.h>    // bux::C_PathFmtLogSnap
 #include <bux/Logger.h>     // DEF_PARA_LOGGER
 #include <bux/ParaLog.h>    // bux::C_ParaLog
@@ -21,12 +22,17 @@ bool g_stop{};
 
 int main()
 {
-    bux::user::g_paraLog.addChild(std::cout, LL_WARNING);
-    bux::user::g_paraLog.addChildT<bux::C_PathFmtLogSnap>(2UL<<20, std::array{
-                                    "logs/st%Y-%m-%d/%y%m%d.log",
-                                    "logs/st%Y-%m-%d/%y%m%d-%H.log",
-                                    "logs/st%Y-%m-%d/%y%m%d-%H-%M.log"});
-    bux::user::g_paraLog.addChildT<std::ofstream,bux::C_OstreamHolder,LL_ERROR>("errors.txt");
+    using bux::user::g_paraLog;
+    g_paraLog.addChild(std::cout, LL_WARNING);
+    g_paraLog.addChildT<bux::C_PathFmtLogSnap>({}, LL_VERBOSE, false);
+    g_paraLog.addChildT<bux::C_PathFmtLogSnap>([](auto &logger)
+    {
+        logger.configPath(2UL<<20, std::array{
+            "logs/st{:%Y-%m-%d/%y%m%d}.log",
+            "logs/st{:%Y-%m-%d/%y%m%d-%H}.log",
+            "logs/st{:%Y-%m-%d/%y%m%d-%H-%M}.log"});
+    });
+    g_paraLog.addChildT<std::ofstream,bux::C_OstreamHolder>({}, LL_ERROR, "errors.txt");
 
     if (bux::C_UseLog u{bux::logger()})
         *u <<std::boolalpha <<"LOGGER_USE_LOCAL_TIME_: " <<LOGGER_USE_LOCAL_TIME_ <<"\n";
@@ -43,7 +49,7 @@ int main()
         loops.emplace_back([]{
             while (!g_stop)
             {
-                static const struct { bux::E_LogLevel ll; const char *msg; } LOG_SRC[] = {
+                static constinit const struct { bux::E_LogLevel ll; const char *msg; } LOG_SRC[] = {
                     {LL_FATAL,   "fatal"},
                     {LL_ERROR,   "error"},
                     {LL_WARNING, "warning"},

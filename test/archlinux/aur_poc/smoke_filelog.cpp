@@ -1,7 +1,8 @@
+//#define LOGGER_USE_LOCAL_TIME_ false
 #include <bux/Logger.h>     // DEF_LOGGER_FILE()
 #include <fstream>          // std::ofstream
 
-DEF_LOGGER_FILE("log/test.log") //, LL_INFO)
+DEF_LOGGER_FILE("log/test.log", LL_INFO)
 
 int main()
 {

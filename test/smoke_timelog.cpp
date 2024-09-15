@@ -1,19 +1,21 @@
-#include <bux/Logger.h>     // DEF_LOGGER_FILES(), DEF_FALLBACKABLE_LOGGER_FILES()
+//#define LOGGER_USE_LOCAL_TIME_ false
+#include <bux/Logger.h>     // DEF_LOGGER_FILES(), DEF_FALLBACK_LOGGER_FILES()
 #include <bux/FileLog.h>    // bux::C_PathFmtLogSnap
 #include <chrono>           // std::chrono::system_clock
 #include <random>           // std::mt19937
 #include <stdlib.h>         // strtoul()
 #include <thread>           // std::this_thread::sleep_for()
 
-//#define SET_SIZE_LIMIT_
+#define SET_SIZE_LIMIT_
 #ifndef SET_SIZE_LIMIT_
-DEF_LOGGER_FILES("timelog/%y%m%d_%H%M.log")
+DEF_LOGGER_FILES("timelog/{:%y%m%d_%H%M}.log")
 #else
-DEF_FALLBACKABLE_LOGGER_FILES(65536, std::vector{
-            "timelog/%y%m%d-%H.log",
-            "timelog/%y%m%d-%H-%M.log",
-            "timelog/%y%m%d-%H-%M-%S.log"
-        })
+constinit const std::array fallbacks{
+    "timelog/{:%y%m%d-%H}.log",
+    "timelog/{:%y%m%d-%H-%M}.log",
+    "timelog/{:%y%m%d-%H-%M-%S}.log"
+};
+DEF_FALLBACK_LOGGER_FILES(65536, fallbacks)
 #endif
 
 thread_local std::mt19937 g_rng{std::random_device{"/dev/urandom"}()};

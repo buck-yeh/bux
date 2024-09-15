@@ -1,4 +1,5 @@
-//#define LOGGER_USE_LOCAL_TIME_ nullptr
+//#define LOGGER_USE_LOCAL_TIME_ std::chrono::get_tzdb().current_zone()
+//#define LOGGER_USE_LOCAL_TIME_ std::chrono::get_tzdb().locate_zone("Asia/Taipei")
 #include <bux/Logger.h>     // DEF_LOGGER_CERR()
 #include <iostream>         // std::cerr
 

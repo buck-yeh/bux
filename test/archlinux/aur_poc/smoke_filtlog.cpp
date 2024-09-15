@@ -1,3 +1,4 @@
+#define LOGGER_USE_LOCAL_TIME_ false
 #include <bux/FileLog.h>    // bux::C_PathFmtLogSnap
 #include <bux/Logger.h>     // DEF_PARA_LOGGER
 #include <bux/ParaLog.h>    // bux::C_ParaLog
@@ -15,50 +16,56 @@ struct FC_MatchStr
     const std::string       m_key;
 
     FC_MatchStr(auto key): m_key(key) {}
-    bool operator()(std::string_view s) const { return s.find(m_key) != s.npos; }
+    bool operator()(std::string_view s) const { return s.contains(m_key); }
 };
 
 } // namespace
 
 int main()
 {
-    bux::user::g_paraLog.addChildT<bux::C_PathFmtLogSnap>(2UL<<20, std::array{
-                                    "logs/all/%y%m%d.log",
-                                    "logs/all/%y%m%d-%H.log",
-                                    "logs/all/%y%m%d-%H-%M.log"});
+    bux::user::g_paraLog.addChildT<bux::C_PathFmtLogSnap>([](auto &logger)
+    {
+        logger.configPath(2UL<<20, std::array{
+                                    "logs/all/{:%y%m%d}.log",
+                                    "logs/all/{:%y%m%d-%H}.log",
+                                    "logs/all/{:%y%m%d-%H-%M}.log"});
+    });
     auto
     nodes = bux::user::g_paraLog.partitionBy(std::initializer_list<FC_MatchStr>{"[foo]", "[bar]"});
-    nodes[0].addChildT<bux::C_PathFmtLogSnap>("logs/%y-%m-%d_foo.log");
-    nodes[1].addChildT<bux::C_PathFmtLogSnap>("logs/%y-%m-%d_bar.log");
-    nodes[2].addChildT<bux::C_PathFmtLogSnap>("logs/%y-%m-%d_no_foo_bar.log");
+    nodes[0].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/{:%y-%m-%d_foo.log"); });
+    nodes[1].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/{:%y-%m-%d_bar.log"); });
+    nodes[2].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/{:%y-%m-%d_no_foo_bar.log"); });
     nodes = bux::user::g_paraLog.partitionBy(std::initializer_list<FC_MatchStr>{"[eeny]", "[meeny]", "[miny]", "[moe]"});
-    nodes[0].addChildT<bux::C_PathFmtLogSnap>("logs/%y-%m-%d_eeny.log");
-    nodes[1].addChildT<bux::C_PathFmtLogSnap>("logs/%y-%m-%d_meeny.log");
-    nodes[2].addChildT<bux::C_PathFmtLogSnap>("logs/%y-%m-%d_miny.log");
-    nodes[3].addChildT<bux::C_PathFmtLogSnap>("logs/%y-%m-%d_moe.log");
-    nodes.matchedNone().addChildT<bux::C_PathFmtLogSnap>("logs/%y-%m-%d_no_eeny_meeny_miny_moe.log");
+    nodes[0].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/{:%y-%m-%d}_eeny.log"); });
+    nodes[1].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/{:%y-%m-%d}_meeny.log"); });
+    nodes[2].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/{:%y-%m-%d}_miny.log"); });
+    nodes[3].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/{:%y-%m-%d}_moe.log"); });
+    nodes.matchedNone().addChildT<bux::C_PathFmtLogSnap>([](auto &logger)
+    {
+        logger.configPath("logs/{:%y-%m-%d}_no_eeny_meeny_miny_moe.log");
+    });
 
     auto
     subnodes = nodes[0].partitionBy(std::initializer_list<FC_MatchStr>{"[foo]", "[bar]"});
-    subnodes[0].addChildT<bux::C_PathFmtLogSnap>("logs/eeny/%y-%m-%d_foo.log");
-    subnodes[1].addChildT<bux::C_PathFmtLogSnap>("logs/eeny/%y-%m-%d_bar.log");
-    subnodes[2].addChildT<bux::C_PathFmtLogSnap>("logs/eeny/%y-%m-%d_no_foo_bar.log");
+    subnodes[0].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/eeny/{:%y-%m-%d_foo.log"); });
+    subnodes[1].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/eeny/{:%y-%m-%d_bar.log"); });
+    subnodes[2].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/eeny/{:%y-%m-%d_no_foo_bar.log"); });
     subnodes = nodes[1].partitionBy(std::initializer_list<FC_MatchStr>{"[foo]", "[bar]"});
-    subnodes[0].addChildT<bux::C_PathFmtLogSnap>("logs/meeny/%y-%m-%d_foo.log");
-    subnodes[1].addChildT<bux::C_PathFmtLogSnap>("logs/meeny/%y-%m-%d_bar.log");
-    subnodes[2].addChildT<bux::C_PathFmtLogSnap>("logs/meeny/%y-%m-%d_no_foo_bar.log");
+    subnodes[0].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/meeny/{:%y-%m-%d_foo.log"); });
+    subnodes[1].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/meeny/{:%y-%m-%d_bar.log"); });
+    subnodes[2].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/meeny/{:%y-%m-%d_no_foo_bar.log"); });
     subnodes = nodes[2].partitionBy(std::initializer_list<FC_MatchStr>{"[foo]", "[bar]"});
-    subnodes[0].addChildT<bux::C_PathFmtLogSnap>("logs/miny/%y-%m-%d_foo.log");
-    subnodes[1].addChildT<bux::C_PathFmtLogSnap>("logs/miny/%y-%m-%d_bar.log");
-    subnodes[2].addChildT<bux::C_PathFmtLogSnap>("logs/miny/%y-%m-%d_no_foo_bar.log");
+    subnodes[0].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/miny/{:%y-%m-%d_foo.log"); });
+    subnodes[1].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/miny/{:%y-%m-%d_bar.log"); });
+    subnodes[2].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/miny/{:%y-%m-%d_no_foo_bar.log"); });
     subnodes = nodes[3].partitionBy(std::initializer_list<FC_MatchStr>{"[foo]", "[bar]"});
-    subnodes[0].addChildT<bux::C_PathFmtLogSnap>("logs/moe/%y-%m-%d_foo.log");
-    subnodes[1].addChildT<bux::C_PathFmtLogSnap>("logs/moe/%y-%m-%d_bar.log");
-    subnodes[2].addChildT<bux::C_PathFmtLogSnap>("logs/moe/%y-%m-%d_no_foo_bar.log");
+    subnodes[0].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/moe/{:%y-%m-%d_foo.log"); });
+    subnodes[1].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/moe/{:%y-%m-%d_bar.log"); });
+    subnodes[2].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/moe/{:%y-%m-%d_no_foo_bar.log"); });
     subnodes = nodes[4].partitionBy(std::initializer_list<FC_MatchStr>{"[foo]", "[bar]"});
-    subnodes[0].addChildT<bux::C_PathFmtLogSnap>("logs/no_eeny_meeny_miny_moe/%y-%m-%d_foo.log");
-    subnodes[1].addChildT<bux::C_PathFmtLogSnap>("logs/no_eeny_meeny_miny_moe/%y-%m-%d_bar.log");
-    subnodes[2].addChildT<bux::C_PathFmtLogSnap>("logs/no_eeny_meeny_miny_moe/%y-%m-%d_no_foo_bar.log");
+    subnodes[0].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/no_eeny_meeny_miny_moe/{:%y-%m-%d_foo.log"); });
+    subnodes[1].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/no_eeny_meeny_miny_moe/{:%y-%m-%d_bar.log"); });
+    subnodes[2].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/no_eeny_meeny_miny_moe/{:%y-%m-%d_no_foo_bar.log"); });
 
     if (bux::C_UseLog u{bux::logger()})
         *u <<std::boolalpha <<"LOGGER_USE_LOCAL_TIME_: " <<LOGGER_USE_LOCAL_TIME_ <<"\n";
