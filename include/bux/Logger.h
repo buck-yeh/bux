@@ -32,15 +32,11 @@ private:
     static int getId();
 };
 
-struct C_UseLogger: C_UseLog
-{
-    C_UseLogger(E_LogLevel level);
-};
-
 //
 //      Externs
 //
 I_SyncLog &logger();
+std::ostream &stamp(const C_UseLog &u, E_LogLevel level);
 
 //
 //      Implement Class Member Templates
@@ -48,11 +44,11 @@ I_SyncLog &logger();
 template<class T_Fmt, class... T_Args>
 C_EntryLog::C_EntryLog(std::string_view scopeName, T_Fmt &&fmtStr, T_Args&&...args)
 {
-    if (C_UseLogger u{LL_VERBOSE})
+    if (C_UseLog u{logger()})
     {
         m_Id = getId();
         const auto fmtfmt = std::format("@{}@{}({}) {{{{\n", *m_Id, scopeName, fmtStr);
-        *u << std::vformat(fmtfmt, std::make_format_args(std::forward<T_Args>(args)...));
+        stamp(u,LL_VERBOSE) << std::vformat(fmtfmt, std::make_format_args(std::forward<T_Args>(args)...));
     }
     deeper();
 }
@@ -75,22 +71,26 @@ I_SyncLog &logger();    // provided by user of LOG(), FUNLOG(), SCOPELOG()
 //
 //      End-User Macros
 //
-#define LOG(ll,fmtStr, ...) do if (bux::C_UseLogger u{ll}) *u <<std::format(fmtStr, ##__VA_ARGS__) <<'\n'; while(false)
+#define LOG(ll,fmtStr, ...) do if (bux::C_UseLog u{bux::logger(),ll}) stamp(u,ll) <<std::format(fmtStr, ##__VA_ARGS__) <<'\n'; while(false)
 #define LOG_RAW(fmtStr, ...) do if (bux::C_UseLog u{bux::logger()}) *u <<std::format(fmtStr, ##__VA_ARGS__) <<'\n'; while(false)
 #define SCOPELOG(scope) SCOPELOG_(__LINE__,scope)
 #define SCOPELOGX(scope,fmtStr, ...) SCOPELOGX_(__LINE__,scope,fmtStr, ##__VA_ARGS__)
 
 #ifndef LOGGER_USE_LOCAL_TIME_
 #define LOGGER_USE_LOCAL_TIME_ true
-/* Valid Definitions (defined before inclusion of this header):
-   - Local Time
-    #define LOGGER_USE_LOCAL_TIME_ true
-    #define LOGGER_USE_LOCAL_TIME_ std::chrono::get_tzdb().current_zone()
-    #define LOGGER_USE_LOCAL_TIME_ std::chrono::get_tzdb().locate_zone("Asia/Taipei")
-
-   - System Clock
-    #define LOGGER_USE_LOCAL_TIME_ false
-    #define LOGGER_USE_LOCAL_TIME_ nullptr
+/*! \def LOGGER_USE_LOCAL_TIME_
+    Valid definitions: (\c #define before including this header)
+    - Local Time
+        ~~~cpp
+        #define LOGGER_USE_LOCAL_TIME_ true
+        #define LOGGER_USE_LOCAL_TIME_ std::chrono::get_tzdb().current_zone()
+        #define LOGGER_USE_LOCAL_TIME_ std::chrono::get_tzdb().locate_zone("Asia/Taipei")
+        ~~~
+    - System Clock
+        ~~~cpp
+        #define LOGGER_USE_LOCAL_TIME_ false
+        #define LOGGER_USE_LOCAL_TIME_ nullptr
+        ~~~
 */
 #endif
 
@@ -114,16 +114,16 @@ I_SyncLog &logger();    // provided by user of LOG(), FUNLOG(), SCOPELOG()
 // #include <bux/FileLog.h> before using this
 #define DEF_LOGGER_FILES(pathfmt, ...) \
     DEF_LOGGER_HEAD_ \
-    static C_PathFmtLogSnap snap_{pathfmt}; \
-    static C_ReenterableOstreamSnap ros_{snap_, ##__VA_ARGS__}; \
+    static C_PathFmtLogSnap snap_{LOGGER_USE_LOCAL_TIME_}; \
+    static C_ReenterableOstreamSnap ros_{snap_.configPath(pathfmt), ##__VA_ARGS__}; \
     static C_SyncLogger l_{ros_, LOGGER_USE_LOCAL_TIME_}; \
     DEF_LOGGER_TAIL_(l_)
 
 // #include <bux/FileLog.h> before using this
-#define DEF_FALLBACKABLE_LOGGER_FILES(first,...) \
+#define DEF_FALLBACK_LOGGER_FILES(fsize_in_bytes, fallbackPaths) \
     namespace bux { namespace user {  \
-    C_PathFmtLogSnap g_snap{first, ##__VA_ARGS__}; \
-    C_ReenterableOstreamSnap g_ros{g_snap}; \
+    C_PathFmtLogSnap g_snap{LOGGER_USE_LOCAL_TIME_}; \
+    C_ReenterableOstreamSnap g_ros{g_snap.configPath(fsize_in_bytes, fallbackPaths)}; \
     I_SyncLog &logger() { \
     static C_SyncLogger l_{g_ros, LOGGER_USE_LOCAL_TIME_}; \
     DEF_LOGGER_TAIL_(l_)

@@ -31,8 +31,8 @@ public:
     explicit C_ParaLog(bool use_local_time): C_ParaLog(use_local_time? std::chrono::get_tzdb().current_zone(): nullptr) {}
     template<class...T_Args>
     bool addChild(T_Args&&...args);
-    template<class C_LogImpl, class C_Holder = typename C_AutoSinkHolderT<C_LogImpl>::type, E_LogLevel LL = LL_VERBOSE, class...T_Args>
-    bool addChildT(T_Args&&...args);
+    template<class C_LogImpl, class C_Holder = typename C_AutoSinkHolderT<C_LogImpl>::type, class...T_Args>
+    bool addChildT(std::function<void(C_LogImpl&)> post_ctor = {}, E_LogLevel ll = LL_VERBOSE, T_Args&&...args);
     template<typename F>
     [[nodiscard]]C_NodeArrayProxy partitionBy(F f);
 
@@ -136,10 +136,14 @@ public:
     {
         return addChild(std::make_unique<C_ReenterableOstreamSnap>(snap, ll));
     }
-    template<class C_LogImpl, class C_Holder = typename C_AutoSinkHolderT<C_LogImpl>::type, E_LogLevel LL = LL_VERBOSE, class...T_Args>
-    bool addChildT(T_Args&&...args) const
+    template<class C_LogImpl, class C_Holder = typename C_AutoSinkHolderT<C_LogImpl>::type, class...T_Args>
+    bool addChildT(std::function<void(C_LogImpl&)> post_ctor = {}, E_LogLevel ll = LL_VERBOSE, T_Args&&...args) const
     {
-        return addChild(std::make_unique<C_ReenterableLoggerInside<C_LogImpl,C_Holder>>(LL, std::forward<T_Args>(args)...));
+        auto child = std::make_unique<C_ReenterableLoggerInside<C_LogImpl,C_Holder>>(ll, std::forward<T_Args>(args)...);
+        if (post_ctor)
+            post_ctor(child->impl());
+
+        return addChild(std::move(child));
     }
     [[nodiscard]]C_NodeArrayProxy partitionBy(std::convertible_to<FC_Accept> auto f) const
     {
@@ -179,10 +183,11 @@ bool C_ParaLog::addChild(T_Args&&...args)
 {
     return C_NodeProxy{m_lock,m_root}.addChild(std::forward<T_Args>(args)...);
 }
-template<class C_LogImpl, class C_Holder, E_LogLevel LL, class...T_Args>
-bool C_ParaLog::addChildT(T_Args&&...args)
+
+template<class C_LogImpl, class C_Holder, class...T_Args>
+bool C_ParaLog::addChildT(std::function<void(C_LogImpl&)> post_ctor, E_LogLevel ll, T_Args&&...args)
 {
-    return C_NodeProxy{m_lock,m_root}.addChildT<C_LogImpl,C_Holder,LL>(std::forward<T_Args>(args)...);
+    return C_NodeProxy{m_lock,m_root}.addChildT<C_LogImpl,C_Holder>(post_ctor, ll, std::forward<T_Args>(args)...);
 }
 
 template<typename F>

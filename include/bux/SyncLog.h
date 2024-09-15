@@ -31,7 +31,7 @@ protected:
         ///< Pointer deletion is not expected
 };
 
-struct I_ReenterableLog /// Thread-unsafe implementaion is preferred for performance
+struct I_ReenterableLog /// Thread-unsafe implementation is preferred for performance
 {
     virtual ~I_ReenterableLog() = default;
             ///< Pointer deletion is hereby granted
@@ -116,6 +116,7 @@ public:
         C_LogImpl(std::forward<T_Args>(args)...),
         C_ReenterableLogger<C_SinkRefHolder>(*static_cast<C_LogImpl*>(this), ll)
         {}
+    C_LogImpl &impl() { return *this; }
 };
 
 class C_SyncLogger: public I_SyncLog
@@ -212,11 +213,12 @@ public:
         if (m_locked)
             m_obj.unlockLog();
     }
-    operator bool() const           { return m_locked != nullptr; }
-    auto &operator*() const         { return *m_locked; }
-    auto stream() const             { return m_locked; }
+    operator bool() const       { return m_locked != nullptr; }
+    auto &operator*() const     { return *m_locked; }
+    auto stream() const         { return m_locked; }
+    auto timezone() const       { return m_obj.tz; }
 
-protected:
+private:
 
     // Data
     I_SyncLog       &m_obj;

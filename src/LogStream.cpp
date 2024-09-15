@@ -45,7 +45,7 @@ std::ostream &timestamp(std::ostream &out, const std::chrono::time_zone *tz)
     if (cur_time != old_time || tz != old_tz)
     {
 #ifdef STD_FORMAT_CHRONO_
-        #define TIMESTAMP_FMT "{:%Y/%m/%d %H:%M:%S}"
+        constexpr const std::string_view TIMESTAMP_FMT = "{:%Y/%m/%d %H:%M:%S}";
         auto tm_str = tz? std::format(TIMESTAMP_FMT, tz->to_local(cur_time)): std::format(TIMESTAMP_FMT, cur_time);
         std::strcpy(YMDHMS, tm_str.c_str());
 #else
