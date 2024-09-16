@@ -23,8 +23,14 @@ public:
     explicit C_PathFmtLogSnap(const std::chrono::time_zone *tz);
     explicit C_PathFmtLogSnap(bool use_local_time = true): C_PathFmtLogSnap(use_local_time? std::chrono::get_tzdb().current_zone(): nullptr) {}
     C_PathFmtLogSnap &configPath(const std::string &pathFmt);
-    C_PathFmtLogSnap &configPath(uintmax_t fsize_in_bytes, const auto &fallbackPaths) requires
-        requires {
+    C_PathFmtLogSnap &configPath(uintmax_t fsize_in_bytes, const auto &fallbackPaths)
+    /*! \param [in] fsize_in_bytes Max bytes per log file.
+        \param [in] fallbackPaths Array of strings used in turn as `fmt` parameter of `std::vformat()` with one single extra argument to format, ie. timestamp for now.
+        \return `*this`
+
+        Each formatted path is the target file for the moment when something is to be logged on demand.
+    */
+        requires requires {
             std::begin(fallbackPaths);
             { *std::begin(fallbackPaths) }-> std::convertible_to<std::string>;
             std::end(fallbackPaths);

@@ -14,6 +14,11 @@ C_PathFmtLogSnap::C_PathFmtLogSnap(const std::chrono::time_zone *tz): m_tz(tz)
 }
 
 C_PathFmtLogSnap &C_PathFmtLogSnap::configPath(const std::string &_pathFmt)
+/*! \param [in] _pathFmt Used as `fmt` parameter of `std::vformat()` with one single extra argument to format, ie. timestamp for now.
+    \return `*this`
+
+    Each formatted path is the target file for the moment when something is to be logged on demand.
+*/
 {
     if (_pathFmt.empty())
         RUNTIME_ERROR("Null path format");
@@ -26,14 +31,10 @@ C_PathFmtLogSnap &C_PathFmtLogSnap::configPath(const std::string &_pathFmt)
 }
 
 C_PathFmtLogSnap &C_PathFmtLogSnap::enableAutoMkDir(bool yes)
-/*! \param [in] yes Whether or not to create subdirectory for the openning log path.
-     The default is true.
+/*! \param [in] yes Whether or not to create subdirectory for the openning log path. The default is _true_.
+    \return `*this`
 
-    If enabled, getResource() always creates the subdir before openning the log
-    path no matter how deep the subdir is.
-
-    Since constructor always enables it, you hradly need to call this method
-    explicitly.
+    If enabled, missing subdirs are always created before opening the log file no matter how deep the subdir is.
 */
 {
     m_AutoMkDir = yes;
@@ -41,6 +42,9 @@ C_PathFmtLogSnap &C_PathFmtLogSnap::enableAutoMkDir(bool yes)
 }
 
 C_PathFmtLogSnap &C_PathFmtLogSnap::setBinaryMode(bool enabled)
+/*! \param [in] enabled Whether or not to open log files in binary mode. The default is _false_.
+    \return `*this`
+*/
 {
     m_OpenMode = std::ios_base::out;
     if (enabled)
