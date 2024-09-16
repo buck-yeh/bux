@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 3.18)
 cmake_policy(VERSION 3.18)
 project(bux)
 
-set(GNU_LIKE_CXX_FLAGS " -Wall -Wextra -Wshadow -Wconversion -Wno-parentheses -g3 -Og -std=c++23")
+set(GNU_LIKE_CXX_FLAGS " -Wall -Wextra -Wshadow -Wconversion -Wno-parentheses -O2 -std=c++23")
 #string(APPEND CMAKE_CXX_FLAGS " -g3")
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND NOT MSVC)
