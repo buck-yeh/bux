@@ -78,7 +78,7 @@ public:
     C_NFA &append(const C_NFA &a);
     C_NFA &append(const T_Inputs &inputs);
     C_NFA &changeTo(int options);
-    void setAction(T_Action &&action);
+    template<class T> void setAction(T &&action);
     size_t totalFinalStates() const { return F.size(); }
 
 private:
@@ -374,10 +374,11 @@ void C_NFA<T_Inputs,T_Action,C_Traits>::gatherStates(std::set<C_NfaState> &usedS
 }
 
 template<class T_Inputs, class T_Action, class C_Traits>
-void C_NFA<T_Inputs,T_Action,C_Traits>::setAction(T_Action &&action)
+template<class T>
+void C_NFA<T_Inputs,T_Action,C_Traits>::setAction(T &&action)
 {
     for (auto &i: F)
-        i.m_Tag = std::forward<T_Action>(action);
+        i.m_Tag = std::forward<T>(action);
 }
 
 template<class T_Inputs, class T_Action, class C_Traits>
