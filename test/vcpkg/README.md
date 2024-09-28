@@ -1,15 +1,20 @@
 # How to PR
 
-1. In the [forked vcpcg main page](https://github.com/buck-yeh/vcpkg), click **Sync fork** and then click **Update Branch**  to ensure the repo up-to-date.
-2. `git clone https://github.com/buck-yeh/vcpkg.git` or `git pull` if it is already cloned.
-3. Update files in `ports/buck-yeh-bux/`:
+1. Fork [vcpcg main page](https://github.com/microsoft/vcpkg), named `vcpkg.fork`.
+2. ~~~bash
+   git clone https://github.com/buck-yeh/vcpkg.fork.git
+   cd vcpkg.fork
+   ./bootstrap-vcpkg.sh
+   ~~~
+3. (This is just for me) Copy `.geany` backup into `vcpkg.fork/` so that I can __Project > Recent Projects > {MyPath}/vcpkg.fork/.geany__ to reopen relevant files all in once.
+4. Update files in `ports/buck-yeh-bux/`:
    * Update `REF` in `portfile.cmake` with the commit full hash of [release](https://github.com/buck-yeh/bux/releases/tag/1.6.5) and zero `SHA512` intentionally:
 
    ~~~cmake
    vcpkg_from_github(
        OUT_SOURCE_PATH SOURCE_PATH
        REPO buck-yeh/bux
-       REF b125e31341660ea76ca51cc5013e52d8d34a1f27 # v1.6.5
+       REF "${VERSION}"
        SHA512 0
        HEAD_REF main
    )
@@ -17,7 +22,7 @@
 
    * Set "version" right in `vcpkg.json`
 
-4. In terminal under the working folder `./vcpkg build buck-yeh-bux` to get the expected error:
+5. In terminal under the working folder `./vcpkg build buck-yeh-bux` to get the expected error:
 
    ~~~bash
    Detecting compiler hash for triplet x64-linux...
@@ -42,13 +47,13 @@
 
    The correct `SHA512` is value of "Actual hash" in the above example output, i.e. `c37fea47076a192161aacacf8694c5b6d487a1c2ebe1fa06acdd9948e42e1b1440d83ebe38f4ae3b86c90cb1aba76f7254cd434ea85e24484a9dacb6944511a9`. Replace `0` with it.
 
-5. Check if there are any conformance issues with:
+6. Check if there are any conformance issues with:
 
    ~~~bash
    ./vcpkg format-manifest ports/buck-yeh-bux/vcpkg.json
    ~~~
 
-6. Update "buck-yeh-bux" in `versions/baseline.json`:
+7. Update "buck-yeh-bux" in `versions/baseline.json`:
 
    ~~~json
    "buck-yeh-bux": {
@@ -57,13 +62,13 @@
    },
    ~~~
 
-7. Commit the changes so far but do not push, and issue the following command to get `git-tree` value which is needed by the next action item:
+8. Commit the changes so far but do not push, and issue the following command to get `git-tree` value which is needed by the next action item:
 
    ~~~bash
    git rev-parse HEAD:ports/buck-yeh-bux
    ~~~
 
-8. Add the new revision on the top of "versions", along with all of prervious PR'ed revisions, in `versions/b-/buck-yeh-bux.json`:
+9. Add the new revision on the top of "versions", along with all of prervious PR'ed revisions, in `versions/b-/buck-yeh-bux.json`:
 
    ~~~json
    {
@@ -78,9 +83,9 @@
    }
    ~~~
 
-   _p.s._ `1fd8af12a04b806faa041b8631ac34dc8c535b41` is the exact output of **7.**
+   _p.s._ `1fd8af12a04b806faa041b8631ac34dc8c535b41` is the exact output from **8.**
 
-9. Stage, amend, push them all and issue a PR -- In the [forked vcpcg main page](https://github.com/buck-yeh/vcpkg), click **Contribute**, click **Open pull request**
+10. Stage, amend, push them all and issue a PR -- In the [forked vcpcg main page](https://github.com/buck-yeh/vcpkg.fork), click **Contribute**, click **Open pull request**
     * Name the title `[buck-yeh-bux] Update to <new-release-tag-name>`
     * Replace `**Describe the pull request**` with the actual release note text.
     * Replace the rest of template with the following canned answers:
@@ -111,4 +116,4 @@
 
     * Done!
 
-10. Fixed subsequently reported errors patiently. The PR will eventually get merged, by AUTHORITY of course.
+11. Fixed subsequently reported errors patiently. The PR will eventually get merged, by AUTHORITY of course.
