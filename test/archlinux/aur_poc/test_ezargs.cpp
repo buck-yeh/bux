@@ -1,8 +1,6 @@
 /*
     Test cases are organized according to ZOMBIES rules
     http://blog.wingman-sw.com/tdd-guided-by-zombies
-
-    Initially a push then a proof to testability of global logger
 */
 #include <bux/EZArgs.h>     // bux::C_EZArgs, bux::C_ErrorOrIndex
 
