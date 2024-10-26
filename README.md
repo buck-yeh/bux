@@ -171,6 +171,7 @@
 
 ## Misc.
 
+- [EZScape.h](include/bux/EZScape.h) - Replacement of [`curl_easy_escape()`](https://curl.se/libcurl/c/curl_easy_escape.html) & [`curl_easy_unescape()`](https://curl.se/libcurl/c/curl_easy_unescape.html) in `libcurl`.
 - [SafeArith.h](include/bux/SafeArith.h) - Supports to safe arithmetics. *(Not used recently)*
 - [XAutoPtr.h](include/bux/XAutoPtr.h) - Safe [`std::auto_ptr`](https://en.cppreference.com/w/cpp/memory/auto_ptr) dated back to pre-C++11 years. *It ain't broke ...*
 - [XException.h](include/bux/XException.h) - Macros to throw `std::runtime_error`, `std::logic_error`, as well as [other exceptions](https://en.cppreference.com/w/cpp/header/stdexcept), with location & formatted message.
