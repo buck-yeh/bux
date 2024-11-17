@@ -1,3 +1,4 @@
+//#define TURN_OFF_LOGGER_
 //#define LOGGER_USE_LOCAL_TIME_ false
 #include <bux/Logger.h>     // DEF_LOGGER_FILE()
 #include <fstream>          // std::ofstream
@@ -6,9 +7,10 @@ DEF_LOGGER_FILE("log/test.log", LL_INFO)
 
 int main()
 {
+#ifndef TURN_OFF_LOGGER_
     if (bux::C_UseLog u{bux::logger()})
         *u <<std::boolalpha <<"LOGGER_USE_LOCAL_TIME_: " <<LOGGER_USE_LOCAL_TIME_ <<"\n";
-
+#endif
     LOG(LL_FATAL,   "Hello fatal");
     FUNLOG;
     LOG(LL_ERROR,   "Hello error");

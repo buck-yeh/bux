@@ -1,3 +1,4 @@
+//#define TURN_OFF_LOGGER_
 #include <bux/Logger.h>     // DEF_LOGGER_COUT()
 #include <iostream>         // std::cout
 

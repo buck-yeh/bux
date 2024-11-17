@@ -67,6 +67,8 @@ I_SyncLog &logger();    // provided by user of LOG(), FUNLOG(), SCOPELOG()
 //      Internal Macros
 //
 #define _gluePair_(x,y) x##y
+
+#ifndef TURN_OFF_LOGGER_
 #define SCOPELOG_(line,scope) bux::C_EntryLog _gluePair_(_log_,line)(scope)
 #define SCOPELOGX_(line,scope,fmtStr, ...) bux::C_EntryLog _gluePair_(_log_,line)(scope,fmtStr, ##__VA_ARGS__)
 #define DEF_LOGGER_HEAD_ namespace bux { namespace user { I_SyncLog &logger() {
@@ -77,8 +79,6 @@ I_SyncLog &logger();    // provided by user of LOG(), FUNLOG(), SCOPELOG()
 //
 #define LOG(ll,fmtStr, ...) do if (bux::C_UseLog u{bux::logger(),ll}) stamp(u,ll) <<std::format(fmtStr, ##__VA_ARGS__) <<'\n'; while(false)
 #define LOG_RAW(fmtStr, ...) do if (bux::C_UseLog u{bux::logger()}) *u <<std::format(fmtStr, ##__VA_ARGS__) <<'\n'; while(false)
-#define SCOPELOG(scope) SCOPELOG_(__LINE__,scope)
-#define SCOPELOGX(scope,fmtStr, ...) SCOPELOGX_(__LINE__,scope,fmtStr, ##__VA_ARGS__)
 
 #ifndef LOGGER_USE_LOCAL_TIME_
 #define LOGGER_USE_LOCAL_TIME_ true
@@ -138,6 +138,23 @@ I_SyncLog &logger();    // provided by user of LOG(), FUNLOG(), SCOPELOG()
     C_ParaLog g_paraLog(LOGGER_USE_LOCAL_TIME_); \
     I_SyncLog &logger() { \
     DEF_LOGGER_TAIL_(g_paraLog)
+#else
+#define SCOPELOG_(line,scope)
+#define SCOPELOGX_(line,scope,fmtStr, ...)
+#define LOG(ll,fmtStr, ...)
+#define LOG_RAW(fmtStr, ...)
+#define DEF_LOGGER_OSTREAM(out, ...)
+#define DEF_LOGGER_FILE(path, ...)
+#define DEF_LOGGER_FILES(pathfmt, ...)
+#define DEF_FALLBACK_LOGGER_FILES(fsize_in_bytes, fallbackPaths)
+#define DEF_PARA_LOGGER
+#endif // TURN_OFF_LOGGER_
 
+// #include <iotream> before using either of these but never both
+#define DEF_LOGGER_COUT(...) DEF_LOGGER_OSTREAM(std::cout, ##__VA_ARGS__)
+#define DEF_LOGGER_CERR(...) DEF_LOGGER_OSTREAM(std::cerr, ##__VA_ARGS__)
+
+#define SCOPELOG(scope) SCOPELOG_(__LINE__,scope)
+#define SCOPELOGX(scope,fmtStr, ...) SCOPELOGX_(__LINE__,scope,fmtStr, ##__VA_ARGS__)
 #define FUNLOG SCOPELOG(CUR_FUNC_)
 #define FUNLOGX(fmtStr, ...) SCOPELOGX(CUR_FUNC_,fmtStr, ##__VA_ARGS__)
