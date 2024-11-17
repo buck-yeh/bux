@@ -48,11 +48,7 @@ C_EntryLog::C_EntryLog(std::string_view scopeName, T_Fmt &&fmtStr, T_Args&&...ar
     {
         m_Id = getId();
         const auto fmtfmt = std::format("@{}@{}({}) {{{{\n", *m_Id, scopeName, fmtStr);
-#ifdef _WIN32
         stamp(u,LL_VERBOSE) << std::vformat(fmtfmt, std::make_format_args(args...));
-#else
-        stamp(u,LL_VERBOSE) << std::vformat(fmtfmt, std::make_format_args(std::forward<T_Args>(args)...));
-#endif
     }
     deeper();
 }
