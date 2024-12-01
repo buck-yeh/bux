@@ -311,4 +311,5 @@ bool C_EZArgs::is_valid_flag(const char *const *argv_rest, int argc_rest) const
 
     return true;
 }
+
 } //namespace bux
