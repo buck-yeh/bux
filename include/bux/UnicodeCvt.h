@@ -77,7 +77,8 @@ private:
         // Nonvirtuals
         C_Source(FH_ReadChar &&readc) noexcept;
         const char *buffer() const noexcept;
-        T_Utf16 getUtf16(size_t pos, bool reverseWord =false) const;
+        T_Utf16 getUtf16(size_t pos, bool reverseWord) const;
+        T_Utf32 getUtf32(size_t pos, bool reverseWord) const;
         void pop(size_t bytes);
         void read(size_t bytes);
         void readTillCtrl();
@@ -102,91 +103,67 @@ private:
     int                     m_ErrCode{UIE_EOF};     ///< Positive number indicates no error.
 
     // Nonvirtuals
+    bool guessCodePage();
     void ingestMBCS();
     void init();
     void readCodePage();
     void readASCII();
     void readReverseUTF16();
-    bool readUTF16(C_Source &src, bool reverseWord);
+    void readReverseUTF32();
     void readUTF16();
+    bool readUTF16(C_Source &src, bool reverseWord);
+    void readUTF32();
+    bool readUTF32(C_Source &src, bool reverseWord);
     void readUTF8();
     void setCodePage(T_Encoding cp);
-    bool testCodePage(T_Encoding cp);
 #ifdef __unix__
     void reset_iconv();
 #endif
 };
 
-class C_MBCStr
+//
+//      Externs
+//
+extern const T_Encoding ENCODING_UTF8;
+
+std::string_view to_utf8(T_Utf32 c);
+std::string to_utf8(C_UnicodeIn &&uin);
+
+template<typename T>
+std::string to_utf8(const T *ps, size_t size = 0, T_Encoding codepage = 0)
 {
-public:
+    if (!size)
+        size = std::char_traits<T>::length(ps);
 
-    // Types
-    typedef void (*F_PushCh)(std::string &dst, char c);
-
-    // Nonvirtuals
-    C_MBCStr(T_Encoding codepage = 0) noexcept: m_codepage(codepage) {}
-    C_MBCStr(const C_MBCStr&) = delete;
-    C_MBCStr &operator=(const C_MBCStr&) = delete;
-
-    C_MBCStr(C_MBCStr &&other) noexcept;
-    void operator=(C_MBCStr &&other) noexcept;
-
-    C_MBCStr(std::string_view s, T_Encoding codepage = 0) noexcept: m_str(s), m_codepage(codepage) {}
-    void operator +=(std::string_view s);
-
-    template<typename T> C_MBCStr(const T *ps, size_t size = 0, T_Encoding codepage = 0): m_codepage(codepage)
-    { append(ps, size); }
-    template<typename T> void operator +=(const T *ps)
-    { append(ps, 0); }
-
-    template<typename T> C_MBCStr(std::basic_string_view<T> s, T_Encoding codepage = 0): m_codepage(codepage)
-    { append(s.data(), s.size()); }
-    template<typename T> void operator +=(const std::basic_string<T> &s)
-    { append(s.data(), s.size()); }
-
-    void append(const char *src, size_t srcBytes);
-    template<typename T>
-    void append(const T *ps, size_t size)
-    {
-        if (!size)
-            size = std::char_traits<T>::length(ps);
-
-        append(reinterpret_cast<const char*>(ps), size*sizeof(T));
-    }
-
-    bool empty() const noexcept;
-    const std::string &escape(F_PushCh pushCh) const;
-    const std::string &escJSON() const;
-    const std::string &strU8() const;
-
-private:
-
-    // Data
-    std::vector<T_Utf32>    mutable m_u32s;
-    std::string             mutable m_str;
-    F_PushCh                mutable m_pushCh{};
-    T_Encoding              m_codepage{};
-
-    // Nonvirtuals
-    void appendNonRaw(const char *src, size_t srcBytes) const;
-    void appendStr(T_Utf32 u32) const;
-};
-
-//
-//      Function Prototypes
-//
-//int u32toutf8(T_Utf32 c, T_Utf8 *dst) noexcept;
-
-std::string_view    to_utf8(T_Utf32 c);
-std::string         to_utf8(std::string_view s, T_Encoding codepage = 0);
-std::string         to_utf8(std::istream &s, T_Encoding codepage = 0);
+    return to_utf8(C_UnicodeIn(std::string_view{reinterpret_cast<const char*>(ps), size*sizeof(T)}, codepage));
+}
 template<typename T>
-auto                to_utf8(const T *ps, size_t size = 0, T_Encoding codepage = 0)  { return C_MBCStr{ps, size, codepage}.strU8(); }
+std::string to_utf8(const std::basic_string<T> &s, T_Encoding codepage = 0)
+{
+    return to_utf8(C_UnicodeIn(std::string_view{reinterpret_cast<const char*>(s.data()), s.size()*sizeof(T)}, codepage));
+}
 template<typename T>
-auto                to_utf8(std::basic_string_view<T> s, T_Encoding codepage = 0) { return C_MBCStr{s, codepage}.strU8(); }
+std::string to_utf8(std::basic_string_view<T> s, T_Encoding codepage = 0)
+{
+    return to_utf8(C_UnicodeIn(std::string_view{reinterpret_cast<const char*>(s.data()), s.size()*sizeof(T)}, codepage));
+}
 
-std::wstring BOM(const std::wstring_view &ws);
+template<typename T>
+std::basic_string<T> BOM(std::basic_string_view<T> sv)
+{
+    if constexpr (sizeof(T) > 1)
+        return T(0xFEFF) + std::basic_string<T>(sv); 
+    else
+        return std::basic_string<T>{(const T*)"\xef\xbb\xbf"}.append(sv);
+}
+template<typename T>
+std::basic_string<T> BOM(const T *p)
+{
+    if constexpr (sizeof(T) > 1)
+        return T(0xFEFF) + std::basic_string<T>(p);
+    else
+        return std::basic_string<T>{(const T*)"\xef\xbb\xbf"} += p;
+}
 
 } // namespace bux
 

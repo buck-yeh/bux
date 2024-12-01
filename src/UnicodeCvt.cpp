@@ -1,5 +1,6 @@
 #include "UnicodeCvt.h"
 #include "XException.h"     // RUNTIME_ERROR()
+#include <bit>              // std::endian::*, std::byteswap()
 #include <cstring>          // memcmp()
 #include <format>           // std::format()
 #include <istream>          // std::istream
@@ -7,10 +8,8 @@
 
 #ifdef _WIN32
 #pragma comment(lib, "Advapi32.lib")    // IsTextUnicode()
-#include <cstdlib>                      // swab()
 #include <windows.h>                    // Win32 API
 #elif defined(__unix__)
-#include <unistd.h>                     // swab()
 #include <errno.h>                      // errno
 #endif
 
@@ -48,52 +47,22 @@ enum
     CHSETS_UTF8 = CP_UTF8
 };
 #elif defined(__unix__)
-const char *const CHSETS_UTF8[] ={"UTF-8", "UTF8", 0};
+// shell command `iconv --list` to show available locales "in this host"
+constinit const char *const CHSETS_SJIS[] = {"CP932", "EUC-JP", "SHIFT_JIS", "SHIFT-JIS", "SJIS", 0};
+constinit const char *const CHSETS_GB[]   = {"CP936", "EUC-CN", "GB18030", "GBK", 0};
+constinit const char *const CHSETS_KSC[]  = {"CP949", "EUC-KR", "JOHAB", 0};
+constinit const char *const CHSETS_BIG5[] = {"CP950", "EUC-TW", "BIG5-HKSCS", "BIG5HKSCS", "BIG-5", "BIG5", 0};
+constinit const char *const CHSETS_UTF8[] = {"UTF-8", "UTF8", 0};
+constinit const char *const CHSETS_UTF7[] = {"UTF-7", "UTF7", 0};
+constinit const char *const CHSETS_UTF16LE[] = {"UCS-2LE", "UTF-16LE", "USC2LE", "UTF16LE", 0};
+constinit const char *const CHSETS_UTF16BE[] = {"UCS-2BE", "UTF-16BE", "USC2BE", "UTF16BE", 0};
+constinit const char *const CHSETS_UTF32LE[] = {"UCS-4LE", "UTF-32LE", "USC4LE", "UTF32LE", 0};
+constinit const char *const CHSETS_UTF32BE[] = {"UCS-4BE", "UTF-32BE", "USC4BE", "UTF32BE", 0};
 #endif
 
 //
 //      In-Module Functions
 //
-#ifdef __unix__
-bool testUtf16(const char *src_, size_t bytes)
-{
-    if (bytes &1)
-        // Odd number of bytes
-        return false;
-
-    size_t wordZeros =0, hiByteZeros =0;
-    for (size_t i =0; i < bytes; i +=2)
-    {
-        const char *t =src_ +i;
-        if (!*reinterpret_cast<const int16_t*>(t))
-            ++wordZeros;
-        else if (!t[1])
-            ++hiByteZeros;
-    }
-    if (!hiByteZeros || wordZeros)
-        // Felt unsecure if there is any null word or there is no ascii char.
-        return false;
-
-    static const char *const CHSETS_UTF16[] ={"UCS-2", "UTF-16", "USC2", "UTF16", 0};
-    iconv_t cd =(iconv_t)(-1);
-    for (const char *const *i =CHSETS_UTF16; *i && cd == (iconv_t)(-1); ++i)
-        cd =iconv_open("UCS-4", *i);
-
-    if (cd == (iconv_t)(-1))
-        // Fail to initialize the corresponding iconv_t descriptor
-        return false;
-
-    const auto ucs4 = std::make_unique<T_Utf32[]>(bytes);
-    size_t size_ucs4 =bytes*4;
-    char *src =const_cast<char*>(src_);
-    char *dst =reinterpret_cast<char*>(ucs4.get());
-    bool ret =  size_t(-1) != iconv(cd, &src, &bytes, &dst, &size_ucs4) || // conversion ok
-                errno != EILSEQ; // invalid multibyte sequence
-    iconv_close(cd);
-    return ret;
-}
-#endif
-
 int u32toutf8(T_Utf32 c, T_Utf8 *dst) noexcept
 {
     int ret;
@@ -128,7 +97,7 @@ int u32toutf8(T_Utf32 c, T_Utf8 *dst) noexcept
         goto Encode;
     }
     else if (c < 0x80000000)
-        // 6 bytes
+        // 6 bytesguessCodePage()
     {
         ret =6;
         goto Encode;
@@ -152,6 +121,11 @@ Encode:
 namespace bux {
 
 //
+//      Constants
+//
+const T_Encoding ENCODING_UTF8 = CHSETS_UTF8;
+
+//
 //      Function Defitions
 //
 std::string_view to_utf8(T_Utf32 uc)
@@ -164,44 +138,18 @@ std::string_view to_utf8(T_Utf32 uc)
     return {reinterpret_cast<char*>(buf), size_t(bytes)};
 }
 
-std::string to_utf8(std::string_view s, T_Encoding codepage)
+std::string to_utf8(C_UnicodeIn &&uin)
 {
-    return C_MBCStr{s, codepage}.strU8();
-}
-
-std::string to_utf8(std::istream &in, T_Encoding codepage)
-/*! \param in Reference of input stream passed to ctor of C_UnicodeIn
-    \param codepage Encoding type of input stream passed to ctor of C_UnicodeIn. Value 0 means C_UnicodeIn should guess the finest.
-
-    \b HEADSUP: When \em codepage is 0 and \em in reference to a stream instance of type `std::ifstream`,
-    the instance should be opened in binary mode with `std::ios::binary` for the case that the encoding is actually UTf-16(LE or BE) and
-    input stream contains '\x1a' bytes (ascii EOF), e.g. as part of '\uff1a'. Or the input stream might hit EOF earlier than it should.
-
-    \code{.cpp}
-    std::string load_file_as_u8string(const std::string &path)
-    {
-        std::ifstream in{path, std::ios::binary};
-        return bux::to_utf8(in);
-    }
-    \endcode
- */
-{
-    C_UnicodeIn cvt{in, codepage};
     T_Utf8 u8[MAX_UTF8];
     int n;
     std::string ret;
-    while ((n = cvt.get(u8)) > 0)
+    while ((n = uin.get(u8)) > 0)
         ret.append(reinterpret_cast<char*>(u8), size_t(n));
 
     if (n < 0)
         RUNTIME_ERROR("UTF-8 conversion error {}", n);
 
     return ret;
-}
-
-std::wstring BOM(const std::wstring &ws)
-{
-    return L'\xFEFF'+ws;
 }
 
 //
@@ -259,7 +207,7 @@ int C_UnicodeIn::get(T_Utf32 &c)
     if (m_GetQ.empty())
     {
         if (m_ErrCode < 0)
-            // Error code persists
+            // Error code persistsiconv --list
             return m_ErrCode;
 
         if (m_ReadMethod)
@@ -323,8 +271,10 @@ void C_UnicodeIn::ingestMBCS()
         else
             m_ErrCode = UIE_NO_UNICODE_TRANSLATION;
 #elif defined(__unix__)
-        for (T_Encoding i =m_CodePage; *i && m_iconv == (iconv_t)(-1); ++i)
-            m_iconv =iconv_open("UCS-4LE", *i);
+        static constinit const char *const TO_UCS4 = std::endian::native == std::endian::little? "UCS-4LE": "UCS-4BE";
+        static_assert(std::endian::native == std::endian::little || std::endian::native == std::endian::big);
+        for (T_Encoding i = m_CodePage; *i && m_iconv == (iconv_t)(-1); ++i)
+            m_iconv = iconv_open(TO_UCS4, *i);
 
         if (m_iconv == (iconv_t)(-1))
             // Fail to initialize the corresponding iconv_t descriptor
@@ -333,13 +283,13 @@ void C_UnicodeIn::ingestMBCS()
             return;
         }
         const auto ucs4 = std::make_unique<T_Utf32[]>(size);
-        size_t size_ucs4 =size*4;
-        auto src =const_cast<char*>(m_Src.buffer());
-        auto dst =reinterpret_cast<char*>(ucs4.get());
+        size_t size_ucs4 = size * 4;
+        auto src = const_cast<char*>(m_Src.buffer());
+        auto dst = reinterpret_cast<char*>(ucs4.get());
         if (size_t(-1) != iconv(m_iconv, &src, &size, &dst, &size_ucs4))
             // Fully converted
         {
-            for (const T_Utf32 *i = ucs4.get(); i < reinterpret_cast<T_Utf32*>(dst); m_GetQ.push(le32toh(*i++)));
+            for (const T_Utf32 *i = ucs4.get(); i < reinterpret_cast<T_Utf32*>(dst); m_GetQ.push(*i++));
             m_Src.pop(m_Src.size());
         }
         else switch (errno)
@@ -348,7 +298,7 @@ void C_UnicodeIn::ingestMBCS()
             m_ErrCode = UIE_NO_UNICODE_TRANSLATION;
             break;
         case EINVAL: // incomplete multibyte sequence
-            for (const T_Utf32 *i =ucs4.get(); i < reinterpret_cast<T_Utf32*>(dst); m_GetQ.push(le32toh(*i++)));
+            for (const T_Utf32 *i = ucs4.get(); i < reinterpret_cast<T_Utf32*>(dst); m_GetQ.push(*i++));
             m_Src.pop(m_Src.size()-size);
             break;
         case E2BIG: // output buffer overflow, which is impossible.
@@ -361,11 +311,26 @@ void C_UnicodeIn::ingestMBCS()
 
 void C_UnicodeIn::init()
 {
-    m_Src.read(2);
+    // BOM encodings from https://en.wikipedia.org/wiki/Byte_order_mark#Byte-order_marks_by_encoding
+    m_Src.read(4);
     switch (m_Src.size())
     {
+    case 4:
+        switch (m_Src.getUtf32(0, false))
+        {
+        case 0xFEFF: // UTF-32 with BOM
+            m_Src.pop(4);
+            m_ReadMethod = &C_UnicodeIn::readUTF32;
+            return;
+        case 0xFFFE0000: // Reverse UTF-32 with BOM
+            m_Src.pop(4);
+            m_ReadMethod = &C_UnicodeIn::readReverseUTF32;
+            return;
+        }
+        [[fallthrough]];
+    case 3:
     case 2:
-        switch (m_Src.getUtf16(0))
+        switch (m_Src.getUtf16(0, false))
         {
         case 0xFEFF: // UTF-16 with BOM
             m_Src.pop(2);
@@ -376,7 +341,6 @@ void C_UnicodeIn::init()
             m_ReadMethod = &C_UnicodeIn::readReverseUTF16;
             return;
         default:
-            m_Src.read(3);
             if (m_Src.size() >= 3 && 0 == memcmp(m_Src.buffer(), "\xef\xbb\xbf", 3))
                 // UTF-8 with BOM
             {
@@ -386,33 +350,27 @@ void C_UnicodeIn::init()
                 return;
             }
 
-            // Infer the encoding of the 1000-byte header chunk (UTF-8, ACP, or something else ?)
+            // Infer the encoding from first-1000-bytes chunk (UTF-8, ACP, or something else ?)
             if (!m_CodePage)
             {
                 m_Src.read(1000);
-                const auto size = m_Src.size();
 #ifdef _WIN32
+                const auto size = m_Src.size();
                 int mask = IS_TEXT_UNICODE_UNICODE_MASK;
                 if (IsTextUnicode(m_Src.buffer(), int(size), &mask))
-#elif defined(__unix__)
-                if (testUtf16(m_Src.buffer(), size))
-#endif
                 {
                     m_ReadMethod = &C_UnicodeIn::readUTF16;
                     return;
                 }
-                const auto revBuf = std::make_unique<char[]>(size);
-                swab(const_cast<char*>(m_Src.buffer()), revBuf.get(), int(size));
-#ifdef _WIN32
-                mask = IS_TEXT_UNICODE_UNICODE_MASK;
-                if (IsTextUnicode(revBuf.get(), int(size), &mask))
-#elif defined(__unix__)
-                if (testUtf16(revBuf.get(), size))
-#endif
+                mask = IS_TEXT_UNICODE_REVERSE_MASK;
+                if (IsTextUnicode(m_Src.buffer(), int(size), &mask))
                 {
                     m_ReadMethod = &C_UnicodeIn::readReverseUTF16;
                     return;
                 }
+#endif
+                if (guessCodePage())
+                    return;
             }
 
             // Read heading asciis off then we can distinguish CP_UTF8 from CP_ACP.
@@ -438,9 +396,15 @@ void C_UnicodeIn::readASCII()
     if (m_Src.size())
     {
         const auto c = T_Utf8(*m_Src.buffer());
+#ifdef _WIN32
         if (!(c &0x80))
-        // Still an ASCII
+#elif defined(__unix__)
+        if (!(c &0x80) && c)
+#else
+#   error Niether win32 nor unix
+#endif
         {
+            // Still an ASCII
             m_GetQ.push(c);
             return m_Src.pop(1);
         }
@@ -458,32 +422,32 @@ void C_UnicodeIn::readASCII()
             return;
         }
     }
+    guessCodePage();
+}
 
-#ifdef __unix__
-    static const char *const CHSETS_SJIS[] = {"CP932", "EUC-JP", "SHIFT_JIS", "SHIFT-JIS", "SJIS", 0};
-    static const char *const CHSETS_GB[]   = {"CP936", "EUC-CN", "GB18030", "GBK", 0};
-    static const char *const CHSETS_KSC[]  = {"CP949", "EUC-KR", "JOHAB", 0};
-    static const char *const CHSETS_BIG5[] = {"CP950", "EUC-TW", "BIG5-HKSCS", "BIG5HKSCS", "BIG-5", "BIG5", 0};
-    static const char *const CHSETS_UTF7[] = {"UTF-7", "UTF7", 0};
-    static const char *const CHSETS_UTF16LE[] = {"UCS-2LE", "UTF-16LE", "USC2LE", "UTF16LE", 0};
-    static const char *const CHSETS_UTF16BE[] = {"UCS-2BE", "UTF-16BE", "USC2BE", "UTF16BE", 0};
-#endif
-    static const T_Encoding MBCS_CODEPAGES[] ={
+bool C_UnicodeIn::guessCodePage()
+{
+    static constinit const T_Encoding MBCS_CODEPAGES[] ={
 #ifdef _WIN32
         CP_ACP, CP_UTF8,
         932, 936, 949, 950, 951, // from https://en.wikipedia.org/wiki/Windows_code_page#East_Asian_multi-byte_code_pages
         CP_UTF7
 #elif defined(__unix__)
-        CHSETS_UTF8, CHSETS_SJIS, CHSETS_GB, CHSETS_KSC, CHSETS_BIG5, CHSETS_UTF7, CHSETS_UTF16LE, CHSETS_UTF16BE
+        CHSETS_UTF32LE, CHSETS_UTF32BE, CHSETS_UTF8, CHSETS_SJIS, CHSETS_GB, CHSETS_KSC, CHSETS_BIG5, CHSETS_UTF7, CHSETS_UTF16LE, CHSETS_UTF16BE
 #endif
     };
     for (size_t i = 0; i < std::size(MBCS_CODEPAGES); ++i)
-        if (testCodePage(MBCS_CODEPAGES[i]))
+    {
+        m_ErrCode = UIE_EOF; // reset error code
+        setCodePage(MBCS_CODEPAGES[i]);
+        ingestMBCS();
+        if (m_ErrCode != UIE_NO_UNICODE_TRANSLATION)
         {
             m_ReadMethod = &C_UnicodeIn::readCodePage;
-            return;
+            return true;
         }
-    // Or else, an error occurred.
+    }
+    return false;
 }
 
 bool C_UnicodeIn::readUTF16(C_Source &src, bool reverseWord)
@@ -493,7 +457,7 @@ bool C_UnicodeIn::readUTF16(C_Source &src, bool reverseWord)
     const size_t read = src.size();
     if (read >= 2)
     {
-        const T_Utf16 uc = src.getUtf16(0,reverseWord);
+        const auto uc = src.getUtf16(0,reverseWord);
         if (0xD800 <= uc && uc < 0xDC00)
             // Hi word of 2-word encoding
         {
@@ -541,6 +505,33 @@ void C_UnicodeIn::readReverseUTF16()
     readUTF16(m_Src, true);
 }
 
+bool C_UnicodeIn::readUTF32(C_Source &src, bool reverseWord)
+{
+    bool ret = false;
+    src.read(4);
+    const size_t read = src.size();
+    if (read >= 4)
+    {
+        m_GetQ.push(src.getUtf32(0,reverseWord));
+        src.pop(4);
+        ret = true;
+    }
+    else if (read > 0)
+        m_ErrCode = UIE_INCOMPLETE_UNICODE;
+
+    return ret;
+}
+
+void C_UnicodeIn::readUTF32()
+{
+    readUTF32(m_Src, false);
+}
+
+void C_UnicodeIn::readReverseUTF32()
+{
+    readUTF32(m_Src, true);
+}
+
 void C_UnicodeIn::readCodePage()
 {
     m_Src.readTillCtrl();
@@ -553,14 +544,6 @@ void C_UnicodeIn::setCodePage(T_Encoding cp)
 #ifdef __unix__
     reset_iconv();
 #endif
-}
-
-bool C_UnicodeIn::testCodePage(T_Encoding cp)
-{
-    m_ErrCode = UIE_EOF; // reset error code
-    setCodePage(cp);
-    ingestMBCS();
-    return m_ErrCode != UIE_NO_UNICODE_TRANSLATION;
 }
 
 #ifdef __unix__
@@ -587,23 +570,22 @@ const char *C_UnicodeIn::C_Source::buffer() const noexcept
 
 T_Utf16 C_UnicodeIn::C_Source::getUtf16(size_t pos, bool reverseWord) const
 {
-    const size_t off = m_AvailBeg +pos *2;
-    if (off +2 > m_ReadBuf.size())
+    const size_t off = m_AvailBeg + pos * 2;
+    if (off + 2 > m_ReadBuf.size())
         RUNTIME_ERROR("End of char {} passes end of buffer", off+2);
 
-    const auto p = m_ReadBuf.data() + off;
-    if (reverseWord)
-    {
-        union
-        {
-            char a[2];
-            T_Utf16 ret;
-        };
-        a[0] = p[1];
-        a[1] = p[0];
-        return ret;
-    }
-    return *(const T_Utf16*)p;
+    auto ret = *reinterpret_cast<const T_Utf16*>(m_ReadBuf.data() + off);
+    return reverseWord? std::byteswap(ret): ret;
+}
+
+T_Utf32 C_UnicodeIn::C_Source::getUtf32(size_t pos, bool reverseWord) const
+{
+    const size_t off = m_AvailBeg + pos * 4;
+    if (off + 4 > m_ReadBuf.size())
+        RUNTIME_ERROR("End of char {} passes end of buffer", off+4);
+
+    auto ret = *reinterpret_cast<const T_Utf32*>(m_ReadBuf.data() + off);
+    return reverseWord? std::byteswap(ret): ret;
 }
 
 void C_UnicodeIn::C_Source::pop(size_t bytes)
@@ -654,132 +636,6 @@ void C_UnicodeIn::C_Source::readTillCtrl()
 size_t C_UnicodeIn::C_Source::size() const noexcept
 {
     return m_ReadBuf.size() - m_AvailBeg;
-}
-
-C_MBCStr::C_MBCStr(C_MBCStr &&other) noexcept:
-    m_u32s      (std::move(other.m_u32s)),
-    m_str       (std::move(other.m_str)),
-    m_pushCh    (other.m_pushCh),
-    m_codepage  (other.m_codepage)
-{
-}
-
-void C_MBCStr::operator=(C_MBCStr &&other) noexcept
-{
-    m_u32s      = std::move(other.m_u32s);
-    m_str       = std::move(other.m_str);
-    m_pushCh    = other.m_pushCh;
-    m_codepage  = other.m_codepage;
-}
-
-void C_MBCStr::operator +=(std::string_view s)
-{
-    if (empty())
-    {
-        m_str = s;
-        m_pushCh = {};
-    }
-    else if (!m_pushCh)
-        m_str += s;
-    else
-        appendNonRaw(s.data(), s.size());
-}
-
-void C_MBCStr::append(const char *src, size_t srcBytes)
-{
-    if (!srcBytes)
-        srcBytes = strlen(src);
-
-    if (empty())
-    {
-        m_str.assign(src, srcBytes);
-        m_pushCh = {};
-    }
-    else if (!m_pushCh)
-        m_str.append(src, srcBytes);
-    else
-        appendNonRaw(src, srcBytes);
-}
-
-void C_MBCStr::appendNonRaw(const char *src, size_t srcBytes) const
-{
-    C_UnicodeIn     uin(std::string_view{src, srcBytes}, m_codepage);
-    T_Utf32         t;
-    while (uin.get(t))
-    {
-        m_u32s.push_back(t);
-        appendStr(t);
-    }
-}
-
-void C_MBCStr::appendStr(T_Utf32 u32) const
-{
-    if (u32 >= 0x100)
-        // Multi-byte
-    {
-        T_Utf8 buf[MAX_UTF8];
-        const auto rc = u32toutf8(u32, buf);
-        if (rc < 0)
-            RUNTIME_ERROR("MBC string conversion error {} after {} bytes converted", rc, m_str.size());
-
-        m_str.append(reinterpret_cast<char*>(buf), size_t(rc));
-    }
-    else
-        m_pushCh(m_str, static_cast<char>(u32));
-}
-
-bool C_MBCStr::empty() const noexcept
-{
-    return m_str.empty() && m_u32s.empty();
-}
-
-const std::string &C_MBCStr::escape(F_PushCh pushCh) const
-{
-    if (!m_pushCh && !m_str.empty())
-    {
-        C_UnicodeIn     uin(m_str, m_codepage);
-        T_Utf32         t;
-        while (uin.get(t))
-            m_u32s.push_back(t);
-    }
-    if (m_pushCh != pushCh)
-    {
-        m_pushCh = pushCh;
-        m_str.clear();
-        for (auto i: m_u32s)
-            appendStr(i);
-    }
-    return m_str;
-}
-
-const std::string &C_MBCStr::escJSON() const
-{
-    return escape([](std::string &dst, char c) {
-        /* From http://stackoverflow.com/questions/19176024/how-to-escape-special-characters-in-building-a-json-string
-            \b  Backspace (ascii code 08)
-            \f  Form feed (ascii code 0C)
-            \n  New line
-            \r  Carriage return
-            \t  Tab
-            \"  Double quote
-            \\  Backslash character
-        */
-        static constexpr char JSON_ESCS[] = "\b\f\n\r\t\"\\";
-        if (auto p = strchr(JSON_ESCS, c))
-        {
-            dst += '\\';
-            dst += "bfnrt\"\\"[p - JSON_ESCS];
-        }
-        else if (isprint(c))
-            dst += c;
-        else
-            dst += std::format("\\u{:04}", int{static_cast<unsigned char>(c)});
-    });
-}
-
-const std::string &C_MBCStr::strU8() const
-{
-    return escape([](std::string &dst, char c) { dst += c; });
 }
 
 } // namespace bux
