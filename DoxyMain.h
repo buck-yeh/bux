@@ -26,6 +26,7 @@
 /// \example test/test_logger.cpp
 /// \example test/test_paralog.cpp
 /// \example test/test_PO.cpp
+/// \example test/test_unicodecvt.cpp
 /// \example parsergen/ParserGen/main.cpp
 /// \example parsergen/ParserGen/GrammarStrip.cpp
 /// \example parsergen/ScannerGen/main.cpp
