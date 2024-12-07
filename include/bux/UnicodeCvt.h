@@ -154,7 +154,7 @@ std::basic_string<T> BOM(std::basic_string_view<T> sv)
     if constexpr (sizeof(T) > 1)
         return T(0xFEFF) + std::basic_string<T>(sv); 
     else
-        return std::basic_string<T>{(const T*)"\xef\xbb\xbf"}.append(sv);
+        return std::basic_string<T>{(const T*)u8"\uFEFF"}.append(sv);
 }
 template<typename T>
 std::basic_string<T> BOM(const T *p)
@@ -162,7 +162,7 @@ std::basic_string<T> BOM(const T *p)
     if constexpr (sizeof(T) > 1)
         return T(0xFEFF) + std::basic_string<T>(p);
     else
-        return std::basic_string<T>{(const T*)"\xef\xbb\xbf"} += p;
+        return std::basic_string<T>{(const T*)u8"\uFEFF"} += p;
 }
 
 } // namespace bux

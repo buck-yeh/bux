@@ -54,10 +54,10 @@ constinit const char *const CHSETS_KSC[]  = {"CP949", "EUC-KR", "JOHAB", 0};
 constinit const char *const CHSETS_BIG5[] = {"CP950", "EUC-TW", "BIG5-HKSCS", "BIG5HKSCS", "BIG-5", "BIG5", 0};
 constinit const char *const CHSETS_UTF8[] = {"UTF-8", "UTF8", 0};
 constinit const char *const CHSETS_UTF7[] = {"UTF-7", "UTF7", 0};
-constinit const char *const CHSETS_UTF16LE[] = {"UCS-2LE", "UTF-16LE", "USC2LE", "UTF16LE", 0};
-constinit const char *const CHSETS_UTF16BE[] = {"UCS-2BE", "UTF-16BE", "USC2BE", "UTF16BE", 0};
-constinit const char *const CHSETS_UTF32LE[] = {"UCS-4LE", "UTF-32LE", "USC4LE", "UTF32LE", 0};
-constinit const char *const CHSETS_UTF32BE[] = {"UCS-4BE", "UTF-32BE", "USC4BE", "UTF32BE", 0};
+constinit const char *const CHSETS_UTF16LE[] = {"UTF-16LE", "UTF16LE", "UCS-2LE", "USC2LE", 0};
+constinit const char *const CHSETS_UTF16BE[] = {"UTF-16BE", "UTF16BE", "UCS-2BE", "USC2BE", 0};
+constinit const char *const CHSETS_UTF32LE[] = {"UTF-32LE", "UTF32LE", "UCS-4LE", "USC4LE", 0};
+constinit const char *const CHSETS_UTF32BE[] = {"UTF-32BE", "UTF32BE", "UCS-4BE", "USC4BE",  0};
 #endif
 
 //
@@ -341,7 +341,7 @@ void C_UnicodeIn::init()
             m_ReadMethod = &C_UnicodeIn::readReverseUTF16;
             return;
         default:
-            if (m_Src.size() >= 3 && 0 == memcmp(m_Src.buffer(), "\xef\xbb\xbf", 3))
+            if (m_Src.size() >= 3 && 0 == memcmp(m_Src.buffer(), u8"\uFEFF", 3))
                 // UTF-8 with BOM
             {
                 m_Src.pop(3);
@@ -357,13 +357,13 @@ void C_UnicodeIn::init()
 #ifdef _WIN32
                 const auto size = m_Src.size();
                 int mask = IS_TEXT_UNICODE_UNICODE_MASK;
-                if (IsTextUnicode(m_Src.buffer(), int(size), &mask))
+                if (IsTextUnicode(m_Src.buffer(), int(size), &mask) || mask)
                 {
                     m_ReadMethod = &C_UnicodeIn::readUTF16;
                     return;
                 }
                 mask = IS_TEXT_UNICODE_REVERSE_MASK;
-                if (IsTextUnicode(m_Src.buffer(), int(size), &mask))
+                if (IsTextUnicode(m_Src.buffer(), int(size), &mask) || mask)
                 {
                     m_ReadMethod = &C_UnicodeIn::readReverseUTF16;
                     return;
@@ -429,17 +429,17 @@ bool C_UnicodeIn::guessCodePage()
 {
     static constinit const T_Encoding MBCS_CODEPAGES[] ={
 #ifdef _WIN32
-        CP_ACP, CP_UTF8,
+        CP_UTF8, CP_ACP,
         932, 936, 949, 950, 951, // from https://en.wikipedia.org/wiki/Windows_code_page#East_Asian_multi-byte_code_pages
         CP_UTF7
 #elif defined(__unix__)
         CHSETS_UTF32LE, CHSETS_UTF32BE, CHSETS_UTF8, CHSETS_SJIS, CHSETS_GB, CHSETS_KSC, CHSETS_BIG5, CHSETS_UTF7, CHSETS_UTF16LE, CHSETS_UTF16BE
 #endif
     };
-    for (size_t i = 0; i < std::size(MBCS_CODEPAGES); ++i)
+    for (auto i: MBCS_CODEPAGES)
     {
         m_ErrCode = UIE_EOF; // reset error code
-        setCodePage(MBCS_CODEPAGES[i]);
+        setCodePage(i);
         ingestMBCS();
         if (m_ErrCode != UIE_NO_UNICODE_TRANSLATION)
         {
