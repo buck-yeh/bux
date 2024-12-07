@@ -3,11 +3,8 @@
     http://blog.wingman-sw.com/tdd-guided-by-zombies
 */
 #include <bux/EZScape.h>    // bux::easy_escape(), bux::easy_unescape()
-
-#define CATCH_CONFIG_MAIN   // This tells Catch to provide a main() - only do this in one cpp file
-#include <catch2/catch_test_macros.hpp>
-
 #include <curl/curl.h>      // curl_easy_escape(), curl_easy_unescape()
+#include <catch2/catch_test_macros.hpp>
 
 namespace {
 

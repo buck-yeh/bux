@@ -1,3 +1,4 @@
+//#define TURN_OFF_LOGGER_
 //#define LOGGER_USE_LOCAL_TIME_ false
 #include <bux/Logger.h>     // DEF_LOGGER_FILES(), DEF_FALLBACK_LOGGER_FILES()
 #include <bux/FileLog.h>    // bux::C_PathFmtLogSnap
@@ -30,9 +31,10 @@ static const struct { bux::E_LogLevel ll; const char *msg; } LOG_SRC[] = {
 
 int main(int argc, const char *argv[])
 {
+#ifndef TURN_OFF_LOGGER_
     if (bux::C_UseLog u{bux::logger()})
         *u <<std::boolalpha <<"LOGGER_USE_LOCAL_TIME_: " <<LOGGER_USE_LOCAL_TIME_ <<"\n";
-
+#endif
     if (argc <= 1)
     {
         for (auto i: LOG_SRC)

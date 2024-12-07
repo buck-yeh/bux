@@ -3,13 +3,10 @@
     http://blog.wingman-sw.com/tdd-guided-by-zombies
 */
 #include <bux/EZArgs.h>     // bux::C_EZArgs, bux::C_ErrorOrIndex
-
-#define CATCH_CONFIG_MAIN   // This tells Catch to provide a main() - only do this in one cpp file
-#include <catch2/catch_test_macros.hpp>
-
 #include <charconv>         // std::from_chars()
 #include <filesystem>       // std::filesystem::*
 #include <ranges>           // std::ranges::views::empty<>
+#include <catch2/catch_test_macros.hpp>
 
 namespace {
 
@@ -107,6 +104,7 @@ TEST_CASE("Scenario: Subcommand help", "[S]") // for commit 42ee62ad4e8c3139b978
     REQUIRE(std::getline(in, line));
     CHECK(line == "USAGE: test1.exe foo <eeny> [-h]");
 }
+
 TEST_CASE("Scenario: Parse negative number as flag value", "[S]")
 {
     double          x{};

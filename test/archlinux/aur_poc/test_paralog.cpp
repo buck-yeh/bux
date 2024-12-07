@@ -5,8 +5,6 @@
 #include <bux/Logger.h>     // DEF_LOGGER_TAIL_, LOG(), LOG_RAW()
 #include <bux/ParaLog.h>    // bux::C_ParaLog
 #include <random>           // std::mt19937
-
-#define CATCH_CONFIG_MAIN   // This tells Catch to provide a main() - only do this in one cpp file
 #include <catch2/catch_test_macros.hpp>
 
 namespace bux { namespace user {    // Mildly modified from definition of DEF_PARA_LOGGER
