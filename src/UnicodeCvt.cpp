@@ -354,8 +354,51 @@ void C_UnicodeIn::init()
             if (!m_CodePage)
             {
                 m_Src.read(1000);
-#ifdef _WIN32
                 const auto size = m_Src.size();
+
+                // Identify UTF-32 wt BOM in OS-agnostic way
+                if (size && size % 4 == 0)
+                {
+                    size_t n_u32_chars = 0, n_u32rev_chars = 0;
+                    const auto p_dwords = reinterpret_cast<const T_Utf32*>(m_Src.buffer());
+                    const size_t n = size / 4;
+                    for (size_t i = 0; i < n; ++i)
+                    {
+                        if (auto u32 = p_dwords[i])
+                        {
+                            bool matched = false;
+                            if (u32 == (u32 & 0xFFFFFF))
+                            {
+                                matched = true;
+                                ++n_u32_chars;
+                            }
+                            //-----------------------------
+                            u32 = std::byteswap(u32);
+                            if (u32 == (u32 & 0xFFFFFF))
+                            {
+                                matched = true;
+                                ++n_u32rev_chars;
+                            }
+                            if (!matched)
+                                goto PostCheckUTF32;
+                        }
+                    }
+
+                    const auto n_overflow = n_u32_chars + n_u32rev_chars - n;
+                    if (n_u32_chars <= n_overflow)
+                    {
+                        m_ReadMethod = &C_UnicodeIn::readReverseUTF32;
+                        return;
+                    }
+                    if (n_u32rev_chars <= n_overflow)
+                    {
+                        m_ReadMethod = &C_UnicodeIn::readUTF32;
+                        return;
+                    }
+                }
+
+            PostCheckUTF32:
+#ifdef _WIN32
                 int mask = IS_TEXT_UNICODE_UNICODE_MASK;
                 if (IsTextUnicode(m_Src.buffer(), int(size), &mask) || mask)
                 {
@@ -369,6 +412,7 @@ void C_UnicodeIn::init()
                     return;
                 }
 #endif
+                // Guess harder
                 if (guessCodePage())
                     return;
             }
@@ -427,13 +471,16 @@ void C_UnicodeIn::readASCII()
 
 bool C_UnicodeIn::guessCodePage()
 {
+    if (m_Src.size() < 2) [[unlikely]]
+        return false;
+
     static constinit const T_Encoding MBCS_CODEPAGES[] ={
 #ifdef _WIN32
         CP_UTF8, CP_ACP,
         932, 936, 949, 950, 951, // from https://en.wikipedia.org/wiki/Windows_code_page#East_Asian_multi-byte_code_pages
         CP_UTF7
 #elif defined(__unix__)
-        CHSETS_UTF32LE, CHSETS_UTF32BE, CHSETS_UTF8, CHSETS_SJIS, CHSETS_GB, CHSETS_KSC, CHSETS_BIG5, CHSETS_UTF7, CHSETS_UTF16LE, CHSETS_UTF16BE
+        CHSETS_UTF8, CHSETS_SJIS, CHSETS_GB, CHSETS_KSC, CHSETS_BIG5, CHSETS_UTF7, CHSETS_UTF16LE, CHSETS_UTF16BE
 #endif
     };
     for (auto i: MBCS_CODEPAGES)
