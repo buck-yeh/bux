@@ -170,3 +170,7 @@ std::basic_string<T> BOM(const T *p)
 using bux::T_Utf32;
 using bux::T_Utf16;
 using bux::T_Utf8;
+
+static_assert(sizeof(T_Utf32) == 4);
+static_assert(sizeof(T_Utf16) == 2);
+static_assert(sizeof(T_Utf8) == 1);
