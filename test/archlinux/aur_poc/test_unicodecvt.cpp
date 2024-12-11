@@ -2,7 +2,6 @@
     Test cases are organized according to ZOMBIES rules
     http://blog.wingman-sw.com/tdd-guided-by-zombies
 */
-//#include <bux/LexBase.h>    // bux::asciiLiteral()
 #include <bux/UnicodeCvt.h> // bux::to_utf8(), bux::BOM()
 #include <catch2/catch_test_macros.hpp>
 
@@ -40,8 +39,10 @@ TEST_CASE("String to utf-8 vs stringview to utf-8", "[S]")
     CHECK(bux::to_utf8(u16str) == (const char*)u8"一律轉成 utf-8");
     for (auto &ch: u16str)
         ch = std::byteswap(ch);
+#ifdef __unix__
     static constinit const char *const CHSETS_UTF16BE[] = {"UTF-16BE", "UTF16BE", "UCS-2BE", "USC2BE", 0};
     CHECK(bux::to_utf8(u16str, 0, CHSETS_UTF16BE) == (const char*)u8"一律轉成 utf-8");
+#endif
     CHECK(bux::to_utf8(u16str) == (const char*)u8"一律轉成 utf-8");
 
     CHECK(bux::to_utf8(u8"一律轉成 utf-8", 0, bux::ENCODING_UTF8) == (const char*)u8"一律轉成 utf-8");
