@@ -52,25 +52,7 @@ void appendAsciiLiteral(uint32_t utf32, std::string &dst)
         }
     }
     else
-    {
-        char buf[10];
-        const auto t = std::to_chars(buf, buf+sizeof(buf), utf32, 16);
-        if (t.ec == std::errc())
-            // On success
-        {
-            const auto n = t.ptr - buf;
-            dst += n <= 4? "\\u": "\\U";
-            if (const auto nonzeros = n % 4)
-                dst.append(size_t(4-nonzeros), '0');
-
-            dst.append(buf, t.ptr);
-        }
-        else
-        {
-            const auto ecode = make_error_code(t.ec);
-            RUNTIME_ERROR("std::to_chars() error: {}:{}", ecode.category().name(), ecode.value());
-        }
-    }
+        dst += to_utf8(utf32);
 }
 
 }
