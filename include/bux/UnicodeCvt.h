@@ -135,17 +135,20 @@ std::string to_utf8(const T *ps, size_t size = 0, T_Encoding codepage = 0)
     if (!size)
         size = std::char_traits<T>::length(ps);
 
-    return to_utf8(C_UnicodeIn(std::string_view{reinterpret_cast<const char*>(ps), size*sizeof(T)}, codepage));
+    std::string_view view_as_chars{reinterpret_cast<const char*>(ps), size*sizeof(T)};
+    return to_utf8(C_UnicodeIn(view_as_chars, codepage));
 }
 template<typename T>
 std::string to_utf8(const std::basic_string<T> &s, T_Encoding codepage = 0)
 {
-    return to_utf8(C_UnicodeIn(std::string_view{reinterpret_cast<const char*>(s.data()), s.size()*sizeof(T)}, codepage));
+    std::string_view view_as_chars{reinterpret_cast<const char*>(s.data()), s.size()*sizeof(T)};
+    return to_utf8(C_UnicodeIn(view_as_chars, codepage));
 }
 template<typename T>
 std::string to_utf8(std::basic_string_view<T> s, T_Encoding codepage = 0)
 {
-    return to_utf8(C_UnicodeIn(std::string_view{reinterpret_cast<const char*>(s.data()), s.size()*sizeof(T)}, codepage));
+    std::string_view view_as_chars{reinterpret_cast<const char*>(s.data()), s.size()*sizeof(T)};
+    return to_utf8(C_UnicodeIn(view_as_chars, codepage));
 }
 
 template<typename T>
