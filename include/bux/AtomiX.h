@@ -69,7 +69,7 @@ private:
 
     // Data
     std::map<T_Key, C_Mapped>   m_map;
-    std::atomic_flag            mutable m_lock = ATOMIC_FLAG_INIT;
+    std::atomic_flag            mutable m_lock;
 };
 
 } // namespace bux
