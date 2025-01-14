@@ -29,19 +29,24 @@ TEST_CASE("String to utf-8 vs stringview to utf-8", "[S]")
     CHECK(bux::to_utf8(u32str) == (const char*)u8"一律轉成 utf-8");
 
     char16_t u16str[] = u"一律轉成 utf-8";
+    auto bomed_u16str = bux::BOM(u16str);
 #ifndef _WIN32
     static constinit const char *const CHSETS_UTF16LE[] = {"UTF-16LE", "UTF16LE", "UCS-2LE", "USC2LE", 0};
     CHECK(bux::to_utf8(u16str, 0, CHSETS_UTF16LE) == (const char*)u8"一律轉成 utf-8");
 
     static constinit const char *const CHSETS_UTF16[] = {"UCS-2", "UTF-16", "USC2", "UTF16", 0};
     CHECK(bux::to_utf8(u16str, 0, CHSETS_UTF16) == (const char*)u8"一律轉成 utf-8");
+    CHECK(bux::to_utf8(bomed_u16str) == (const char*)u8"一律轉成 utf-8");
 #endif
     CHECK(bux::to_utf8(u16str) == (const char*)u8"一律轉成 utf-8");
     for (auto &ch: u16str)
         ch = std::byteswap(ch);
+    for (auto &ch: bomed_u16str)
+        ch = std::byteswap(ch);
 #ifndef _WIN32
     static constinit const char *const CHSETS_UTF16BE[] = {"UTF-16BE", "UTF16BE", "UCS-2BE", "USC2BE", 0};
     CHECK(bux::to_utf8(u16str, 0, CHSETS_UTF16BE) == (const char*)u8"一律轉成 utf-8");
+    CHECK(bux::to_utf8(bomed_u16str) == (const char*)u8"一律轉成 utf-8");
 #endif
     CHECK(bux::to_utf8(u16str) == (const char*)u8"一律轉成 utf-8");
 
