@@ -9,7 +9,7 @@
 #include <string_view>  // std::string_view
 #include <vector>       // std::vector<>
 
-#ifdef __unix__
+#ifndef _WIN32
 #include <iconv.h>      // iconv_t
 #endif
 
@@ -44,7 +44,7 @@ typedef std::function<std::optional<char>()> FH_ReadChar;
 
 #ifdef _WIN32
 typedef unsigned T_Encoding;
-#elif defined(__unix__)
+#else
 typedef const char *const *T_Encoding; // null-terminated const array of const char pointers
 #endif
 
@@ -97,7 +97,7 @@ private:
     C_Queue<T_Utf32>        m_GetQ;
     void                    (C_UnicodeIn::*m_ReadMethod)(){};
     T_Encoding              m_CodePage;
-#ifdef __unix__
+#ifndef _WIN32
     iconv_t                 m_iconv{(iconv_t)-1};   // changed according to m_CodePage
 #endif
     int                     m_ErrCode{UIE_EOF};     ///< Positive number indicates no error.
@@ -114,9 +114,8 @@ private:
     bool readUTF16(C_Source &src, bool reverseWord);
     void readUTF32();
     bool readUTF32(C_Source &src, bool reverseWord);
-    void readUTF8();
     void setCodePage(T_Encoding cp);
-#ifdef __unix__
+#ifndef _WIN32
     void reset_iconv();
 #endif
 };

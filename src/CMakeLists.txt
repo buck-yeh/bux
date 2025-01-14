@@ -1,3 +1,5 @@
+find_package(Iconv REQUIRED)
+
 add_library(bux STATIC
         AtomiX.cpp
         EZArgs.cpp EZScape.cpp
@@ -8,3 +10,6 @@ add_library(bux STATIC
         XConsole.cpp XException.cpp
         )
 target_include_directories(bux PRIVATE ../include/bux)
+if(Iconv_FOUND)
+target_link_libraries(bux Iconv::Iconv)
+endif()

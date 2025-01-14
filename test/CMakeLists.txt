@@ -1,4 +1,5 @@
 enable_testing()
+find_package(Iconv REQUIRED)
 
 add_executable(hrtn hrtn.cpp)
 target_include_directories(hrtn PRIVATE ../include)
@@ -159,7 +160,7 @@ target_include_directories(test_unicodecvt PRIVATE ../include)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 target_link_libraries(test_unicodecvt PRIVATE bux Catch2::Catch2WithMain)
 else()
-target_link_libraries(test_unicodecvt PRIVATE bux Catch2::Catch2WithMain stdc++ m)
+target_link_libraries(test_unicodecvt PRIVATE bux Catch2::Catch2WithMain Iconv::Iconv stdc++ m)
 endif()
 add_test(NAME test_unicodecvt_All COMMAND test_unicodecvt)
 

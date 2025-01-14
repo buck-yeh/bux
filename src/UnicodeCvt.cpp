@@ -9,7 +9,7 @@
 #ifdef _WIN32
 #pragma comment(lib, "Advapi32.lib")    // IsTextUnicode()
 #include <windows.h>                    // Win32 API
-#elif defined(__unix__)
+#else
 #include <errno.h>                      // errno
 #endif
 
@@ -46,7 +46,7 @@ enum
 {
     CHSETS_UTF8 = CP_UTF8
 };
-#elif defined(__unix__)
+#else
 // shell command `iconv --list` to show available locales "in this host"
 constinit const char *const CHSETS_SJIS[] = {"CP932", "EUC-JP", "SHIFT_JIS", "SHIFT-JIS", "SJIS", 0};
 constinit const char *const CHSETS_GB[]   = {"CP936", "EUC-CN", "GB18030", "GBK", 0};
@@ -197,7 +197,7 @@ C_UnicodeIn::C_UnicodeIn(std::istream &in, T_Encoding codepage):
 
 C_UnicodeIn::~C_UnicodeIn() noexcept
 {
-#ifdef __unix__
+#ifndef _WIN32
     reset_iconv();
 #endif
 }
@@ -270,7 +270,7 @@ void C_UnicodeIn::ingestMBCS()
         }
         else
             m_ErrCode = UIE_NO_UNICODE_TRANSLATION;
-#elif defined(__unix__)
+#else
         static constinit const char *const TO_UCS4 = std::endian::native == std::endian::little? "UCS-4LE": "UCS-4BE";
         static_assert(std::endian::native == std::endian::little || std::endian::native == std::endian::big);
         for (T_Encoding i = m_CodePage; *i && m_iconv == (iconv_t)(-1); ++i)
@@ -442,10 +442,8 @@ void C_UnicodeIn::readASCII()
         const auto c = T_Utf8(*m_Src.buffer());
 #ifdef _WIN32
         if (!(c &0x80))
-#elif defined(__unix__)
-        if (!(c &0x80) && c)
 #else
-#   error Niether win32 nor unix
+        if (!(c &0x80) && c)
 #endif
         {
             // Still an ASCII
@@ -479,7 +477,7 @@ bool C_UnicodeIn::guessCodePage()
         CP_UTF8, CP_ACP,
         932, 936, 949, 950, 951, // from https://en.wikipedia.org/wiki/Windows_code_page#East_Asian_multi-byte_code_pages
         CP_UTF7
-#elif defined(__unix__)
+#else
         CHSETS_UTF8, CHSETS_SJIS, CHSETS_GB, CHSETS_KSC, CHSETS_BIG5, CHSETS_UTF7, CHSETS_UTF16LE, CHSETS_UTF16BE
 #endif
     };
@@ -588,12 +586,12 @@ void C_UnicodeIn::readCodePage()
 void C_UnicodeIn::setCodePage(T_Encoding cp)
 {
     m_CodePage = cp;
-#ifdef __unix__
+#ifndef _WIN32
     reset_iconv();
 #endif
 }
 
-#ifdef __unix__
+#ifndef _WIN32
 void C_UnicodeIn::reset_iconv()
 {
     if (m_iconv != (iconv_t)(-1))

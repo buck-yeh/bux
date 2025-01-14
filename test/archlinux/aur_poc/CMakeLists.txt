@@ -3,6 +3,7 @@ cmake_policy(VERSION 3.18)
 project(build_tester)
 
 enable_testing()
+find_package(Iconv REQUIRED)
 
 string(APPEND CMAKE_CXX_FLAGS " -Wall -Wextra -Wshadow -Wconversion -Wno-parentheses -Wno-unknown-pragmas -std=c++23")
 
@@ -165,7 +166,7 @@ target_include_directories(test_unicodecvt PRIVATE ../include)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 target_link_libraries(test_unicodecvt PRIVATE bux Catch2::Catch2WithMain)
 else()
-target_link_libraries(test_unicodecvt PRIVATE bux Catch2::Catch2WithMain stdc++ m)
+target_link_libraries(test_unicodecvt PRIVATE bux Catch2::Catch2WithMain Iconv::Iconv stdc++ m)
 endif()
 add_test(NAME test_unicodecvt_All COMMAND test_unicodecvt)
 
