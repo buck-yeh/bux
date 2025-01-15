@@ -165,7 +165,7 @@ add_test(NAME test_paralog_All COMMAND test_paralog)
 
 add_executable(test_unicodecvt test_unicodecvt.cpp)
 target_include_directories(test_unicodecvt PRIVATE ../include)
-if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" OR NOT Iconv_FOUND)
 target_link_libraries(test_unicodecvt PRIVATE bux Catch2::Catch2WithMain)
 else()
 target_link_libraries(test_unicodecvt PRIVATE bux Catch2::Catch2WithMain Iconv::Iconv stdc++ m)
