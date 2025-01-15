@@ -1,3 +1,9 @@
+if(WIN32 OR Iconv_FOUND)
+set(XCONSOLE_CPP XConsole.cpp)
+else()
+set(XCONSOLE_CPP )
+endif()
+message(DEBUG "XCONSOLE_CPP = ${XCONSOLE_CPP}")
 
 add_library(bux STATIC
         AtomiX.cpp
@@ -6,7 +12,7 @@ add_library(bux STATIC
         LexBase.cpp LogStream.cpp LR1.cpp GLR.cpp ParserBase.cpp Logger.cpp ParaLog.cpp
         ScannerBase.cpp Serialize.cpp StrUtil.cpp SyncLog.cpp
         UnicodeCvt.cpp
-        XConsole.cpp XException.cpp
+        ${XCONSOLE_CPP} XException.cpp
         )
 target_include_directories(bux PRIVATE ../include/bux)
 if(Iconv_FOUND)
