@@ -79,6 +79,7 @@ else()
 target_link_libraries(smoke_timestamp PRIVATE bux stdc++)
 endif()
 
+if(NOT APPLE)
 add_executable(test_expand_env test_expand_env.cpp)
 #target_compile_options(test_expand_env PUBLIC -D_GLIBCXX_USE_CXX11_ABI=1)
 target_include_directories(test_expand_env PRIVATE ../include)
@@ -102,6 +103,7 @@ add_test(NAME test_pass_env
          COMMAND test_expand_env env "USER"
          )
 set_tests_properties(test_pass_env PROPERTIES PASS_REGULAR_EXPRESSION "$ENV{USER}")
+endif()
 
 find_package(Catch2 REQUIRED)
 include(Catch)

@@ -9,7 +9,7 @@
 #elif defined(__unix__) || defined(__unix) || defined(__gnu_linux__)
     #include <wordexp.h>    // wordexp(), wordfree()
 #else
-    #error "Platform other than Windows and Unix-like not supported yet"
+    #warning "Calling bux::expand_env() will get thrown an exception"
 #endif
 #ifdef __unix__
     #include <cxxabi.h>         // abi::__cxa_demangle()
