@@ -1,4 +1,3 @@
-find_package(Iconv REQUIRED)
 
 add_library(bux STATIC
         AtomiX.cpp

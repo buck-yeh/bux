@@ -19,6 +19,10 @@ else()
     message(DEBUG "Unknown compiler")
 endif()
 
+if(NOT WIN32)
+find_package(Iconv REQUIRED)
+endif()
+
 add_subdirectory (src)
 
 if(${BUILD_TEST})

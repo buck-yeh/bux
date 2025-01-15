@@ -1,6 +1,4 @@
 enable_testing()
-find_package(Iconv REQUIRED)
-
 add_executable(hrtn hrtn.cpp)
 target_include_directories(hrtn PRIVATE ../include)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
