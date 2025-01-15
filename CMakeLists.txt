@@ -7,22 +7,22 @@ set(GNU_LIKE_CXX_FLAGS " -Wall -Wextra -Wshadow -Wconversion -Wno-parentheses -s
 string(APPEND GNU_LIKE_CXX_FLAGS " -O2")
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND NOT MSVC)
-    message("Clang")
+    message(DEBUG "Clang")
     string(APPEND CMAKE_CXX_FLAGS "${GNU_LIKE_CXX_FLAGS} -Wno-potentially-evaluated-expression")
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    message("GNU")
+    message(DEBUG "GNU")
     string(APPEND CMAKE_CXX_FLAGS "${GNU_LIKE_CXX_FLAGS}")
 elseif(MSVC)
-    message("MSVC")
+    message(DEBUG "MSVC")
     string(APPEND CMAKE_CXX_FLAGS " /Zc:__cplusplus /std:c++latest /MP")
 else()
-    message("Unknown compiler")
+    message(DEBUG "Unknown compiler")
 endif()
 
 add_subdirectory (src)
 
 if(${BUILD_TEST})
-message("Build tests too")
+message(DEBUG "Build tests too")
 add_subdirectory (test)
 endif()
 
