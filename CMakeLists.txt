@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 3.18)
 cmake_policy(VERSION 3.18)
 project(bux)
 
-set(GNU_LIKE_CXX_FLAGS " -Wall -Wextra -Wshadow -Wconversion -Wno-parentheses -std=c++23")
+set(GNU_LIKE_CXX_FLAGS " -Wall -Wextra -Wshadow -Wconversion -Wno-parentheses")
 #string(APPEND GNU_LIKE_CXX_FLAGS " -ggdb")
 string(APPEND GNU_LIKE_CXX_FLAGS " -O2")
 

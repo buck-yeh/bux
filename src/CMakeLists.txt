@@ -15,6 +15,7 @@ add_library(bux STATIC
         ${XCONSOLE_CPP} XException.cpp
         )
 target_include_directories(bux PRIVATE ../include/bux)
+target_compile_features(bux PRIVATE cxx_std_23)
 if(Iconv_FOUND)
 target_link_libraries(bux Iconv::Iconv)
 endif()
