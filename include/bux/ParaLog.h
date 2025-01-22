@@ -27,8 +27,10 @@ public:
     class C_NodeArrayProxy;
 
     // Nonvirtuals
-    explicit C_ParaLog(const std::chrono::time_zone *tz_ = nullptr): I_SyncLog(tz_) {}
-    explicit C_ParaLog(bool use_local_time): C_ParaLog(use_local_time? std::chrono::get_tzdb().current_zone(): nullptr) {}
+    explicit C_ParaLog(T_LocalZone tz_ = T_LocalZone()): I_SyncLog(tz_) {}
+#ifndef _LIBCPP_HAS_NO_TIME_ZONE_DATABASE
+    explicit C_ParaLog(bool use_local_time): C_ParaLog(use_local_time? local_zone(): T_LocalZone()) {}
+#endif
     template<class...T_Args>
     bool addChild(T_Args&&...args);
     template<class C_LogImpl, class C_Holder = typename C_AutoSinkHolderT<C_LogImpl>::type, class...T_Args>

@@ -20,8 +20,10 @@ class C_PathFmtLogSnap: public I_SnapT<std::ostream*>
 public:
 
     // Nonvirtuals
-    explicit C_PathFmtLogSnap(const std::chrono::time_zone *tz);
-    explicit C_PathFmtLogSnap(bool use_local_time = true): C_PathFmtLogSnap(use_local_time? std::chrono::get_tzdb().current_zone(): nullptr) {}
+    explicit C_PathFmtLogSnap(T_LocalZone tz = local_zone());
+#if LOCALZONE_IS_TIMEZONE
+    explicit C_PathFmtLogSnap(bool use_local_time): C_PathFmtLogSnap(use_local_time? local_zone(): T_LocalZone()) {}
+#endif
     C_PathFmtLogSnap &configPath(const std::string &pathFmt);
     C_PathFmtLogSnap &configPath(uintmax_t fsize_in_bytes, const auto &fallbackPaths)
     /*! \param [in] fsize_in_bytes Max bytes per log file.
@@ -58,15 +60,15 @@ public:
 private:
 
     // Data
-    const std::chrono::time_zone    *const m_tz;
-    std::ofstream                   m_Out;              // prior to m_Lock
-    std::string                     m_CurrPath;         // Path of the currently openned file
-    std::vector<std::string>        m_PathFmts;
-    uintmax_t                       m_FileSizeLimit{};  // in bytes
-    size_t                          m_CurPathFmt{};
-    std::chrono::sys_seconds        m_OldTime;
-    std::ios_base::openmode         m_OpenMode{std::ios_base::out};
-    bool                            m_AutoMkDir{true};
+    const T_LocalZone           m_tz;
+    std::ofstream               m_Out;              // prior to m_Lock
+    std::string                 m_CurrPath;         // Path of the currently openned file
+    std::vector<std::string>    m_PathFmts;
+    uintmax_t                   m_FileSizeLimit{};  // in bytes
+    size_t                      m_CurPathFmt{};
+    std::chrono::sys_seconds    m_OldTime;
+    std::ios_base::openmode     m_OpenMode{std::ios_base::out};
+    bool                        m_AutoMkDir{true};
 };
 
 } // namespace bux

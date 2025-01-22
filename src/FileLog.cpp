@@ -8,7 +8,7 @@ namespace bux {
 //
 //      Class Implementation
 //
-C_PathFmtLogSnap::C_PathFmtLogSnap(const std::chrono::time_zone *tz): m_tz(tz)
+C_PathFmtLogSnap::C_PathFmtLogSnap(T_LocalZone tz): m_tz(tz)
 {
     configPath("{:%Y%m%d}.log");
 }
@@ -61,8 +61,13 @@ std::ostream *C_PathFmtLogSnap::snap()
         std::string_view pathFmt = m_PathFmts.at(indFmt);
         if (m_tz)
         {
-            const auto lt = m_tz->to_local(t);
-            return std::vformat(pathFmt, make_format_args(lt));
+#if LOCALZONE_IS_TIMEZONE
+            auto ltm = m_tz->to_local(t);
+#else
+            auto sys_t = std::chrono::system_clock::to_time_t(t);
+            std::chrono::local_time<std::chrono::seconds> ltm(t.time_since_epoch() + std::chrono::seconds(localtime(&sys_t)->tm_gmtoff));
+#endif
+            return std::vformat(pathFmt, make_format_args(ltm));
         }
         return std::vformat(pathFmt, make_format_args(t));
     };

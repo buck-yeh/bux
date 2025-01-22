@@ -9,15 +9,18 @@
 #include <ctime>            // std::localtime(), std::strftime()
 #endif
 
-#ifdef __GNUC__
+#ifdef __APPLE__
+// based on https://developer.apple.com/library/archive/documentation/Porting/Conceptual/PortingUnix/compiling/compiling.html#//apple_ref/doc/uid/TP40002850-SW13
+#include <pthread.h>
+#define TID_    pthread_self()
+#elifdef __GNUC__
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE         // or _BSD_SOURCE or _SVID_SOURCE
 #endif
 #include <unistd.h>
 #include <sys/syscall.h>    // for SYS_xxx definitions
-
 #define TID_    syscall(SYS_gettid)
-#elif defined(_WIN32)
+#elifdef _WIN32
 #include <windows.h>        // GetCurrentThreadId()
 
 #define TID_    GetCurrentThreadId()
@@ -29,7 +32,7 @@
 
 namespace bux {
 
-std::ostream &timestamp(std::ostream &out, const std::chrono::time_zone *tz)
+std::ostream &timestamp(std::ostream &out, T_LocalZone tz)
 /*! \param out Output stream to add timestamp to.
     \param [in] tz Pointer to the time zone to convert system clock to. In case of **nullptr**, the timestamp will use system clock.
     \return \em out
@@ -40,13 +43,26 @@ std::ostream &timestamp(std::ostream &out, const std::chrono::time_zone *tz)
     typedef std::chrono::system_clock myclock;
     static char YMDHMS[30];
     static std::chrono::time_point<myclock,std::chrono::milliseconds> old_time;
-    static const std::chrono::time_zone *old_tz = nullptr;
+    static T_LocalZone old_tz{};
     const auto cur_time = time_point_cast<std::chrono::milliseconds>(myclock::now());
     if (cur_time != old_time || tz != old_tz)
     {
 #ifdef STD_FORMAT_CHRONO_
         constexpr const std::string_view TIMESTAMP_FMT = "{:%Y/%m/%d %H:%M:%S}";
-        auto tm_str = tz? std::format(TIMESTAMP_FMT, tz->to_local(cur_time)): std::format(TIMESTAMP_FMT, cur_time);
+        std::string tm_str;
+        if (tz)
+        {
+#if LOCALZONE_IS_TIMEZONE
+            auto ltm = tz->to_local(cur_time);
+#else
+            auto sys_t = std::chrono::system_clock::to_time_t(cur_time);
+            std::chrono::local_time<std::chrono::milliseconds> ltm(cur_time.time_since_epoch() + std::chrono::seconds(localtime(&sys_t)->tm_gmtoff));
+#endif
+            tm_str = std::format(TIMESTAMP_FMT, ltm);
+        }
+        else
+            tm_str = std::format(TIMESTAMP_FMT, cur_time);
+
         std::strcpy(YMDHMS, tm_str.c_str());
 #else
         auto d = imaxdiv(cur_time.time_since_epoch().count(), 1000);
@@ -59,7 +75,7 @@ std::ostream &timestamp(std::ostream &out, const std::chrono::time_zone *tz)
     return out <<YMDHMS;
 }
 
-std::ostream &logTrace(std::ostream &out, const std::chrono::time_zone *tz)
+std::ostream &logTrace(std::ostream &out, T_LocalZone tz)
 /*! \param out Output stream to add trace(line prefix) to.
     \param tz Pointer to the time zone to convert system clock to. In case of **nullptr**, the timestamp will use system clock.
     \return \em out

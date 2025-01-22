@@ -1,7 +1,7 @@
 #pragma once
 
 #include "LogLevel.h"   // E_LogLevel
-#include <chrono>       // std::chrono::time_zone
+#include "XPlatform.h"  // bux::T_LocalZone, bux::local_zone()
 #include <concepts>     // std::convertible_to<>, std::derived_from<>
 #include <mutex>        // std::recursive_mutex
 #include <ostream>      // std::ostream
@@ -22,11 +22,11 @@ public:
     virtual void unlockLog(bool flush = true) = 0;
             ///< If the previous call to lockLog() returned null, the behavior is undefined.
 
-    const std::chrono::time_zone *const tz;
+    const T_LocalZone tz;
 
 protected:
 
-    I_SyncLog(const std::chrono::time_zone *tz_): tz(tz_) {}
+    I_SyncLog(T_LocalZone tz_): tz(tz_) {}
     ~I_SyncLog() = default;
         ///< Pointer deletion is not expected
 };
@@ -128,9 +128,11 @@ class C_SyncLogger: public I_SyncLog
 public:
 
     // Nonvirtuals
-    explicit C_SyncLogger(I_ReenterableLog &impl, const std::chrono::time_zone *tz_ = nullptr): I_SyncLog(tz_), m_impl(impl) {}
+    explicit C_SyncLogger(I_ReenterableLog &impl, T_LocalZone tz_ = T_LocalZone()): I_SyncLog(tz_), m_impl(impl) {}
+#if LOCALZONE_IS_TIMEZONE
     explicit C_SyncLogger(I_ReenterableLog &impl, bool use_local_time):
-        C_SyncLogger(impl, use_local_time? std::chrono::get_tzdb().current_zone(): nullptr) {}
+        C_SyncLogger(impl, use_local_time? local_zone(): nullptr) {}
+#endif
 
     // Implement I_SyncLog
     std::ostream *lockLog() override;
