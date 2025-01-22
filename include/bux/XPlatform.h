@@ -16,7 +16,7 @@ namespace bux {
 
 #ifndef _LIBCPP_HAS_NO_TIME_ZONE_DATABASE
 using T_LocalZone = const std::chrono::time_zone *;
-T_LocalZone local_zone() { return std::chrono::get_tzdb().current_zone(); }
+inline T_LocalZone local_zone() { return std::chrono::get_tzdb().current_zone(); }
 #define LOCALZONE_IS_TIMEZONE (1)
 #else
 using T_LocalZone = bool;
