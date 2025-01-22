@@ -22,7 +22,7 @@
 
 # Installation & Usage
 
-## in [ArchLinux](https://archlinux.org/)
+## In [ArchLinux](https://archlinux.org/)
 
 1. Make sure you have installed [`yay`](https://aur.archlinux.org/packages/yay/) or any other [pacman wrapper](https://wiki.archlinux.org/index.php/AUR_helpers)
 
@@ -47,12 +47,17 @@
    *p.s.* Header files are in `/usr/include/bux` and compiler is expected to search `/usr/include` by default.
 5. If directly using `gcc` or `clang` is intended, the required compiler flags are `-std=c++23 -lbux`
 
-## from github in any of [Linux distros](https://distrowatch.com/)
+## Build from github in MacOS or any of [Linux distros](https://distrowatch.com/)
 
-1. Make sure you have installed `cmake`(3.18 or newer) `make` `gcc`(13 or newer) `git`, or the likes.
+1. Make sure you have installed the following tools or the likes:
+   * `cmake`(3.18 or newer)
+   * `make`
+   * `gcc`(13 or newer) or `clang`(usually thru installing xcode on MacOS)
+   * `git`
 
 2. ~~~bash
-   git clone -b main --single-branch https://github.com/buck-yeh/bux.git .
+   git clone https://github.com/buck-yeh/bux.git
+   cd bux
    cmake .
    make -j
    BUX_DIR="/full/path/to/current/dir"
@@ -63,13 +68,13 @@
 
    ~~~cmake
    add_executable(foo foo.cpp)
-   target_compile_options(foo PRIVATE -std=c++2a)
+   target_compile_features(foo PRIVATE cxx_std_23)
    target_include_directories(foo PRIVATE "$env{BUX_DIR}/include") 
    target_link_directories(foo PRIVATE "$env{BUX_DIR}/src") 
    target_link_libraries(foo bux)
    ~~~
 
-4. Include the header files by prefixing header name with `bux/`, for example:
+4. Include the header files by prefixing header names with `bux/`, for example:
 
    ~~~c++
    #include <bux/Logger.h>
@@ -95,22 +100,16 @@
 
 1. ~~~PowerShell
    PS F:\vcpkg> .\vcpkg.exe search bux
-   buck-yeh-bux             1.6.8#2          A supplemental C++ library with functionalities not directly supported fro...
-   buck-yeh-bux-mariadb-client 1.0.3#1       Loose-coupled throw-on-error C++20 wrapper classes and utilities over mysq...
-   buck-yeh-bux-sqlite      1.0.1            Modern C++ wrapper classes and utilities of the original sqlite3 API
+   buck-yeh-bux             1.11.0           A supplemental C++ library with functionalities not directly supported fro...
+   buck-yeh-bux-sqlite      1.0.5            Modern C++ wrapper classes and utilities of the original sqlite3 API
    The result may be outdated. Run `git pull` to get the latest results.
    If your port is not listed, please open an issue at and/or consider making a pull request.  -  https://github.com/Microsoft/vcpkg/issues
    PS F:\vcpkg>
    ~~~
+2. Install `buck-yeh-bux` with triplets you needed. For example:
 
-2. Available triplets are:
-
-   ~~~
-   buck-yeh-bux:x64-windows
-   buck-yeh-bux:x64-windows-static
-   buck-yeh-bux:x64-windows-static-md
-   buck-yeh-bux:x86-windows
-   buck-yeh-bux:x86-windows-static
+   ~~~PowerShell
+   PS F:\vcpkg> .\vcpkg.exe install buck-yeh-bux:x64-windows-static
    ~~~
 
 3. Include the header files by prefixing header name with `bux/`, for example:
@@ -131,7 +130,7 @@
 ## Input/Output
 
 - [EZArgs.h](include/bux/EZArgs.h) - Inspired by Python [argparse.ArgumentParser](https://docs.python.org/3/library/argparse.html#argumentparser-objects) with interfaces making sense to Modern C++
-- [LogStream.h](include/bux/LogStream.h) - Marginal utilities for `std::ostream`, used by loggers.
+- [LogStream.h](include/bux/LogStream.h) - Fundation functions for `std::ostream`, used indirectly by logger macros such as [`LOG()`](https://buck-yeh.github.io/bux/html/Logger_8h.html#ac1de67d40c06ffbf5dbe628a2f25e928), ...
 - [MemIn.h](include/bux/MemIn.h) - Drop-in replacement of C++98-deprecated [`std::istrstream`](https://en.cppreference.com/w/cpp/io/istrstream).
 - [MemOut.h](include/bux/MemOut.h) - Drop-in replacement of C++98-deprecated [`std::ostrstream`](https://en.cppreference.com/w/cpp/io/ostrstream). *(Not used recently)*
 - [Serialize.h](include/bux/Serialize.h) - Simple functions to define serialization/deserialization in a symmetric way.
