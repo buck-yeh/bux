@@ -276,7 +276,7 @@ C_ErrorOrIndex C_EZArgs::parse(std::integral auto argc, const char *const argv[]
         break;
     case 1: // with positional arguments
         for (; ind < argc && argv[ind][0] != '-'; ++ind);
-        m_totoalPositionArgs = ind;
+        m_totoalPositionArgs = size_t(ind);
         if (ind < argc && (argv[ind][1] == 'h' || !strcmp(argv[ind], "--help")))
             return help_full(argv);
         else
@@ -326,8 +326,8 @@ C_ErrorOrIndex C_EZArgs::parse(std::integral auto argc, const char *const argv[]
                     auto ret = i.second.parse(argc-ind, argv+ind);
                     if (ret)
                     {
-                        m_totoalPositionArgs = i.second.m_totoalPositionArgs + ind;
-                        return ret.m_optIndex.value() + ind;
+                        m_totoalPositionArgs = i.second.m_totoalPositionArgs + size_t(ind);
+                        return ret.m_optIndex.value() + size_t(ind);
                     }
                     return ret;
                 }
