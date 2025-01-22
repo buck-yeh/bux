@@ -11,14 +11,17 @@ namespace {
 std::string cmp_escape(std::string_view src)
 {
     std::string ret;
-    if (auto curl = curl_easy_init())
+    if (!src.empty())
     {
-        if (auto output = curl_easy_escape(curl, src.data(), int(src.size())))
+        if (auto curl = curl_easy_init())
         {
-            ret = output;
-            curl_free(output);
+            if (auto output = curl_easy_escape(curl, src.data(), int(src.size())))
+            {
+                ret = output;
+                curl_free(output);
+            }
+            curl_easy_cleanup(curl);
         }
-        curl_easy_cleanup(curl);
     }
     return ret;
 }
