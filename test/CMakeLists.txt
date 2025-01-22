@@ -64,6 +64,7 @@ endif()
 
 add_executable(smoke_filtlog smoke_filtlog.cpp)
 target_compile_features(smoke_filtlog PRIVATE cxx_std_23)
+#target_compile_options(smoke_filtlog PRIVATE -g -O0)
 target_include_directories(smoke_filtlog PRIVATE ../include)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 target_link_libraries(smoke_filtlog PRIVATE bux)

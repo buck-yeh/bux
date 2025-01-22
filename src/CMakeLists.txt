@@ -16,6 +16,7 @@ add_library(bux STATIC
         )
 target_include_directories(bux PRIVATE ../include/bux)
 target_compile_features(bux PRIVATE cxx_std_23)
+#target_compile_options(bux PRIVATE -g -O0)
 if(Iconv_FOUND)
 target_link_libraries(bux Iconv::Iconv)
 endif()
