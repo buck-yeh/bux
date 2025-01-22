@@ -56,8 +56,10 @@ constinit const char *const CHSETS_UTF8[] = {"UTF-8", "UTF8", 0};
 constinit const char *const CHSETS_UTF7[] = {"UTF-7", "UTF7", 0};
 constinit const char *const CHSETS_UTF16LE[] = {"UTF-16LE", "UTF16LE", "UCS-2LE", "USC2LE", 0};
 constinit const char *const CHSETS_UTF16BE[] = {"UTF-16BE", "UTF16BE", "UCS-2BE", "USC2BE", 0};
+/* Not used due to the introduced algorithm "Identify UTF-32 wt BOM in OS-agnostic way"
 constinit const char *const CHSETS_UTF32LE[] = {"UTF-32LE", "UTF32LE", "UCS-4LE", "USC4LE", 0};
 constinit const char *const CHSETS_UTF32BE[] = {"UTF-32BE", "UTF32BE", "UCS-4BE", "USC4BE",  0};
+*/
 #endif
 
 //
