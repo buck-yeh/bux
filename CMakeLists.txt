@@ -6,7 +6,7 @@ set(GNU_LIKE_CXX_FLAGS " -Wall -Wextra -Wshadow -Wconversion -Wno-parentheses")
 #string(APPEND GNU_LIKE_CXX_FLAGS " -ggdb")
 string(APPEND GNU_LIKE_CXX_FLAGS " -O2")
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND NOT MSVC)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang" OR ( CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND NOT MSVC ))
     message(DEBUG "Clang")
     string(APPEND CMAKE_CXX_FLAGS "${GNU_LIKE_CXX_FLAGS} -Wno-potentially-evaluated-expression")
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")

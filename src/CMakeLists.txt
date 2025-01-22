@@ -1,7 +1,7 @@
-if(WIN32 OR Iconv_FOUND)
-set(XCONSOLE_CPP XConsole.cpp)
-else()
+if(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
 set(XCONSOLE_CPP )
+else()
+set(XCONSOLE_CPP XConsole.cpp)
 endif()
 message(DEBUG "XCONSOLE_CPP = ${XCONSOLE_CPP}")
 

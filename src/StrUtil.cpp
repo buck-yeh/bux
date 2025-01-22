@@ -9,7 +9,7 @@
 #elif defined(__unix__) || defined(__unix) || defined(__gnu_linux__)
     #include <wordexp.h>    // wordexp(), wordfree()
 #else
-    #warning "Calling bux::expand_env() will get thrown an exception"
+    #define DISABLE_EXPAND_ENV_
 #endif
 #ifdef __unix__
     #include <cxxabi.h>         // abi::__cxa_demangle()
@@ -41,6 +41,7 @@ const char *ord_suffix(size_t i)
     return "th";
 }
 
+#ifndef DISABLE_EXPAND_ENV_
 std::string expand_env(const char *s)
 /*! \param [in] s Input string containing environment variables.
     \return Expanded string
@@ -66,6 +67,7 @@ std::string expand_env(const char *s)
 #endif
     throw std::runtime_error(std::string("Fail to expand \"")+s+'"');
 }
+#endif //DISABLE_EXPAND_ENV_
 
 std::string _HRTN(const char *originalName)
 /*! \param [in] originalName Compiler mangled or expanded type name, depending on which compiler you are using.
