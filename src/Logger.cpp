@@ -19,7 +19,7 @@ namespace bux {
 //
 I_SyncLog &logger()
 {
-    auto        &ret = user::logger();
+    auto &ret = user::logger();
     static bool first = true;
     if (first)
     {
@@ -79,13 +79,12 @@ C_EntryLog::~C_EntryLog()
     if (m_Id)
     {
         if (C_UseLog u{logger()})
-            stamp(u,LL_VERBOSE) <<std::format("@{}{}", *m_Id,
-                []{
-                    if (auto n = std::uncaught_exceptions())
-                        return std::format("@}} due to {} uncaught exception{}\n", n, (n>1?"s":""));
+            stamp(u, LL_VERBOSE) << std::format("@{}{}", *m_Id, [] {
+                if (auto n = std::uncaught_exceptions())
+                    return std::format("@}} due to {} uncaught exception{}\n", n, (n > 1 ? "s" : ""));
 
-                    return std::string{"@}\n"};
-                }());
+                return std::string{"@}\n"};
+            }());
     }
 }
 
