@@ -3,7 +3,7 @@
 #include <bux/Logger.h>     // DEF_LOGGER_FILE()
 #include <fstream>          // std::ofstream
 
-DEF_LOGGER_FILE("log/test.log", LL_INFO)
+DEF_LOGGER_FILE("log/test.log", LL_INFO) // Folder `log/` has to exist in before execution
 
 int main()
 {

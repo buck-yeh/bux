@@ -11,7 +11,7 @@
 #include <curses.h>         // getch(), ...
 #endif
 
-DEF_PARA_LOGGER
+DEF_PARA_LOGGER // local/system time already dominated by LOGGER_USE_LOCAL_TIME_
 
 namespace {
 
@@ -23,16 +23,16 @@ bool g_stop{};
 int main()
 {
     using bux::user::g_paraLog;
-    g_paraLog.addChild(std::cout, LL_WARNING);
-    g_paraLog.addChildT<bux::C_PathFmtLogSnap>({}, LL_VERBOSE, false);
-    g_paraLog.addChildT<bux::C_PathFmtLogSnap>([](auto &logger)
+    g_paraLog.addChild(std::cout, LL_WARNING);                          // to console
+    g_paraLog.addChildT<bux::C_PathFmtLogSnap>({}, LL_VERBOSE, false);  // default path formatted in system time
+    g_paraLog.addChildT<bux::C_PathFmtLogSnap>([](auto &logger)         // fallback path formats on log size 2MB, each formatted in local time
     {
         logger.configPath(2UL<<20, std::array{
             "logs/st{:%Y-%m-%d/%y%m%d}.log",
             "logs/st{:%Y-%m-%d/%y%m%d-%H}.log",
             "logs/st{:%Y-%m-%d/%y%m%d-%H-%M}.log"});
     });
-    g_paraLog.addChildT<std::ofstream,bux::C_OstreamHolder>({}, LL_ERROR, "errors.txt");
+    g_paraLog.addChildT<std::ofstream,bux::C_OstreamHolder>({}, LL_ERROR, "errors.txt"); // to log file "errors.txt"
 
     if (bux::C_UseLog u{bux::logger()})
         *u <<std::boolalpha <<"LOGGER_USE_LOCAL_TIME_: " <<LOGGER_USE_LOCAL_TIME_ <<"\n";

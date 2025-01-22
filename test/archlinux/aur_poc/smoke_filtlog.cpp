@@ -32,9 +32,9 @@ int main()
     });
     auto
     nodes = bux::user::g_paraLog.partitionBy(std::initializer_list<FC_MatchStr>{"[foo]", "[bar]"});
-    nodes[0].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/{:%y-%m-%d_foo.log"); });
-    nodes[1].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/{:%y-%m-%d_bar.log"); });
-    nodes[2].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/{:%y-%m-%d_no_foo_bar.log"); });
+    nodes[0].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/{:%y-%m-%d}_foo.log"); });
+    nodes[1].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/{:%y-%m-%d}_bar.log"); });
+    nodes[2].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/{:%y-%m-%d}_no_foo_bar.log"); });
     nodes = bux::user::g_paraLog.partitionBy(std::initializer_list<FC_MatchStr>{"[eeny]", "[meeny]", "[miny]", "[moe]"});
     nodes[0].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/{:%y-%m-%d}_eeny.log"); });
     nodes[1].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/{:%y-%m-%d}_meeny.log"); });
@@ -47,25 +47,25 @@ int main()
 
     auto
     subnodes = nodes[0].partitionBy(std::initializer_list<FC_MatchStr>{"[foo]", "[bar]"});
-    subnodes[0].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/eeny/{:%y-%m-%d_foo.log"); });
-    subnodes[1].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/eeny/{:%y-%m-%d_bar.log"); });
-    subnodes[2].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/eeny/{:%y-%m-%d_no_foo_bar.log"); });
+    subnodes[0].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/eeny/{:%y-%m-%d}_foo.log"); });
+    subnodes[1].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/eeny/{:%y-%m-%d}_bar.log"); });
+    subnodes[2].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/eeny/{:%y-%m-%d}_no_foo_bar.log"); });
     subnodes = nodes[1].partitionBy(std::initializer_list<FC_MatchStr>{"[foo]", "[bar]"});
-    subnodes[0].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/meeny/{:%y-%m-%d_foo.log"); });
-    subnodes[1].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/meeny/{:%y-%m-%d_bar.log"); });
-    subnodes[2].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/meeny/{:%y-%m-%d_no_foo_bar.log"); });
+    subnodes[0].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/meeny/{:%y-%m-%d}_foo.log"); });
+    subnodes[1].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/meeny/{:%y-%m-%d}_bar.log"); });
+    subnodes[2].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/meeny/{:%y-%m-%d}_no_foo_bar.log"); });
     subnodes = nodes[2].partitionBy(std::initializer_list<FC_MatchStr>{"[foo]", "[bar]"});
-    subnodes[0].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/miny/{:%y-%m-%d_foo.log"); });
-    subnodes[1].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/miny/{:%y-%m-%d_bar.log"); });
-    subnodes[2].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/miny/{:%y-%m-%d_no_foo_bar.log"); });
+    subnodes[0].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/miny/{:%y-%m-%d}_foo.log"); });
+    subnodes[1].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/miny/{:%y-%m-%d}_bar.log"); });
+    subnodes[2].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/miny/{:%y-%m-%d}_no_foo_bar.log"); });
     subnodes = nodes[3].partitionBy(std::initializer_list<FC_MatchStr>{"[foo]", "[bar]"});
-    subnodes[0].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/moe/{:%y-%m-%d_foo.log"); });
-    subnodes[1].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/moe/{:%y-%m-%d_bar.log"); });
-    subnodes[2].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/moe/{:%y-%m-%d_no_foo_bar.log"); });
+    subnodes[0].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/moe/{:%y-%m-%d}_foo.log"); });
+    subnodes[1].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/moe/{:%y-%m-%d}_bar.log"); });
+    subnodes[2].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/moe/{:%y-%m-%d}_no_foo_bar.log"); });
     subnodes = nodes[4].partitionBy(std::initializer_list<FC_MatchStr>{"[foo]", "[bar]"});
-    subnodes[0].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/no_eeny_meeny_miny_moe/{:%y-%m-%d_foo.log"); });
-    subnodes[1].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/no_eeny_meeny_miny_moe/{:%y-%m-%d_bar.log"); });
-    subnodes[2].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/no_eeny_meeny_miny_moe/{:%y-%m-%d_no_foo_bar.log"); });
+    subnodes[0].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/no_eeny_meeny_miny_moe/{:%y-%m-%d}_foo.log"); });
+    subnodes[1].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/no_eeny_meeny_miny_moe/{:%y-%m-%d}_bar.log"); });
+    subnodes[2].addChildT<bux::C_PathFmtLogSnap>([](auto &logger){ logger.configPath("logs/no_eeny_meeny_miny_moe/{:%y-%m-%d}_no_foo_bar.log"); });
 
     if (bux::C_UseLog u{bux::logger()})
         *u <<std::boolalpha <<"LOGGER_USE_LOCAL_TIME_: " <<LOGGER_USE_LOCAL_TIME_ <<"\n";
