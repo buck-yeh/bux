@@ -3,7 +3,7 @@
     http://blog.wingman-sw.com/tdd-guided-by-zombies
 */
 #include <bux/EZArgs.h>     // bux::C_EZArgs, bux::C_ErrorOrIndex
-#include <charconv>         // std::from_chars()
+#include <cstdlib>          // strtod()
 #include <filesystem>       // std::filesystem::*
 #include <ranges>           // std::ranges::views::empty<>
 #include <catch2/catch_test_macros.hpp>
@@ -110,7 +110,8 @@ TEST_CASE("Scenario: Parse negative number as flag value", "[S]")
     double          x{};
     bux::C_EZArgs   ezargs;
     ezargs.add_flag('x', "foobar", [&](auto v){ // parse
-        std::from_chars(v.data(), v.data()+v.size(), x);
+        std::string vv{v.begin(), v.end()};
+        x = strtod(vv.c_str(), nullptr);
     });
     const std::string arg0 = std::filesystem::current_path() / "test1.exe";
     const char *argv[]{arg0.c_str(), "-x", "-.5"};
