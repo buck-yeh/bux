@@ -5,6 +5,7 @@
 #include "XException.h" // RUNTIME_ERROR()
 #include <algorithm>    // std::set_difference()
 #include <concepts>     // std::convertible_to<>, std::invocable<>
+#include <iterator>     // std::inserter()
 #include <list>         // std::list<>
 #include <map>          // std::map<>
 #include <set>          // std::set<>
