@@ -26,11 +26,11 @@ struct C_ErrorOrIndex
     std::optional<size_t>   m_optIndex;
 
     // Nonvirtuals
-    C_ErrorOrIndex(const std::string &error, auto flagErrInd): m_message(error), m_optIndex(flagErrInd) {}
+    C_ErrorOrIndex(const std::string &error, std::integral auto flagErrInd): m_message(error), m_optIndex(flagErrInd) {}
     C_ErrorOrIndex(const std::string &help): m_message(help) {}
-    C_ErrorOrIndex(auto flagStartInd): m_optIndex(flagStartInd) {}
+    C_ErrorOrIndex(std::integral auto flagStartInd): m_optIndex(flagStartInd) {}
     operator bool() const { return m_message.empty(); }
-    auto index() const { return m_optIndex.value(); }
+    size_t index() const { return m_optIndex.value(); }
     std::string message() const;
 };
 
