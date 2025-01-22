@@ -5,6 +5,7 @@
 - Doxygen-generated API reference is [here](https://buck-yeh.github.io/bux/html/index.html). 💡 Doxygen has been known for being insensitive to Modern C++ for so many years. Keywords like any of attributes, ... etc can be misinterpreted or simply dropped. Viewer's discretion is advised.
 
 ---
+**Table of contents**
 <!-- TOC -->
 
 - [In ArchLinux](#in-archlinux)
