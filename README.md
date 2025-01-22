@@ -4,23 +4,22 @@
 
 - Doxygen-generated API reference is [here](https://buck-yeh.github.io/bux/html/index.html). 💡 Doxygen has been known for being insensitive to Modern C++ for so many years. Keywords like any of attributes, ... etc can be misinterpreted or simply dropped. Viewer's discretion is advised.
 
-# Table of Contents
-   * [Installation &amp; Usage](#installation--usage)
-      * [in ArchLinux](#in-archlinux)
-      * [from github in any of Linux distros](#from-github-in-any-of-linux-distros)
-      * [from vcpkg in Windows](#from-vcpkg-in-windows)
-   * [Header Intros](#header-intros)
-      * [Containers](#containers)
-      * [Input/Output](#inputoutput)
-      * [Logger](#logger)
-      * [Parser/scanner related](#parserscanner-related)
-      * [System](#system)
-      * [Thread Safety](#thread-safety)
-      * [Misc.](#misc)
+---
+<!-- TOC -->
 
-*(Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc))*
+- [In ArchLinux](#in-archlinux)
+- [Build from github in MacOS or any of Linux distros](#build-from-github-in-macos-or-any-of-linux-distros)
+- [From vcpkg in Windows](#from-vcpkg-in-windows)
+- [Header Intros](#header-intros)
+    - [Containers](#containers)
+    - [Input/Output](#inputoutput)
+    - [Logger](#logger)
+    - [Parser/scanner related](#parserscanner-related)
+    - [System](#system)
+    - [Thread Safety](#thread-safety)
+    - [Misc.](#misc)
 
-# Installation & Usage
+<!-- /TOC -->
 
 ## In [ArchLinux](https://archlinux.org/)
 
@@ -96,7 +95,7 @@
    ctest .
    ~~~
 
-## from vcpkg in Windows
+## From vcpkg in Windows
 
 1. ~~~PowerShell
    PS F:\vcpkg> .\vcpkg.exe search bux
@@ -118,16 +117,16 @@
    #include <bux/Logger.h>
    ~~~
 
-# Header Intros
+## Header Intros
 
-## Containers
+### Containers
 
 - [Intervals.h](include/bux/Intervals.h) - `std::C_Intervals<T>` defines its own arithmetics but is currently ever used by [`scannergen`](https://github.com/buck-yeh/parsergen/tree/main/ScannerGen)
 - [PartialOrdering.h](include/bux/PartialOrdering.h) - Define [partial ordering](https://en.wikipedia.org/wiki/Partially_ordered_set) as container in order to generate a compatible [linear ordering](https://en.wikipedia.org/wiki/Total_order).
 - [XQue.h](include/bux/XQue.h) - An efficient generic queue.
 - [Xtack.h](include/bux/Xtack.h) - Generic stack types.
 
-## Input/Output
+### Input/Output
 
 - [EZArgs.h](include/bux/EZArgs.h) - Inspired by Python [argparse.ArgumentParser](https://docs.python.org/3/library/argparse.html#argumentparser-objects) with interfaces making sense to Modern C++
 - [LogStream.h](include/bux/LogStream.h) - Fundation functions for `std::ostream`, used indirectly by logger macros such as [`LOG()`](https://buck-yeh.github.io/bux/html/Logger_8h.html#ac1de67d40c06ffbf5dbe628a2f25e928), ...
@@ -137,7 +136,7 @@
 - [StrUtil.h](include/bux/StrUtil.h) - String utilities.
 - [UnicodeCvt.h](include/bux/UnicodeCvt.h) - Encode text stream to unicodes (`utf8`/`utf16`/`utf32`)
 
-## Logger
+### Logger
 
 - [FileLog.h](include/bux/FileLog.h) - [`bux::C_PathFmtLogSnap`](https://buck-yeh.github.io/bux/html/classbux_1_1C__PathFmtLogSnap.html) can be configured to automatically change the output path, *IOW* to output to different files, according to the current timestamp. The object is a plugin to `bux::C_ReenterableOstreamSnap` and `bux::C_ParaLog`
 - [Logger.h](include/bux/Logger.h) - Log macros for various needs with *singleton* `bux::logger()` in mind.
@@ -145,7 +144,7 @@
 - [ParaLog.h](include/bux/ParaLog.h) - [`bux::C_ParaLog`](https://buck-yeh.github.io/bux/html/classbux_1_1C__ParaLog.html) is a logger facade to reroute log lines to multiple child loggers 
 - [SyncLog.h](include/bux/SyncLog.h) - Basic classes to give variety of *thread-safe* loggers.
 
-## Parser/scanner related
+### Parser/scanner related
 
 - [FA.h](include/bux/FA.h) - Supports to finite automaton, *aka* finite state machine, *aka* regular expression, emphasizing on minimizing [NFA](https://en.wikipedia.org/wiki/Nondeterministic_finite_automaton) into [DFA](https://en.wikipedia.org/wiki/Deterministic_finite_automaton).
 - [GLR.h](include/bux/GLR.h) - Implementation of [**G**eneralized **LR** parser](https://en.wikipedia.org/wiki/GLR_parser)
@@ -158,17 +157,17 @@
 - [Range2Type.h](include/bux/Range2Type.h) - `bux::fittestType()` called by [`parsergen`](https://github.com/buck-yeh/parsergen/tree/main/ParserGen) & [`scannergen`](https://github.com/buck-yeh/parsergen/tree/main/ScannerGen).
 - [ScannerBase.h](include/bux/ScannerBase.h) - Generic supports to all scanners.
 
-## System
+### System
 
 - [FsUtil.h](include/bux/FsUtil.h) - Utilities solely related to [\<filesystem\>](https://en.cppreference.com/w/cpp/header/filesystem)
 - [XConsole.h](include/bux/XConsole.h) - Cross-platform console functions.
 - [XPlatform.h](include/bux/XPlatform.h) - Most possibly macros & typedefs defined in per-platform fashions.
 
-## Thread Safety
+### Thread Safety
 
 - [AtomiX.h](include/bux/AtomiX.h) - Spin lock on [`std::atomic_flag`](https://en.cppreference.com/w/cpp/atomic/atomic_flag) & a mapping cache type using it.
 
-## Misc.
+### Misc.
 
 - [EZScape.h](include/bux/EZScape.h) - Replacement of [`curl_easy_escape()`](https://curl.se/libcurl/c/curl_easy_escape.html) & [`curl_easy_unescape()`](https://curl.se/libcurl/c/curl_easy_unescape.html) in `libcurl`.
 - [SafeArith.h](include/bux/SafeArith.h) - Supports to safe arithmetics. *(Not used recently)*
