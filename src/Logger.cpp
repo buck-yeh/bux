@@ -95,7 +95,7 @@ void C_EntryLog::deeper()
 
 int C_EntryLog::getId()
 {
-    static std::atomic<int> id = ATOMIC_VAR_INIT(1);
+    static std::atomic<int> id(1);
     return id++;
 }
 
