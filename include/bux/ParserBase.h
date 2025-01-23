@@ -81,7 +81,7 @@ public:
 protected:
 
     // Data
-    std::array<unsigned,5>  m_count{}; static_assert(LL_VERBOSE+1 == 5);
+    std::array<unsigned,LL_VERBOSE+1>  m_count{}; // Presumably LL_VERBOSE is the highest log level
 
     // Virtuals
     virtual std::string toStr(const C_SourcePos &pos) const;

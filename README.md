@@ -141,7 +141,7 @@
 
 - [FileLog.h](include/bux/FileLog.h) - [`bux::C_PathFmtLogSnap`](https://buck-yeh.github.io/bux/html/classbux_1_1C__PathFmtLogSnap.html) can be configured to automatically change the output path, *IOW* to output to different files, according to the current timestamp. The object is a plugin to `bux::C_ReenterableOstreamSnap` and `bux::C_ParaLog`
 - [Logger.h](include/bux/Logger.h) - Log macros for various needs with *singleton* `bux::logger()` in mind.
-- [LogLevel.h](include/bux/LogLevel.h) - LL_FATAL, LL_ERROR, LL_WARNING, LL_INFO, LL_VERBOSE
+- [LogLevel.h](include/bux/LogLevel.h) - LL_FATAL, LL_ERROR, LL_WARNING, LL_INFO, LL_DEBUG, LL_VERBOSE
 - [ParaLog.h](include/bux/ParaLog.h) - [`bux::C_ParaLog`](https://buck-yeh.github.io/bux/html/classbux_1_1C__ParaLog.html) is a logger facade to reroute log lines to multiple child loggers 
 - [SyncLog.h](include/bux/SyncLog.h) - Basic classes to give variety of *thread-safe* loggers.
 

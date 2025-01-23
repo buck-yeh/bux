@@ -46,11 +46,12 @@ I_SyncLog &logger()
 
 std::ostream &stamp(const C_UseLog &u, E_LogLevel level)
 {
-    constexpr static const char FEWIV[] = "FEWIV";
+    constexpr static const char FEWIV[] = "FEWIDV";
     static_assert(FEWIV[LL_FATAL]   == 'F');
     static_assert(FEWIV[LL_ERROR]   == 'E');
     static_assert(FEWIV[LL_WARNING] == 'W');
     static_assert(FEWIV[LL_INFO]    == 'I');
+    static_assert(FEWIV[LL_DEBUG]   == 'D');
     static_assert(FEWIV[LL_VERBOSE] == 'V');
     if (auto pout = u.stream())
     {
