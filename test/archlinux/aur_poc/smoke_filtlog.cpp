@@ -79,6 +79,7 @@ int main()
                     {LL_ERROR,   "error"},
                     {LL_WARNING, "warning"},
                     {LL_INFO,    "info"},
+                    {LL_DEBUG,   "debug"},
                     {LL_VERBOSE, "verbose"},
                 };
                 const auto &src = LOG_SRC[RAND_ARRAY_INDEX(LOG_SRC)];

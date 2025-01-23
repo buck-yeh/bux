@@ -26,6 +26,7 @@ static const struct { bux::E_LogLevel ll; const char *msg; } LOG_SRC[] = {
     {LL_ERROR,   "Hello error"},
     {LL_WARNING, "Hello warning"},
     {LL_INFO,    "Hello info"},
+    {LL_DEBUG,   "Hello debug"},
     {LL_VERBOSE, "Hello verbose"},
 };
 

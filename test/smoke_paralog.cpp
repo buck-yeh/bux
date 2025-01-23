@@ -54,6 +54,7 @@ int main()
                     {LL_ERROR,   "error"},
                     {LL_WARNING, "warning"},
                     {LL_INFO,    "info"},
+                    {LL_DEBUG,   "debug"},
                     {LL_VERBOSE, "verbose"},
                 };
                 const auto &src = LOG_SRC[std::uniform_int_distribution<size_t>{0,std::size(LOG_SRC)-1}(g_rng)];
