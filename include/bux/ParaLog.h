@@ -28,7 +28,7 @@ public:
 
     // Nonvirtuals
     explicit C_ParaLog(T_LocalZone tz_ = T_LocalZone()): I_SyncLog(tz_) {}
-#ifndef _LIBCPP_HAS_NO_TIME_ZONE_DATABASE
+#if LOCALZONE_IS_TIMEZONE
     explicit C_ParaLog(bool use_local_time): C_ParaLog(use_local_time? local_zone(): T_LocalZone()) {}
 #endif
     template<class...T_Args>
