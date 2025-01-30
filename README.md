@@ -27,7 +27,7 @@
 1. Make sure you have installed [`yay`](https://aur.archlinux.org/packages/yay/) or any other [pacman wrapper](https://wiki.archlinux.org/index.php/AUR_helpers)
 
 2. ~~~bash
-   yay -Ss bux
+   yay -S bux
    ~~~
 
 3. To define target executable `foo` using `bux` in `CMakeLists.txt`
@@ -162,7 +162,7 @@
 
 - [FsUtil.h](include/bux/FsUtil.h) - Utilities solely related to [\<filesystem\>](https://en.cppreference.com/w/cpp/header/filesystem)
 - [XConsole.h](include/bux/XConsole.h) - Cross-platform console functions.
-- [XPlatform.h](include/bux/XPlatform.h) - Most possibly macros & typedefs defined in per-platform fashions.
+- [XPlatform.h](include/bux/XPlatform.h) - Conditionally defined macros, types, functions for as many platforms as possible.
 
 ### Thread Safety
 
