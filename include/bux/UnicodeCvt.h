@@ -151,6 +151,14 @@ std::string to_utf8(std::basic_string_view<T> s, T_Encoding codepage = 0)
 }
 
 template<typename T>
+std::basic_string<T> BOM(const std::basic_string<T> &s)
+{
+    if constexpr (sizeof(T) > 1)
+        return T(0xFEFF) + s;
+    else
+        return (const T*)u8"\uFEFF" + s;
+}
+template<typename T>
 std::basic_string<T> BOM(std::basic_string_view<T> sv)
 {
     if constexpr (sizeof(T) > 1)
