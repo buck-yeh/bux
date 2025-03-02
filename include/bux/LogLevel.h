@@ -14,6 +14,11 @@ enum E_LogLevel
     LL_DEBUG,   ///< Debug only logs which can be suppressed easily for releases
     LL_VERBOSE  ///< More detailed or advanced information probably considered too much by some.
 };
+static_assert(LL_FATAL < LL_ERROR);
+static_assert(LL_ERROR < LL_WARNING);
+static_assert(LL_WARNING < LL_INFO);
+static_assert(LL_INFO < LL_DEBUG);
+static_assert(LL_DEBUG < LL_VERBOSE);
 
 } // namespace bux
 

@@ -40,6 +40,10 @@ typedef std::uint32_t T_Utf32;  ///< UTF-32 to cover the full range of codespace
 typedef std::uint16_t T_Utf16;  ///< UTF-16: You need T_Utf16[2] to hold full range of unicode.
 typedef std::uint8_t  T_Utf8;   ///< UTF-8: You need T_Utf8[4] to hold full range of unicode.
 
+static_assert(sizeof(T_Utf32) == 4);
+static_assert(sizeof(T_Utf16) == 2);
+static_assert(sizeof(T_Utf8)  == 1);
+
 typedef std::function<std::optional<char>()> FH_ReadChar;
 
 #ifdef _WIN32
