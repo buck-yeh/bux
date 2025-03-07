@@ -146,14 +146,12 @@ public:
         auto n = nfa2dfa(nfa, Fraw, deltaRaw, pickAction);
         minDfa(Fraw, deltaRaw, n, F, delta);
     }
-    template<class F_Get>
-    void eachFinalState(F_Get get) const requires std::invocable<F_Get,int,const T_Action&>
+    void eachFinalState(std::invocable<int,const T_Action&> auto get) const
     {
         for (const auto &i: F)
             get(i.first, i.second);
     }
-    template<class F_Get>
-    void eachTransition(F_Get get) const requires std::invocable<F_Get,int,const T_Inputs&,int>
+    void eachTransition(std::invocable<int,const T_Inputs&,int> auto get) const
     {
         for (const auto &i: delta)
             for (const auto &j: i.second)
