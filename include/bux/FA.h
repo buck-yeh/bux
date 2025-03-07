@@ -159,7 +159,7 @@ public:
     }
     bool isFinal(int state, T_Action &action) const;
         // Return true and assign action if state is final; return false otherwise
-    static int startingState()      { return 0; }
+    static constexpr int startingState() { return 0; }
     size_t totalFinalStates() const { return F.size(); }
 
 private:
