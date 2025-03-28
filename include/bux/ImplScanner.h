@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ScannerBase.h"    // bux::C_LexTraits<>, bux::I_Scanner<>, bux::C_ActionRet, ...
+#include "XException.h"     // RUNTIME_ERROR()
 #include <vector>           // std::vector<>
 
 namespace bux {
