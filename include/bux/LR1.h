@@ -134,7 +134,7 @@ struct C_NewLex: C_NewNode<C_LexDataT<T_Data>>
         if (!i)
             this->assign(new C_LexDataT<T_Data>, true);
         else if (!this->takeOver(i.m_attr))
-            RUNTIME_ERROR("{}", typeid(*i).name());
+            throw std::runtime_error{typeid(*i).name()};
     }
     template<class...T_Args>
     explicit C_NewLex(T_Args&&...args):

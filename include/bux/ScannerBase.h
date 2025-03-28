@@ -105,7 +105,7 @@ template<T_LexID _ID, class T_LexCh>
     uint32_t key;
     const auto len = parseEscapeChar(toString(c,1,n-1), key);
     if (len + 2 != n)
-        RUNTIME_ERROR("parseEscapeChar() returns {} != {}", len, n -2);
+        throw std::runtime_error{"parseEscapeChar() returns " + std::to_string(len) + " != " + std::to_string(n-2)};
 
     return C_ActionRet{_ID, createLex(key)};
 }

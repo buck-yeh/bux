@@ -5,8 +5,9 @@
 #   pragma warn -8027
 #endif
 
-#include "XException.h" // RUNTIME_ERROR()
-#include <string>       // std::string
+#include <cstdint>      // uint32_t
+#include <stdexcept>    // std::runtime_error
+#include <string>       // std::string, std::to_string()
 #include <string_view>  // std::string_view
 #include <type_traits>  // std::is_base_of_v<>, std::is_arithmetic_v<>
 
@@ -170,7 +171,7 @@ public:
         const auto t = value_();
         const auto ret = static_cast<T>(t);
         if (ret != t)
-            RUNTIME_ERROR("Cast overflow {} != {}", ret, t);
+            throw std::runtime_error{"Cast overflow " + std::to_string(ret) + " != " + std::to_string(t)};
 
         return ret;
     }

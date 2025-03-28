@@ -2,8 +2,6 @@
 #include "UnicodeCvt.h" // bux::C_UnicodeIn
 #include <cctype>       // isprint()
 #include <cstring>      // strchr()
-#include <charconv>     // std::to_chars()
-#include <ios>          // std::make_error_code()
 
 namespace {
 
@@ -95,7 +93,7 @@ std::string asciiLiteral(std::string_view utf8)
             appendAsciiLiteral(u32, ret);
         else
             // On error
-            RUNTIME_ERROR("C_UnicodeIn::get() error {}", t);
+            throw std::runtime_error{"C_UnicodeIn::get() error " + std::to_string(t)};
     }
     return ret;
 }
@@ -137,7 +135,7 @@ long long C_IntegerLex::value_() const
     size_t end;
     auto ret = std::stoll(m_numStr, &end, m_radix);
     if (end < m_numStr.size())
-        RUNTIME_ERROR("Not entirely number {}", m_numStr);
+        throw std::runtime_error{"Not entirely number " + m_numStr};
 
     return ret;
 }
