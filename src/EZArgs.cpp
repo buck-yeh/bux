@@ -27,7 +27,7 @@ C_EZArgs::C_FlagDef &C_EZArgs::create_flag_def(std::string_view name, char short
         else
         {
             m_flags.pop_back();
-            RUNTIME_ERROR("Invalid flag name: {}", name);
+            throw std::runtime_error{"Invalid flag name: " + (std::string)name};
         }
     else
         dst.m_name = name;

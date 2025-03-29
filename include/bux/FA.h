@@ -2,13 +2,13 @@
 
 //  FA stands for Finite Automoton
 
-#include "XException.h" // RUNTIME_ERROR()
 #include <algorithm>    // std::set_difference()
 #include <concepts>     // std::convertible_to<>, std::invocable<>
 #include <iterator>     // std::inserter()
 #include <list>         // std::list<>
 #include <map>          // std::map<>
 #include <set>          // std::set<>
+#include <stdexcept>    // std::runtime_error
 #include <vector>       // std::vector<>
 
 namespace bux {
@@ -427,7 +427,7 @@ auto C_DFA<T_Inputs,T_Action,C_Traits>::findDfaClosure(const C_DfaClosures &Q, i
             // Found
             return i;
     }
-    RUNTIME_ERROR("State {} not found", state);
+    throw std::runtime_error{"State " + std::to_string(state) + " not found"};
 }
 
 template<class T_Inputs, class T_Action, class C_Traits>
@@ -584,7 +584,7 @@ void C_DFA<T_Inputs,T_Action,C_Traits>::minDfa(
             Fmin[i->m_Tag] = a2c.begin()->first;
             if (a2c.size() > 1)
                 // Impossible
-                RUNTIME_ERROR("a2c.size() == ()", a2c.size());
+                throw std::runtime_error{"a2c.size() == " + std::to_string(a2c.size())};
         }
     }
     for (const auto &i: deltaFat)
@@ -601,7 +601,7 @@ void C_DFA<T_Inputs,T_Action,C_Traits>::minDfa(
                         // Aleady added
                         goto PostInsertion;
 
-                    RUNTIME_ERROR("Contradicted mapping");
+                    throw std::runtime_error{"Contradicted mapping"};
                 }
             }
             C_Traits::inputUnion(dst_i[value], j.second);
@@ -746,7 +746,7 @@ int C_DFA<T_Inputs,T_Action,C_Traits>::nfa2dfa(const C_NFA<T_Inputs,T_Action,C_T
             {
                 auto action = pickAction(i.m_Tag, conflict);
                 if (action == T_Action())
-                    RUNTIME_ERROR("Interrupted");
+                    throw std::runtime_error{"Interrupted"};
 
                 F[i.m_Tag] = action;
             }

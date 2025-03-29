@@ -1,10 +1,10 @@
 #pragma once
 
 #include "SyncLog.h"    // bux::I_SnapT<>
-#include "XException.h" // RUNTIME_ERROR()
 #include <chrono>       // std::chrono::*
 #include <filesystem>   // std::filesystem::*
 #include <fstream>      // std::ofstream
+#include <stdexcept>    // std::runtime_error
 #include <string>       // std::string
 #include <vector>       // std::vector<>
 
@@ -43,7 +43,7 @@ public:
         {
             const std::string _path = i;
             if (_path.empty())
-                RUNTIME_ERROR("Null path format");
+                throw std::runtime_error{"Null path format"};
 
             m_PathFmts.emplace_back(std::filesystem::absolute(_path).string());
         }

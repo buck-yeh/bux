@@ -1,10 +1,10 @@
 #pragma once
 
-#include "XException.h" // RUNTIME_ERROR()
 #include <concepts>     // std::integral<>
 #include <iterator>     // std::input_iterator<>
 #include <limits>       // std::numeric_limits<>
 #include <ostream>      // std::basic_ostream<>
+#include <stdexcept>    // std::runtime_error
 #include <utility>      // std::cmp_less_equal()
 #include <vector>       // std::vector<>
 
@@ -108,7 +108,7 @@ template<IntervalPt T>
 C_Intervals<T>::C_Intervals(value_type i)
 {
     if (i.first > i.second)
-        RUNTIME_ERROR("({},{})", i.first, i.second);
+        throw std::runtime_error{'('+std::to_string(i.first)+','+std::to_string(i.second)};
 
     m_Intervals.emplace_back(i);
 }

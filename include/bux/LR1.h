@@ -3,6 +3,7 @@
 #include "ParserBase.h" // bux::T_StateID, bux::F_GetProducedT<>, LexBase.h
 #include "XAutoPtr.h"   // bux::C_AutoNode<>
 #include "Xtack.h"      // bux::C_ResourceStack<>
+#include <stdexcept>    // std::runtime_error
 
 namespace bux {
 namespace LR1 {

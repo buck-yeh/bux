@@ -21,7 +21,7 @@ C_PathFmtLogSnap &C_PathFmtLogSnap::configPath(const std::string &_pathFmt)
 */
 {
     if (_pathFmt.empty())
-        RUNTIME_ERROR("Null path format");
+        throw std::runtime_error{"Null path format"};
 
     m_PathFmts.clear();
     m_PathFmts.emplace_back(fs::absolute(_pathFmt).string());
@@ -126,7 +126,7 @@ OpenNewFile:
             m_Out.open(nextPath, m_OpenMode);
         }
         if (!m_Out.is_open())
-            RUNTIME_ERROR("{}", nextPath);
+            throw std::runtime_error{nextPath};
 
         m_CurrPath = nextPath;
     }

@@ -2,6 +2,7 @@
 
 #include "LexBase.h"    // bux::T_LexID, bux::I_LexAttr, bux::C_IntegerLex, bux::TID_EOF
 #include "UnicodeCvt.h" // bux::C_UnicodeIn
+#include <stdexcept>    // std::runtime_error
 #ifdef _WIN32
     #include <ctype.h>  // __isascii()
 #else

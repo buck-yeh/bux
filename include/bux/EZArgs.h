@@ -1,6 +1,5 @@
 #pragma once
 
-#include "XException.h" // RUNTIME_ERROR()
 #include <algorithm>    // std::sort()
 #include <concepts>     // std::integral<>, std::invocable<>
 #include <cstring>      // std::strcmp()
@@ -9,6 +8,7 @@
 #include <list>         // std::list<>
 #include <optional>     // std::optional<>
 #include <ranges>       // std::ranges::forward_range<>, std::ranges::views::empty<>
+#include <stdexcept>    // std::runtime_error
 #include <string>       // std::to_string()
 #include <string_view>  // std::string_view
 #include <variant>      // std::variant<>, std::monostate
@@ -206,7 +206,7 @@ C_EZArgs &C_EZArgs::add_subcommand(const std::string &name, std::invocable<> aut
     case UP2U_SUBCMD:
         break;
     case UP2U_LAYOUT:
-        RUNTIME_ERROR("Already set as positional arguments");
+        throw std::runtime_error{"Already set as positional arguments"};
     }
     auto &ret = std::get<UP2U_SUBCMD>(m_up2u).emplace_back(name, description).second;
 
@@ -243,7 +243,7 @@ C_EZArgs &C_EZArgs::position_args           (
         case 1:
             break;
         case 2:
-            RUNTIME_ERROR("Already added subcommands");
+            throw std::runtime_error{"Already added subcommands"};
         }
         auto &dst = std::get<1>(m_up2u);
         dst.m_posArgs.assign(std::begin(arg_names), std::end(arg_names));
