@@ -169,6 +169,7 @@
 
 ### System
 
+- [FileAsMem.h](include/bux/FileAsMem.h) - [Memory-mapped file](https://en.wikipedia.org/wiki/Memory-mapped_file)
 - [FsUtil.h](include/bux/FsUtil.h) - Utilities solely related to [\<filesystem\>](https://en.cppreference.com/w/cpp/header/filesystem)
 - [XConsole.h](include/bux/XConsole.h) - Cross-platform console functions.
 - [XPlatform.h](include/bux/XPlatform.h) - Conditionally defined macros, types, functions for as many platforms as possible.
