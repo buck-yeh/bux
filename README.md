@@ -12,6 +12,7 @@
 - [Build from github in MacOS or any of Linux distros](#build-from-github-in-macos-or-any-of-linux-distros)
 - [From vcpkg in Windows](#from-vcpkg-in-windows)
 - [Header Intros](#header-intros)
+    - [If you target iOS 16.0 or earlier](#if-you-target-ios-160-or-earlier)
     - [Containers](#containers)
     - [Input/Output](#inputoutput)
     - [Logger](#logger)
@@ -119,6 +120,14 @@
    ~~~
 
 ## Header Intros
+
+### 💡 If you target iOS 16.0 or earlier
+The following headers and every header using them should be avoided to use because they use [std::format()](https://en.cppreference.com/w/cpp/utility/format/format) directly or indirectly, which in turn uses the floating point version of [std::to_chars()](https://en.cppreference.com/w/cpp/utility/to_chars), which wasn't ready in AppleClang at the advent C++17 for quite a few years.
+
+- [EZScape.h](include/bux/EZScape.h)
+- [ImplScanner.h](include/bux/ImplScanner.h)
+- [Logger.h](include/bux/Logger.h)
+- [XException.h](include/bux/XException.h)
 
 ### Containers
 
