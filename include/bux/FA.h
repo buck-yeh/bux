@@ -9,6 +9,7 @@
 #include <map>          // std::map<>
 #include <set>          // std::set<>
 #include <stdexcept>    // std::runtime_error
+#include <string>       // std::to_string()
 #include <vector>       // std::vector<>
 
 namespace bux {
