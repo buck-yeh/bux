@@ -2,7 +2,7 @@
 
 - Supplemental static library of whatever are seen required in sense of general purpose but not directly supported from [Modern C++](https://www.modernescpp.com/index.php/what-is-modern-c). Or whatever is deemed reusable from my side projects. 
 
-- Doxygen-generated API reference is [here](https://buck-yeh.github.io/bux/html/index.html). 💡 Doxygen has been known for being insensitive to Modern C++ for so many years. Keywords like any of attributes, ... etc can be misinterpreted or simply dropped. Viewer's discretion is advised.
+- Doxygen-generated API reference is [here](https://buck-yeh.github.io/bux/html/index.html).
 
 ---
 **Table of contents**
@@ -12,7 +12,7 @@
 - [Build from github in MacOS or any of Linux distros](#build-from-github-in-macos-or-any-of-linux-distros)
 - [From vcpkg in Windows](#from-vcpkg-in-windows)
 - [Header Intros](#header-intros)
-    - [If you target iOS 16.0 or earlier](#if-you-target-ios-160-or-earlier)
+    - [If you target iOS prior to 16.3](#if-you-target-ios-prior-to-163)
     - [Containers](#containers)
     - [Input/Output](#inputoutput)
     - [Logger](#logger)
@@ -121,8 +121,8 @@
 
 ## Header Intros
 
-### If you target iOS 16.0 or earlier
-💡 The following headers and other headers using them should be avoided to use because they call [std::format()](https://en.cppreference.com/w/cpp/utility/format/format) directly or indirectly, which in turn calls the floating point version of [std::to_chars()](https://en.cppreference.com/w/cpp/utility/to_chars), which wasn't ready in AppleClang at the advent C++17 for quite a few years.
+### If you target iOS prior to 16.3
+💡 The following headers and other headers using them should be avoided to use because they call [std::format()](https://en.cppreference.com/w/cpp/utility/format/format) directly or indirectly, which in turn calls the floating point version of [std::to_chars()](https://en.cppreference.com/w/cpp/utility/to_chars), which wasn't ready in AppleClang with the advent of C++17 for quite a few years.
 
 - [EZScape.h](include/bux/EZScape.h)
 - [ImplScanner.h](include/bux/ImplScanner.h)
