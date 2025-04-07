@@ -14,7 +14,7 @@
 
 namespace bux {
 
-#ifndef __APPLE__
+#if !defined(__APPLE__) && !defined(__ANDROID__)
 using T_LocalZone = const std::chrono::time_zone *;
 inline T_LocalZone local_zone() { return std::chrono::get_tzdb().current_zone(); }
 #define LOCALZONE_IS_TIMEZONE (1)

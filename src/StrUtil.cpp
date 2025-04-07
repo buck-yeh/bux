@@ -6,13 +6,14 @@
 #include <cstring>          // strstr(), strlen()
 #ifdef _WIN32
     #include <processenv.h> // ExpandEnvironmentStringsA()
-#elif defined(__unix__) || defined(__unix) || defined(__gnu_linux__)
+#elif !defined(__ANDROID__) && (defined(__unix__) || defined(__unix) || defined(__gnu_linux__))
     #include <wordexp.h>    // wordexp(), wordfree()
 #else
     #define DISABLE_EXPAND_ENV_
 #endif
 #ifdef __unix__
-    #include <cxxabi.h>         // abi::__cxa_demangle()
+    #include <cstdlib>      // free()
+    #include <cxxabi.h>     // abi::__cxa_demangle()
 #endif
 
 
