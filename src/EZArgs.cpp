@@ -1,6 +1,7 @@
 #include "EZArgs.h"
 #include <cstring>      // strchr()
 #include <filesystem>   // std::filesystem::path
+#include <format>       // std::format()
 
 namespace bux {
 

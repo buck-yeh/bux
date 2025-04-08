@@ -1,5 +1,6 @@
 #include "LogStream.h"
 //---------------------------------------------------------------
+#include <format>           // std::format()
 #include <ostream>          // std::ostream
 #include <cinttypes>        // imaxdiv()
 #include <cstring>          // std::strcpy()
