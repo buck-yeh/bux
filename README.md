@@ -124,9 +124,14 @@
 ### If you target iOS prior to 16.3
 💡 The following headers and other headers using them should be avoided to use because they call [std::format()](https://en.cppreference.com/w/cpp/utility/format/format) directly or indirectly, which in turn calls the floating point version of [std::to_chars()](https://en.cppreference.com/w/cpp/utility/to_chars), which wasn't ready in AppleClang with the advent of C++17 for quite a few years.
 
+- [EZArgs.h](include/bux/EZArgs.h)
 - [EZScape.h](include/bux/EZScape.h)
+- [GLR.h](include/bux/GLR.h)
 - [ImplScanner.h](include/bux/ImplScanner.h)
 - [Logger.h](include/bux/Logger.h)
+- [LogStream.h](include/bux/LogStream.h)
+- [LR1.h](include/bux/LR1.h)
+- [ParserBase.h](include/bux/ParserBase.h)
 - [XException.h](include/bux/XException.h)
 
 ### Containers
