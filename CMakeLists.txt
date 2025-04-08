@@ -8,7 +8,7 @@ string(APPEND GNU_LIKE_CXX_FLAGS " -O2")
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang" OR ( CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND NOT MSVC ))
     message(DEBUG "Clang")
-    string(APPEND CMAKE_CXX_FLAGS "${GNU_LIKE_CXX_FLAGS} -Wno-potentially-evaluated-expression")
+    string(APPEND CMAKE_CXX_FLAGS "${GNU_LIKE_CXX_FLAGS} -Wno-potentially-evaluated-expression -Wno-delete-non-abstract-non-virtual-dtor")
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     message(DEBUG "GNU")
     string(APPEND CMAKE_CXX_FLAGS "${GNU_LIKE_CXX_FLAGS}")
