@@ -3,7 +3,8 @@ set(XCONSOLE_CPP )
 else()
 set(XCONSOLE_CPP XConsole.cpp)
 endif()
-message(DEBUG "XCONSOLE_CPP = ${XCONSOLE_CPP}")
+
+message(NOTICE "XCONSOLE_CPP = ${XCONSOLE_CPP}")
 
 add_library(bux STATIC
         AtomiX.cpp
