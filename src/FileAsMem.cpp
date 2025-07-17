@@ -13,7 +13,7 @@ C_FileAsMemory::C_FileAsMemory(const std::filesystem::path& path)
 #ifdef _WIN32
     const auto hFile = CreateFileW(path.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
     if (hFile == INVALID_HANDLE_VALUE)
-        throw std::runtime_error{"Failed to open \" + path.string() + \" for read-only"};
+        throw std::runtime_error{"Failed to open \"" + path.string() + "\" for read-only"};
 
     m_handle = CreateFileMappingW(hFile, nullptr, PAGE_READONLY, 0, 0, nullptr);
     CloseHandle(hFile);
