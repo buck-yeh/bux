@@ -276,8 +276,9 @@ void C_UnicodeIn::ingestMBCS()
         else
             m_ErrCode = UIE_NO_UNICODE_TRANSLATION;
 #else
-        static constinit const char *const TO_UCS4 = std::endian::native == std::endian::little? "UCS-4LE": "UCS-4BE";
-        static_assert(std::endian::native == std::endian::little || std::endian::native == std::endian::big);
+        static constexpr const char *const TO_UCS4 = std::endian::native == std::endian::little? "UTF-32LE": "UTF-32BE";
+        static_assert(std::endian::little != std::endian::big &&
+            (std::endian::native == std::endian::little || std::endian::native == std::endian::big));
         for (T_Encoding i = m_CodePage; *i && m_iconv == (iconv_t)(-1); ++i)
             m_iconv = iconv_open(TO_UCS4, *i);
 
