@@ -30,6 +30,7 @@ enum
     UIE_ILLFORMED_UNICODE       = -1,
     UIE_INCOMPLETE_UNICODE      = -2,
     UIE_NO_UNICODE_TRANSLATION  = -3,
+    UIE_ICONV_FAIL              = -4,
     UIE_INTERNAL                = -9
 };
 

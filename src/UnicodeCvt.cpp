@@ -301,7 +301,7 @@ void C_UnicodeIn::ingestMBCS()
         else switch (errno)
         {
         case EILSEQ: // invalid multibyte sequence
-            m_ErrCode = UIE_NO_UNICODE_TRANSLATION;
+            m_ErrCode = UIE_ICONV_FAIL;
             break;
         case EINVAL: // incomplete multibyte sequence
             for (const T_Utf32 *i = ucs4.get(); i < reinterpret_cast<T_Utf32*>(dst); m_GetQ.push(*i++));
