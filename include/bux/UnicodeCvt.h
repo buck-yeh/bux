@@ -71,6 +71,7 @@ public:
     int get(T_Utf8 *dst);
     int lastError() const noexcept { return m_GetQ.empty()? m_ErrCode: 1; }
     T_Encoding encoding() const noexcept { return m_CodePage; }
+    bool withBOM() const { return m_BOMed; }
 
 private:
 
@@ -106,6 +107,7 @@ private:
     iconv_t                 m_iconv{(iconv_t)-1};   // changed according to m_CodePage
 #endif
     int                     m_ErrCode{UIE_EOF};     ///< Positive number indicates no error.
+    bool                    m_BOMed = false;
 
     // Nonvirtuals
     bool guessCodePage();

@@ -327,10 +327,12 @@ void C_UnicodeIn::init()
         case 0xFEFF: // UTF-32 with BOM
             m_Src.pop(4);
             m_ReadMethod = &C_UnicodeIn::readUTF32;
+            m_BOMed = true;
             return;
         case 0xFFFE0000: // Reverse UTF-32 with BOM
             m_Src.pop(4);
             m_ReadMethod = &C_UnicodeIn::readReverseUTF32;
+            m_BOMed = true;
             return;
         }
         [[fallthrough]];
@@ -341,10 +343,12 @@ void C_UnicodeIn::init()
         case 0xFEFF: // UTF-16 with BOM
             m_Src.pop(2);
             m_ReadMethod = &C_UnicodeIn::readUTF16;
+            m_BOMed = true;
             return;
         case 0xFFFE: // Reverse UTF-16 with BOM
             m_Src.pop(2);
             m_ReadMethod = &C_UnicodeIn::readReverseUTF16;
+            m_BOMed = true;
             return;
         default:
             if (m_Src.size() >= 3 && 0 == memcmp(m_Src.buffer(), u8"\uFEFF", 3))
@@ -353,6 +357,7 @@ void C_UnicodeIn::init()
                 m_Src.pop(3);
                 setCodePage(CHSETS_UTF8);
                 m_ReadMethod = &C_UnicodeIn::readCodePage;
+                m_BOMed = true;
                 return;
             }
 
