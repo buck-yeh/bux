@@ -15,7 +15,7 @@ std::string easy_escape(std::string_view src)
 */
 {
     std::string ret;
-    for (char c: src)
+    for (unsigned char c: src)
     {
         if (c && (std::isalnum(c) || std::strchr("-_.~", c)))
             ret += c;
