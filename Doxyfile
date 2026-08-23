@@ -1028,6 +1028,7 @@ WARN_LOGFILE           =
 
 INPUT                  = src \
                          include/bux \
+                         doc \
                          DoxyMain.h
 
 # This tag can be used to specify the character encoding of the source files

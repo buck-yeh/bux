@@ -1,5 +1,9 @@
 #pragma once
 
+/*! \file
+    \brief \ref tldr_logger "Summary"
+*/
+
 #include "SyncLog.h"        // bux::I_SyncLog, bux::C_UseLog
 #include "XPlatform.h"      // CUR_FUNC_
 #include <format>           // std::format(), std::vformat(), std::make_format_args()
