@@ -1,6 +1,6 @@
 #pragma once
 
-#include <concepts>     // std::regular_invocable<>, std::convertible_to<>
+#include <concepts>     // std::regular_invocable<>
 #include <functional>   // std::function<>
 #include <stdexcept>    // std::exception
 #include <string>       // std::string
