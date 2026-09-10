@@ -94,3 +94,18 @@ TEST_CASE("split<char32_t>(ascii)", "[I]")
     CHECK(tokens.size() == 2);
     CHECK(tokens == decltype(tokens){U"Hello", U"world!"});
 }
+
+TEST_CASE("Verify the final delimeter", "[S]")
+{
+    std::vector<std::string> strs;
+    bux::split("Hello (world)!"s, " ()!"s,
+        [&](auto token){
+            strs.emplace_back(token);
+            return true;
+        },
+        [&](auto delim){
+            strs.emplace_back(delim);
+            return true;
+        });
+    CHECK(strs == std::vector{"Hello"s, " ("s, "world"s, ")!"s});
+}
