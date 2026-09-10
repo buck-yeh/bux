@@ -46,8 +46,12 @@ void split(const S& token_list, std::type_identity_t<std::basic_string_view<T>> 
     {
         const auto first_not_of_off = src.find_first_not_of(splitters, start_off);
         if (first_not_of_off == view_t::npos)
-            break;
+        {
+            if (start_off < src.size())
+                apply_delim(src.substr(start_off));
 
+            break;
+        }
         if (start_off < first_not_of_off)
             apply_delim(src.substr(start_off, first_not_of_off - start_off));
 
